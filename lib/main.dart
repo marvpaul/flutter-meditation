@@ -105,6 +105,14 @@ class _MyHomePageState extends State<MyHomePage> {
           // wireframe for each widget.
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
+            ElevatedButton(
+              onPressed: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(builder: (context) => SimpleBreathing()),
+                );
+              },
+              child: Text('Go to MyPage'),
+            ),
             const Text(
               'You have pushed the button this many times:',
             ),
@@ -123,3 +131,28 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 }
+
+
+class SimpleBreathing extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Simple 4-7-8 breathing'),
+      ),
+      body: Center(
+        child: Text('Your Page Content Goes Here'),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.of(context).pop(); // This line pops the current page and goes back.
+        },
+        child: Icon(Icons.arrow_back),
+      ),
+    );
+  }
+}
+
+
+
+
