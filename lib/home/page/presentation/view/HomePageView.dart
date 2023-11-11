@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_meditation/settings/page/presentation/view/SettingsPageView.dart';
 import 'package:provider/provider.dart';
 
 import '../../../../pastmeditation/presentation/PastMeditationsCardView.dart';
@@ -28,9 +29,9 @@ class _HomePageState extends State<HomePageView> {
           IconButton(
             icon: const Icon(Icons.settings_rounded),
             onPressed: () {
-              // Navigator.of(context).push(
-              //   MaterialPageRoute(builder: (context) => SettingsPage()),
-              // );
+              Navigator.of(context).push(
+                MaterialPageRoute(builder: (context) => const SettingsPageView()),
+              );
             },
           ),],
       ),
