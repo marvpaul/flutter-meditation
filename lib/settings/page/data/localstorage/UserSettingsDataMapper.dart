@@ -29,7 +29,7 @@ extension MeditationInfoDataMapper on MeditationInfo {
 
 extension UserSettingsDTODataMapper on UserSettingsDTO? {
   UserSettings? toDomain() {
-    if (this != null && this!.meditationInfo != null && this!.meditationSettings != null) {
+    if (this != null) {
       return UserSettings(
         meditationSettings: this!.meditationSettings.toDomain(),
         meditationInfo: this!.meditationInfo.toDomain(),
