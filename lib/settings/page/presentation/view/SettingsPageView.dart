@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter_meditation/dependency_service.dart';
 
 import '../viewmodel/SettingsPageViewModel.dart';
 
@@ -7,16 +7,16 @@ class SettingsPageView extends StatefulWidget {
   const SettingsPageView({ super.key });
 
   @override
-  State<SettingsPageView> createState() => SettingsPageState();
+  State<SettingsPageView> createState() => _SettingsPageState();
 }
 
-class SettingsPageState extends State<SettingsPageView> {
+class _SettingsPageState extends State<SettingsPageView> {
   late SettingsPageViewModel viewModel;
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    viewModel = Provider.of<SettingsPageViewModel>(context);
+    viewModel = DependencyService.getChangeNotifier(context);
     viewModel.startObserving();
   }
 

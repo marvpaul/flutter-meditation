@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_meditation/dependency_service.dart';
 import 'package:flutter_meditation/home/page/presentation/view/HomePageView.dart';
 import 'package:flutter_meditation/settings/page/di/SettingsModule.dart';
 import 'package:flutter_meditation/settings/page/presentation/viewmodel/SettingsPageViewModel.dart';
@@ -7,7 +8,12 @@ import 'package:provider/provider.dart';
 import 'home/page/presentation/viewmodel/HomePageViewModel.dart';
 
 void main() {
+  _setupDependencies();
   runApp(const MyApp());
+}
+
+void _setupDependencies() {
+  SettingsModule();
 }
 
 class MyApp extends StatelessWidget {
@@ -19,7 +25,7 @@ class MyApp extends StatelessWidget {
     return MultiProvider(
         providers: [
           ChangeNotifierProvider(create: (_) => HomePageViewModel()),
-          ChangeNotifierProvider(create: (_) => SettingsModule().provide()), // TODO: use di library get_it
+          ChangeNotifierProvider(create: (_) => DependencyService.get<SettingsPageViewModel>()),
         ],
         child: MaterialApp(
           theme: ThemeData(

@@ -1,32 +1,26 @@
+import 'package:flutter_meditation/dependency_service.dart';
+
 import '../data/repository/LocalStorageUserSettingsRepository.dart';
 import '../domain/repository/UserSettingsRepository.dart';
 import '../domain/usecase/ChangeHapticFeedbackUserSettingsUseCase.dart';
 import '../domain/usecase/GetUserSettingsUseCase.dart';
 import '../presentation/viewmodel/SettingsPageViewModel.dart';
 
-// TODO: hopefully just temporary - ideally use di library get_it to replace this
-abstract class SettingsModuleType {
-  SettingsPageViewModel provide();
-}
+class SettingsModule {
 
-class SettingsModule implements SettingsModuleType {
-
-  final UserSettingsRepository _userSettingsRepository = LocalStorageUserSettingsRepository();
-
-  UserSettingsRepository _componentUserSettingsRepository() {
-    return _userSettingsRepository;
+  SettingsModule() {
+    _registerDependencies();
   }
 
-  GetUserSettingsUseCase _componentGetUserSettingsUseCase() {
-    return GetUserSettingsUseCase(_componentUserSettingsRepository());
-  }
-
-  ChangeHapticFeedbackUserSettingsUseCase _componentChangeHapticFeedbackUserSettingsUseCase() {
-    return ChangeHapticFeedbackUserSettingsUseCase(_componentUserSettingsRepository());
-  }
-
-  @override
-  SettingsPageViewModel provide() {
-    return SettingsPageViewModel(_componentGetUserSettingsUseCase(), _componentChangeHapticFeedbackUserSettingsUseCase());
+  _registerDependencies() {
+    DependencyService.registerLazySingleton<UserSettingsRepository>(() => LocalStorageUserSettingsRepository());
+    DependencyService.registerFactory<GetUserSettingsUseCase>(() => GetUserSettingsUseCase(DependencyService.get<UserSettingsRepository>()));
+    DependencyService.registerFactory<ChangeHapticFeedbackUserSettingsUseCase>(() => ChangeHapticFeedbackUserSettingsUseCase(DependencyService.get<UserSettingsRepository>()));
+    DependencyService.registerFactory<SettingsPageViewModel>(() {
+      return SettingsPageViewModel(
+          DependencyService.get<GetUserSettingsUseCase>(),
+          DependencyService.get<ChangeHapticFeedbackUserSettingsUseCase>()
+      );
+    });
   }
 }

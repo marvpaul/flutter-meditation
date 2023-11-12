@@ -11,7 +11,6 @@ class SettingsPageViewModel extends ChangeNotifier {
   bool isHapticFeedbackEnabled = true;
 
   late StreamSubscription<UserSettings> _subscription;
-
   final GetUserSettingsUseCase _getUserSettingsUseCase;
   final ChangeHapticFeedbackUserSettingsUseCase _changeHapticFeedbackUserSettingsUseCase;
 
