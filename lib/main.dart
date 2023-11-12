@@ -4,7 +4,9 @@ import 'package:flutter_meditation/home/page/presentation/view/HomePageView.dart
 import 'package:flutter_meditation/settings/page/di/SettingsModule.dart';
 import 'package:flutter_meditation/settings/page/presentation/viewmodel/SettingsPageViewModel.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
+import 'common/localstorage/di/LocalStorageModule.dart';
 import 'home/page/di/HomeModule.dart';
 import 'home/page/presentation/viewmodel/HomePageViewModel.dart';
 
@@ -13,7 +15,9 @@ void main() {
   runApp(const MyApp());
 }
 
-void _setupDependencies() {
+void _setupDependencies() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  LocalStorageModule();
   HomeModule();
   SettingsModule();
 }

@@ -13,7 +13,7 @@ class SettingsModule {
   }
 
   _registerDependencies() {
-    DependencyService.registerLazySingleton<UserSettingsRepository>(() => LocalStorageUserSettingsRepository());
+    DependencyService.registerLazySingleton<UserSettingsRepository>(() => LocalStorageUserSettingsRepository(DependencyService.get()));
     DependencyService.registerFactory<GetUserSettingsUseCase>(() => GetUserSettingsUseCase(DependencyService.get<UserSettingsRepository>()));
     DependencyService.registerFactory<ChangeHapticFeedbackUserSettingsUseCase>(() => ChangeHapticFeedbackUserSettingsUseCase(DependencyService.get<UserSettingsRepository>()));
     DependencyService.registerFactory<SettingsPageViewModel>(() {

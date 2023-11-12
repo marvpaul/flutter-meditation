@@ -9,6 +9,6 @@ class HomeModule {
   }
 
   _registerDependencies() {
-    DependencyService.registerFactory(() => HomePageViewModel());
+    DependencyService.registerFactory<HomePageViewModel>(() => HomePageViewModel());
   }
 }
