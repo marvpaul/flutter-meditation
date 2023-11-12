@@ -4,7 +4,6 @@ import 'package:flutter_meditation/home/page/presentation/view/HomePageView.dart
 import 'package:flutter_meditation/settings/page/di/SettingsModule.dart';
 import 'package:flutter_meditation/settings/page/presentation/viewmodel/SettingsPageViewModel.dart';
 import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 import 'common/localstorage/di/LocalStorageModule.dart';
 import 'home/page/di/HomeModule.dart';
@@ -29,22 +28,24 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
-        providers: [
-          ChangeNotifierProvider(create: (_) => DependencyService.get<HomePageViewModel>()),
-          ChangeNotifierProvider(create: (_) => DependencyService.get<SettingsPageViewModel>()),
-        ],
-        child: MaterialApp(
-          theme: ThemeData(
-            brightness: Brightness.light,
-            useMaterial3: true,
-          ),
-          darkTheme: ThemeData(
-            brightness: Brightness.dark,
-            useMaterial3: true,
-          ),
-          themeMode: ThemeMode.system,
-          home: const HomePageView(),
+      providers: [
+        ChangeNotifierProvider(
+            create: (_) => DependencyService.get<HomePageViewModel>()),
+        ChangeNotifierProvider(
+            create: (_) => DependencyService.get<SettingsPageViewModel>()),
+      ],
+      child: MaterialApp(
+        theme: ThemeData(
+          brightness: Brightness.light,
+          useMaterial3: true,
         ),
+        darkTheme: ThemeData(
+          brightness: Brightness.dark,
+          useMaterial3: true,
+        ),
+        themeMode: ThemeMode.system,
+        home: const HomePageView(),
+      ),
     );
   }
 }
