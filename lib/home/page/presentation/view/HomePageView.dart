@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_meditation/settings/page/presentation/view/SettingsPageView.dart';
 import 'package:provider/provider.dart';
 
+import '../../../../dependency_service.dart';
 import '../../../../pastmeditation/presentation/PastMeditationsCardView.dart';
 import '../viewmodel/HomePageViewModel.dart';
 
@@ -13,12 +14,18 @@ class HomePageView extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePageView> {
+  late HomePageViewModel viewModel;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    viewModel = DependencyService.getChangeNotifier(context);
+  }
 
   @override
   Widget build(BuildContext context) {
     HomePageViewModel viewModel = Provider.of<HomePageViewModel>(context);
     return Scaffold(
-      // TODO: change appbar to display the large title below the toolbar - might not be possible with the current version of Flutter
       appBar: AppBar(
         toolbarHeight: 100,
         centerTitle: false,
