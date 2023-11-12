@@ -29,7 +29,6 @@ class _SettingsPageState extends State<SettingsPageView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // TODO: change appbar to display the large title below the toolbar - might not be possible with the current version of Flutter
       appBar: AppBar(
         centerTitle: false,
         titleTextStyle: Theme.of(context).textTheme.headlineLarge,
