@@ -1,25 +1,20 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_meditation/dependency_service.dart';
-import 'package:flutter_meditation/home/page/presentation/view/HomePageView.dart';
-import 'package:flutter_meditation/settings/page/di/SettingsModule.dart';
-import 'package:flutter_meditation/settings/page/presentation/viewmodel/SettingsPageViewModel.dart';
+import 'package:flutter_meditation/view/screens/home_page_view.dart';
+import 'package:flutter_meditation/view_model/home_page_view_model.dart';
+import 'package:flutter_meditation/view_model/settings_page_view_model.dart';
+import 'package:injectable/injectable.dart';
 import 'package:provider/provider.dart';
 
-import 'common/localstorage/di/LocalStorageModule.dart';
-import 'home/page/di/HomeModule.dart';
-import 'home/page/presentation/viewmodel/HomePageViewModel.dart';
+import 'di/Setup.dart';
 
-void main() {
-  _setupDependencies();
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await configureInjection(Environment.prod);
+  await getIt.allReady();
   runApp(const MyApp());
 }
 
-void _setupDependencies() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  LocalStorageModule();
-  HomeModule();
-  SettingsModule();
-}
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -29,10 +24,8 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider(
-            create: (_) => DependencyService.get<HomePageViewModel>()),
-        ChangeNotifierProvider(
-            create: (_) => DependencyService.get<SettingsPageViewModel>()),
+        ChangeNotifierProvider.value(value: HomePageViewModel()),
+        ChangeNotifierProvider.value(value: SettingsPageViewModel()),
       ],
       child: MaterialApp(
         theme: ThemeData(

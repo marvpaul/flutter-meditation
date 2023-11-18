@@ -2,15 +2,26 @@
 
 A new Flutter project.
 
-## Getting Started
+## Build project
 
-This project is a starting point for a Flutter application.
+To build GETIt service locator instances for dependency injection and model classes run:
 
-A few resources to get you started if this is your first Flutter project:
+`flutter pub run build_runner build`
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+To clean generated files:
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+`flutter packages pub run build_runner clean`
+
+## App Architecture
+
+- MVVM architecture
+- Repository Pattern
+  - JSON serialization/deserialization of model classes using freezed library
+- dependency injection using injectable library
+
+The app architecture is inspired by the following projects:
+
+ - https://github.com/noveriojoee/what_to_do_app_flutter
+ - https://github.com/HarryHaiVn/Flutter-Clean-Architecture-MVVM/tree/master
+ - https://github.com/wasabeef/flutter-architecture-blueprints/tree/main
+ - https://github.com/dacianf/flutter_rxdart_state_management/tree/master
