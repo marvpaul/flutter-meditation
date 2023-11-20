@@ -36,7 +36,7 @@ class HomePageViewModel extends BaseViewModel {
   Future<bool> playBinauralBeats(
       double frequencyLeft, double frequencyRight) async {
     //TODO give other arguments to service
-    return await _binauralBeatsRepository.playBinauralBeats(120, 120, 0, 0, 10);
+    return await _binauralBeatsRepository.playBinauralBeats(500, 600, 0, 0, 10);
   }
 
   String _getGreetingForCurrentTime() {
