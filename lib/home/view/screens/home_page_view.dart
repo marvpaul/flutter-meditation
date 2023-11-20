@@ -1,29 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
+import '../../../base/base_view.dart';
+import '../../../settings/view/screens/settings_page_view.dart';
 import '../../view_model/home_page_view_model.dart';
 import '../widgets/past_meditations_card_view.dart';
-import 'settings_page_view.dart';
 
 
-class HomePageView extends StatefulWidget {
-  const HomePageView({ super.key });
+class HomePageView extends BaseView<HomePageViewModel> {
 
   @override
-  State<HomePageView> createState() => _HomePageState();
-}
-
-class _HomePageState extends State<HomePageView> {
-  late HomePageViewModel viewModel;
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    HomePageViewModel viewModel = Provider.of<HomePageViewModel>(context);
+  Widget build(
+      BuildContext context, HomePageViewModel viewModel, Widget? child) {
     return Scaffold(
       appBar: AppBar(
         toolbarHeight: 100,
@@ -57,7 +44,7 @@ class _HomePageState extends State<HomePageView> {
         ),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-      floatingActionButton: const PastMeditationsCardView(meditationSessionEntries: 7),
+      floatingActionButton: PastMeditationsCardView(meditationSessionEntries: viewModel.meditationDataCount),
     );
   }
 }

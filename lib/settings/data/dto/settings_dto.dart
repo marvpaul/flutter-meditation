@@ -1,5 +1,5 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
-import '../settings_model.dart';
+import '../../../settings/data/model/settings_model.dart';
 part 'settings_dto.freezed.dart';
 part 'settings_dto.g.dart';
 @unfreezed

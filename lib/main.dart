@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_meditation/view/screens/home_page_view.dart';
-import 'package:flutter_meditation/view_model/home_page_view_model.dart';
-import 'package:flutter_meditation/view_model/settings_page_view_model.dart';
+import 'package:flutter_meditation/home/view/screens/home_page_view.dart';
+import 'package:flutter_meditation/settings/view_model/settings_page_view_model.dart';
 import 'package:injectable/injectable.dart';
 import 'package:provider/provider.dart';
 
 import 'di/Setup.dart';
+import 'home/view_model/home_page_view_model.dart';
 
 
 void main() async {
@@ -37,7 +37,7 @@ class MyApp extends StatelessWidget {
           useMaterial3: true,
         ),
         themeMode: ThemeMode.system,
-        home: const HomePageView(),
+        home: HomePageView(),
       ),
     );
   }
