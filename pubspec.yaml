@@ -31,10 +31,22 @@ dependencies:
   flutter:
     sdk: flutter
 
+  # State Management
+  provider: ^6.1.1
+
+  # Dependency Injection
+  get_it: ^7.2.0
+  rxdart: ^0.27.2
+  mockito: ^5.4.2
+  shared_preferences: ^2.0.8
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.2
+  json_annotation: ^4.8.1
+  freezed: ^2.4.5
+  injectable: ^2.3.2
+  mocktail: ^1.0.1
 
 dev_dependencies:
   flutter_test:
@@ -46,6 +58,10 @@ dev_dependencies:
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
   flutter_lints: ^2.0.0
+  build_runner: ^2.4.6
+  json_serializable: ^6.7.1
+  injectable_generator:
+  test: ^1.24.3
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
