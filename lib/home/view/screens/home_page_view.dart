@@ -5,9 +5,7 @@ import '../../../settings/view/screens/settings_page_view.dart';
 import '../../view_model/home_page_view_model.dart';
 import '../widgets/past_meditations_card_view.dart';
 
-
 class HomePageView extends BaseView<HomePageViewModel> {
-
   @override
   Widget build(
       BuildContext context, HomePageViewModel viewModel, Widget? child) {
@@ -26,7 +24,8 @@ class HomePageView extends BaseView<HomePageViewModel> {
                 MaterialPageRoute(builder: (context) => SettingsPageView()),
               );
             },
-          ),],
+          ),
+        ],
       ),
       body: Center(
         child: Column(
@@ -34,9 +33,7 @@ class HomePageView extends BaseView<HomePageViewModel> {
           children: <Widget>[
             ElevatedButton(
               onPressed: () {
-                // Navigator.of(context).push(
-                //   MaterialPageRoute(builder: (context) => SimpleBreathing()),
-                // );
+                viewModel.playBinauralBeats(600, 200);
               },
               child: const Text('Start'),
             ),
@@ -44,7 +41,8 @@ class HomePageView extends BaseView<HomePageViewModel> {
         ),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-      floatingActionButton: PastMeditationsCardView(meditationSessionEntries: viewModel.meditationDataCount),
+      floatingActionButton: PastMeditationsCardView(
+          meditationSessionEntries: viewModel.meditationDataCount),
     );
   }
 }

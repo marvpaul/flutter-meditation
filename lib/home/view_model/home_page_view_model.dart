@@ -1,5 +1,7 @@
 import 'package:flutter_meditation/base/base_view_model.dart';
 import 'package:flutter_meditation/home/data/model/meditation_model.dart';
+import 'package:flutter_meditation/home/data/repository/binaural_beats_repository.dart';
+import 'package:flutter_meditation/home/data/repository/impl/binaural_beats_repository_local.dart';
 import 'package:flutter_meditation/home/data/repository/past_meditation_repository.dart';
 import 'package:injectable/injectable.dart';
 
@@ -11,7 +13,11 @@ class HomePageViewModel extends BaseViewModel {
   List<MeditationModel>? _meditationData;
 
   // TODO discuss to move this to a separate view model for past meditations
-  final MeditationRepository _meditationRepository = getIt<MeditationRepositoryLocal>();
+  final MeditationRepository _meditationRepository =
+      getIt<MeditationRepositoryLocal>();
+
+  final BinauralBeatsRepository _binauralBeatsRepository =
+      getIt<BinauralBeatsRepositoryLocal>();
 
   String _appbarText = "";
   String get appbarText => _appbarText;
@@ -27,6 +33,12 @@ class HomePageViewModel extends BaseViewModel {
     _appbarText = _getGreetingForCurrentTime();
   }
 
+  Future<bool> playBinauralBeats(
+      double frequencyLeft, double frequencyRight) async {
+    //TODO give other arguments to service
+    return await _binauralBeatsRepository.playBinauralBeats(120, 120, 0, 0, 10);
+  }
+
   String _getGreetingForCurrentTime() {
     final hour = DateTime.now().hour;
     if (hour > 6 && hour < 12) {
@@ -39,5 +51,4 @@ class HomePageViewModel extends BaseViewModel {
       return "Good Night";
     }
   }
-
 }
