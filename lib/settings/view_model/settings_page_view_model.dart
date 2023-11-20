@@ -15,7 +15,7 @@ class SettingsPageViewModel extends BaseViewModel {
   final SettingsRepository _settingsRepository = getIt<SettingsRepositoryLocal>();
 
   @override
-  void init() async {
+  Future<void> init() async {
     _settingsModel = await _settingsRepository.getSettings();
   }
 

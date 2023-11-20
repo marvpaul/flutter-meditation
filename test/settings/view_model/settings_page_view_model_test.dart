@@ -32,8 +32,7 @@ void main() async {
     test('initialize view model', () async {
       expect(viewModel.settings, null);
       when(() => mockSettingsRepository.getSettings()).thenAnswer((_) => Future(() => settingsHapticFeedbackEnabled));
-      viewModel.init();
-      await Future.delayed(const Duration(milliseconds: 200), (){});
+      await viewModel.init();
       expect(viewModel.settings , settingsHapticFeedbackEnabled);
     });
   });
