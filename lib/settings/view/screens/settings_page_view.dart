@@ -34,7 +34,7 @@ class SettingsPageView extends BaseView<SettingsPageViewModel> {
             );
           } else {
             return ListTile(
-              enableFeedback: isHapticFeedbackEnabled,
+              enableFeedback: shouldShowHeartRate,
               title: const Text("Show Heart Rate"),
               trailing: Switch(
                 value: shouldShowHeartRate,
