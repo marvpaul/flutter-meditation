@@ -80,7 +80,7 @@ class SettingsPageView extends BaseView<SettingsPageViewModel> {
                 trailing: Switch(
                   value: viewModel.settings?.shouldShowHeartRate ?? false,
                   onChanged: (isEnabled) {
-                    viewModel.toggleshouldShowHeartRate(isEnabled);
+                    viewModel.toggleShouldShowHeartRate(isEnabled);
                   },
                 ),
               ),

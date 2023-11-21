@@ -6,6 +6,6 @@ import '../data/repository/past_sessions_repository.dart';
 
 @injectable
 class PastSessionsPageViewModel extends BaseViewModel {
-  final PastSessionsRepository _settingsRepository = getIt<PastSessionsRepositoryLocal>();
+  final PastSessionsRepository _pastSessionsRepository = getIt<PastSessionsRepositoryLocal>();
 
 }

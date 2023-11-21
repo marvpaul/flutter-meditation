@@ -11,7 +11,7 @@ import '../data/repository/session_repository.dart';
 
 @injectable
 class SessionPageViewModel extends BaseViewModel {
-  final SessionRepository _settingsRepository = getIt<SessionRepositoryLocal>();
+  final SessionRepository _sessionRepository = getIt<SessionRepositoryLocal>();
 
   List<String> breathingTechniques = ["Inhale", "Hold", "Exhale"];
   List<double> breathingDurations = [4, 7, 8];
