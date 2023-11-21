@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_meditation/base/base_view_model.dart';
-import 'package:flutter_meditation/home/data/model/meditation_model.dart';
-import 'package:flutter_meditation/home/data/repository/past_meditation_repository.dart';
-import 'package:flutter_meditation/past_sessions/view/screens/past_sessions_page_view.dart';
 import 'package:injectable/injectable.dart';
 
+import '../../../base/base_view_model.dart';
+import '../../../home/data/model/meditation_model.dart';
+import '../../../home/data/repository/past_meditation_repository.dart';
+import '../../../past_sessions/view/screens/past_sessions_page_view.dart';
 import '../../../settings/view/screens/settings_page_view.dart';
 import '../../../session/view/screens/session_page_view.dart';
-
 import '../../di/Setup.dart';
 import '../data/repository/impl/past_meditation_repository_local.dart';
 
