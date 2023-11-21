@@ -24,6 +24,11 @@ class SettingsPageViewModel extends BaseViewModel {
       _settingsModel!.isHapticFeedbackEnabled = isEnabled;
       notifyListeners();
     }
-
+  }
+  toggleshouldShowHeartRate(bool isEnabled) {
+    if(_settingsModel != null){
+      _settingsModel!.shouldShowHeartRate = isEnabled;
+      notifyListeners();
+    }
   }
 }

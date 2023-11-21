@@ -1,7 +1,10 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_meditation/base/base_view_model.dart';
 import 'package:flutter_meditation/home/data/model/meditation_model.dart';
 import 'package:flutter_meditation/home/data/repository/past_meditation_repository.dart';
 import 'package:injectable/injectable.dart';
+
+import '../../../settings/view/screens/settings_page_view.dart';
 
 import '../../di/Setup.dart';
 import '../data/repository/impl/past_meditation_repository_local.dart';
@@ -25,6 +28,24 @@ class HomePageViewModel extends BaseViewModel {
 
   HomePageViewModel() {
     _appbarText = _getGreetingForCurrentTime();
+  }
+
+   void navigateToSession(var context) {
+    /* Navigator.of(context).push(
+      MaterialPageRoute(builder: (context) => const SessionView()),
+    ); */
+  }
+
+  void navigateToSessionSummary(var context) {
+   /*  Navigator.of(context).push(
+      MaterialPageRoute(builder: (context) => const SessionSummaryView()),
+    ); */
+  }
+  void navigateToSettings(var context) {
+     Navigator.of(context).push(
+                      MaterialPageRoute(
+                          builder: (context) => SettingsPageView()),
+                    );
   }
 
   String _getGreetingForCurrentTime() {

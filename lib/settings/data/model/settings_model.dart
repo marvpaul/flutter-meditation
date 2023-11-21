@@ -6,6 +6,7 @@ part 'settings_model.g.dart';
 class SettingsModel with _$SettingsModel {
   factory SettingsModel({
     @Default(false) bool isHapticFeedbackEnabled,
+    @Default(false) bool shouldShowHeartRate,
   }) = _SettingsModel;
 
   factory SettingsModel.fromJson(Map<String, dynamic> json) =>
