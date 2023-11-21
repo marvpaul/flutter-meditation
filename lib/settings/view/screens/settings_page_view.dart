@@ -15,37 +15,78 @@ class SettingsPageView extends BaseView<SettingsPageViewModel> {
         backgroundColor: Theme.of(context).colorScheme.background,
         title: const Text("Settings"),
       ),
-      body: ListView.builder(
-        itemBuilder: (context, index) {
-          final isHapticFeedbackEnabled =
-              viewModel.settings?.isHapticFeedbackEnabled ?? false;
-          final shouldShowHeartRate =
-              viewModel.settings?.shouldShowHeartRate ?? false;
-          if (index == 0) {
-            return ListTile(
-              enableFeedback: isHapticFeedbackEnabled,
-              title: const Text("Haptic Feedback"),
-              trailing: Switch(
-                value: isHapticFeedbackEnabled,
-                onChanged: (isEnabled) {
-                  viewModel.toggleHapticFeedback(isEnabled);
-                },
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Text(
+              'Meditation settings',
+              style: TextStyle(
+                fontSize: 14.0,
+                color: Theme.of(context).colorScheme.surfaceTint,
               ),
-            );
-          } else {
-            return ListTile(
-              enableFeedback: shouldShowHeartRate,
-              title: const Text("Show Heart Rate"),
-              trailing: Switch(
-                value: shouldShowHeartRate,
-                onChanged: (isEnabled) {
-                  viewModel.toggleshouldShowHeartRate(isEnabled);
-                },
+            ),
+          ),
+          ListView(
+            shrinkWrap: true,
+            children: [
+              ListTile(
+                enableFeedback: false,
+                title: Text(viewModel.hapticFeedbackName),
+                trailing: Switch(
+                  value: viewModel.settings?.isHapticFeedbackEnabled ?? false,
+                  onChanged: (isEnabled) {
+                    viewModel.toggleHapticFeedback(isEnabled);
+                  },
+                ),
               ),
-            );
-          }
-        },
-        itemCount: 2,
+              ListTile(
+                enableFeedback: false,
+                title: Text(viewModel.soundName),
+                trailing: DropdownButton<String>(
+                  value: viewModel.settings?.sound ?? "Option 1",
+                  onChanged: (String? newValue) {
+                    viewModel.changeList(
+                        viewModel.soundName, newValue ?? 'Option 1');
+                  },
+                  items: viewModel.soundOptions
+                      .map<DropdownMenuItem<String>>((String value) {
+                    return DropdownMenuItem<String>(
+                      value: value,
+                      child: Text(value),
+                    );
+                  }).toList(),
+                ),
+              ),
+            ],
+          ),
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Text(
+              'Meditation info',
+              style: TextStyle(
+                fontSize: 14.0,
+                color: Theme.of(context).colorScheme.surfaceTint,
+              ),
+            ),
+          ),
+          ListView(
+            shrinkWrap: true,
+            children: [
+              ListTile(
+                enableFeedback: false,
+                title: Text(viewModel.heartRateName),
+                trailing: Switch(
+                  value: viewModel.settings?.shouldShowHeartRate ?? false,
+                  onChanged: (isEnabled) {
+                    viewModel.toggleshouldShowHeartRate(isEnabled);
+                  },
+                ),
+              ),
+            ],
+          ),
+        ],
       ),
     );
   }

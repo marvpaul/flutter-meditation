@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_meditation/widgets/circle_widget.dart';
 import 'package:flutter_meditation/widgets/gradient_background.dart';
-
 import '../../../base/base_view.dart';
 import '../../view_model/home_page_view_model.dart';
 import '../widgets/past_meditations_card_view.dart';
@@ -25,7 +24,7 @@ class HomePageView extends BaseView<HomePageViewModel> {
                 IconButton(
                   icon: const Icon(Icons.settings_rounded),
                   onPressed: () {
-                    viewModel.navigateToSettings(context); 
+                    viewModel.navigateToSettings(context);
                   },
                 ),
               ],
@@ -48,7 +47,11 @@ class HomePageView extends BaseView<HomePageViewModel> {
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       floatingActionButton: PastMeditationsCardView(
-          meditationSessionEntries: viewModel.meditationDataCount),
+        meditationSessionEntries: viewModel.meditationDataCount,
+        onPressed: () {
+          viewModel.navigateToSessionSummary(context);
+        },
+      ),
     );
   }
 }
