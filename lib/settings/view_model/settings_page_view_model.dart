@@ -34,6 +34,7 @@ class SettingsPageViewModel extends BaseViewModel {
   toggleHapticFeedback(bool isEnabled) {
     if (_settingsModel != null) {
       _settingsModel!.isHapticFeedbackEnabled = isEnabled;
+      _settingsRepository.saveSettings(_settingsModel!);
       notifyListeners();
     }
   }
@@ -41,6 +42,7 @@ class SettingsPageViewModel extends BaseViewModel {
   toggleShouldShowHeartRate(bool isEnabled) {
     if (_settingsModel != null) {
       _settingsModel!.shouldShowHeartRate = isEnabled;
+      _settingsRepository.saveSettings(_settingsModel!);
       notifyListeners();
     }
   }
@@ -49,6 +51,7 @@ class SettingsPageViewModel extends BaseViewModel {
     if (_settingsModel != null) {
       if (name == "Sound") {
         _settingsModel!.sound = value;
+        _settingsRepository.saveSettings(_settingsModel!);
         notifyListeners();
       }
     }
