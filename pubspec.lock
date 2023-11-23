@@ -186,7 +186,7 @@ packages:
     source: hosted
     version: "2.3.2"
   equatable:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: equatable
       sha256: c2b87cb7756efdf69892005af546c56c0b5037f54d2a88269b4f347a505e3ca2
@@ -238,6 +238,14 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  flutter_blue_plus:
+    dependency: "direct main"
+    description:
+      name: flutter_blue_plus
+      sha256: "566b42a95215c54a0615298c5c0e8fe4af0cb79dd481568bee56bad27ad2cf86"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.29.5"
   flutter_lints:
     dependency: "direct dev"
     description:
