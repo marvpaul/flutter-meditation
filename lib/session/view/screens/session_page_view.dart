@@ -4,6 +4,7 @@ import 'package:flutter_meditation/widgets/breathing_circle_widget.dart';
 import 'package:flutter_meditation/widgets/gradient_background.dart';
 import 'package:flutter_meditation/widgets/heart_rate_graph.dart';
 import 'package:flutter_meditation/widgets/information_box.dart';
+import 'package:flutter_meditation/widgets/kaleidoscope.dart';
 import '../../../base/base_view.dart';
 import '../../view_model/session_page_view_model.dart';
 
@@ -56,6 +57,11 @@ class SessionPageView extends BaseView<SessionPageViewModel> {
                           state: viewModel.state),
                     ),
                   ),
+                ),
+                Container(
+                  width: 100,
+                  height: 100,
+                  child: Kaleidoscope(),
                 ),
                 SizedBox(
                   width: MediaQuery.of(context).size.width *

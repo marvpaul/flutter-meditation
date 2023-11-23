@@ -16,8 +16,8 @@ import '../session_repository.dart';
 class SessionRepositoryLocal implements SessionRepository{
   final SharedPreferences prefs;
   SessionRepositoryLocal(this.prefs);
-  final SettingsRepository _settingsRepository =
-      getIt<SettingsRepositoryLocal>();
+  /* final SettingsRepository _settingsRepository =
+      getIt<SettingsRepositoryLocal>(); */
 
   @override
   Future<SessionModel> getSession() async {
@@ -36,13 +36,15 @@ class SessionRepositoryLocal implements SessionRepository{
 
   Future<SessionModel> createNewSession() async{
     print("Create new session, fetch params!"); 
-    SettingsModel? settings = await _settingsRepository.getSettings();
+    /* SettingsModel? settings = await _settingsRepository.getSettings();
     print(settings); 
-
+ */
     SessionModel sessionModel = SessionModel();
-    sessionModel.isHapticFeedbackEnabled = settings?.isHapticFeedbackEnabled??false; 
+    SettingsRepository _settingsRepository =
+      getIt<SettingsRepositoryLocal>();
+   /*  sessionModel.isHapticFeedbackEnabled = settings?.isHapticFeedbackEnabled??false; 
     sessionModel.shouldShowHeartRate = settings?.shouldShowHeartRate??false; 
-    sessionModel.sound = settings?.sound??'Option 1'; 
+    sessionModel.sound = settings?.sound??'Option 1';  */
     saveSession(sessionModel);
     // return default if no config was found
     return sessionModel;
