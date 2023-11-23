@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_meditation/base/base_view_model.dart';
+import 'package:flutter_meditation/session/data/model/session_model.dart';
 import 'package:flutter_meditation/widgets/heart_rate_graph.dart';
 import 'package:injectable/injectable.dart';
 import '../../di/Setup.dart';
@@ -13,7 +14,10 @@ import 'package:flutter_meditation/session/data/repository/binaural_beats_reposi
 
 @injectable
 class SessionPageViewModel extends BaseViewModel {
-  final SessionRepository _sessionRepository = getIt<SessionRepositoryLocal>();
+  SessionModel? get session => _sessionModel;
+  SessionModel? _sessionModel;
+  final SessionRepository _sessionRepository =
+      getIt<SessionRepositoryLocal>();
 
   final BinauralBeatsRepository _binauralBeatsRepository =
       getIt<BinauralBeatsRepositoryLocal>();
@@ -40,6 +44,11 @@ class SessionPageViewModel extends BaseViewModel {
 
   SessionPageViewModel() {
     _initSession();
+  }
+
+  @override
+  Future<void> init() async {
+    _sessionModel = await _sessionRepository.getSession();
   }
 
   void startTimer() {
