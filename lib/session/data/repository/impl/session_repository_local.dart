@@ -29,11 +29,23 @@ class SessionRepositoryLocal implements SessionRepository{
       return SessionDTO.fromJson(JsonDecoder().convert(sessionObj)).session;
     }
     SessionModel settingsModel = SessionModel();
-    SettingsModel? settings = await _settingsRepository.getSettings();
-    print(settings); 
     saveSession(settingsModel);
     // return default if no config was found
     return settingsModel;
+  }
+
+  Future<SessionModel> createNewSession() async{
+    print("Create new session, fetch params!"); 
+    SettingsModel? settings = await _settingsRepository.getSettings();
+    print(settings); 
+
+    SessionModel sessionModel = SessionModel();
+    sessionModel.isHapticFeedbackEnabled = settings?.isHapticFeedbackEnabled??false; 
+    sessionModel.shouldShowHeartRate = settings?.shouldShowHeartRate??false; 
+    sessionModel.sound = settings?.sound??'Option 1'; 
+    saveSession(sessionModel);
+    // return default if no config was found
+    return sessionModel;
   }
 
   @override

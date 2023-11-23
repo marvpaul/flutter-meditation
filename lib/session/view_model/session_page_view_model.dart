@@ -48,7 +48,7 @@ class SessionPageViewModel extends BaseViewModel {
 
   @override
   Future<void> init() async {
-    _sessionModel = await _sessionRepository.getSession();
+    _sessionModel = await _sessionRepository.createNewSession();
   }
 
   void startTimer() {
