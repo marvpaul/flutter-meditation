@@ -29,28 +29,36 @@ class SettingsPageViewModel extends BaseViewModel {
   @override
   Future<void> init() async {
     _settingsModel = await _settingsRepository.getSettings();
+    notifyListeners();
   }
 
   toggleHapticFeedback(bool isEnabled) {
     if (_settingsModel != null) {
       _settingsModel!.isHapticFeedbackEnabled = isEnabled;
-      notifyListeners();
+      _saveSettingsAndNotify();
     }
   }
 
   toggleShouldShowHeartRate(bool isEnabled) {
     if (_settingsModel != null) {
       _settingsModel!.shouldShowHeartRate = isEnabled;
-      notifyListeners();
+      _saveSettingsAndNotify();
     }
   }
 
   changeList(String name, String value) {
     if (_settingsModel != null) {
-      if (name == "Sound") {
+      if (name == _soundName) {
         _settingsModel!.sound = value;
-        notifyListeners();
+        _saveSettingsAndNotify();
       }
+    }
+  }
+  
+  void _saveSettingsAndNotify(){
+    if (_settingsModel != null) {
+        _settingsRepository.saveSettings(_settingsModel!);
+        notifyListeners();
     }
   }
 }

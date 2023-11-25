@@ -8,6 +8,9 @@ class SettingsPageView extends BaseView<SettingsPageViewModel> {
   @override
   Widget build(
       BuildContext context, SettingsPageViewModel viewModel, Widget? child) {
+    if(viewModel.settings == null){
+      return const Scaffold();
+    }
     return Scaffold(
       appBar: AppBar(
         centerTitle: false,
