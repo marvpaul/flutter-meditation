@@ -8,6 +8,7 @@ import 'package:flutter_meditation/home/data/repository/impl/all_meditations_rep
 import 'package:flutter_meditation/home/data/repository/impl/meditation_repository_local.dart';
 import 'package:flutter_meditation/home/data/repository/all_meditations_repository.dart';
 import 'package:flutter_meditation/home/data/repository/meditation_repository.dart';
+import 'package:flutter_meditation/home/view_model/home_page_view_model.dart';
 import 'package:flutter_meditation/widgets/heart_rate_graph.dart';
 import 'package:injectable/injectable.dart';
 import '../../di/Setup.dart';
@@ -31,6 +32,7 @@ class SessionPageViewModel extends BaseViewModel {
   List<double> breathingDurations = [4, 7, 8];
   int stateCounter = 0;
   bool running = false;
+  bool finished = false; 
   String state = "Inhale";
   double timeLeft = 0;
   double totalTimePerState = 0;
@@ -56,7 +58,7 @@ class SessionPageViewModel extends BaseViewModel {
     meditationModel = await _meditationRepository.createNewMeditation();
   }
 
-  void startTimer() {
+  void startTimer(BuildContext context) {
     running = true;
     state = breathingTechniques[stateCounter];
     timeLeft = breathingDurations[stateCounter];
@@ -87,11 +89,13 @@ class SessionPageViewModel extends BaseViewModel {
       if (elapsedSeconds >= totalDuration.inSeconds && running) {
         // TODO: Why do we execute this if statement two times?
         running = false;
+        finished = true; 
         print(
             "Elasped time $elapsedSeconds secs, heart rates ${heartRates.toString()}");
         if (meditationModel != null) {
           _allMeditationsRepository.addMeditation(meditationModel!);
           notifyListeners();
+          Navigator.pop(context);
         } else {
           // Handle the case where _sessionModel is null.
           // You might want to log a warning or handle it in another appropriate way.
@@ -115,8 +119,6 @@ class SessionPageViewModel extends BaseViewModel {
   }
 
   void _initSession() {
-    startTimer();
-
     // Start the timer to update the last data point every second
     heartRateTimer = Timer.periodic(Duration(seconds: 1), (timer) {
       // Simulate heart rate values
@@ -147,8 +149,12 @@ class SessionPageViewModel extends BaseViewModel {
 
   @override
   void dispose() {
-    heartRateTimer.cancel();
-    timer.cancel();
+    if (heartRateTimer.isActive) {
+      heartRateTimer.cancel();
+    }
+    if (timer.isActive) {
+      timer.cancel();
+    }
     super.dispose();
   }
 }

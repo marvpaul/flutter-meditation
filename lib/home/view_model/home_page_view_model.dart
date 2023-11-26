@@ -23,6 +23,7 @@ class HomePageViewModel extends BaseViewModel {
 
   @override
   void init() async {
+    print("INIT--------"); 
     _allMeditationsModel = await _meditationRepository.getAllMeditation();
     notifyListeners();
   }
