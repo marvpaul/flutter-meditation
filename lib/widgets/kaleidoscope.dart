@@ -31,12 +31,13 @@ class _KaleidoscopeState extends State<Kaleidoscope>
         'Arctic'
             '.jpg');
     image = await decodeImageFromList(imageData.buffer.asUint8List());
-
+    if (!mounted) return; // check if the widget is still mounted
     setState(() {
       // trigger a repaint
     });
 
     timer = Timer.periodic(const Duration(milliseconds: 30), (timer) {
+      if (!mounted) return; // check if the widget is still mounted
       setState(() {
         delta += 1 / 33 * 5;
       });
@@ -51,6 +52,7 @@ class _KaleidoscopeState extends State<Kaleidoscope>
 
   @override
   void dispose() {
+    timer.cancel(); 
     super.dispose();
   }
 

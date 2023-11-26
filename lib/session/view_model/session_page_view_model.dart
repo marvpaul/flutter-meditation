@@ -3,7 +3,11 @@ import 'dart:async';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_meditation/base/base_view_model.dart';
-import 'package:flutter_meditation/session/data/model/session_model.dart';
+import 'package:flutter_meditation/home/data/model/meditation_model.dart';
+import 'package:flutter_meditation/home/data/repository/impl/all_meditations_repository_local.dart';
+import 'package:flutter_meditation/home/data/repository/impl/meditation_repository_local.dart';
+import 'package:flutter_meditation/home/data/repository/all_meditations_repository.dart';
+import 'package:flutter_meditation/home/data/repository/meditation_repository.dart';
 import 'package:flutter_meditation/widgets/heart_rate_graph.dart';
 import 'package:injectable/injectable.dart';
 import '../../di/Setup.dart';
@@ -14,10 +18,11 @@ import 'package:flutter_meditation/session/data/repository/binaural_beats_reposi
 
 @injectable
 class SessionPageViewModel extends BaseViewModel {
-  SessionModel? get session => _sessionModel;
-  SessionModel? _sessionModel;
-  final SessionRepository _sessionRepository =
-      getIt<SessionRepositoryLocal>();
+  MeditationModel? meditationModel;
+  final MeditationRepository _meditationRepository =
+      getIt<MeditationRepositoryLocal>();
+  final AllMeditationsRepository _allMeditationsRepository =
+      getIt<AllMeditationsRepositoryLocal>();
 
   final BinauralBeatsRepository _binauralBeatsRepository =
       getIt<BinauralBeatsRepositoryLocal>();
@@ -48,7 +53,7 @@ class SessionPageViewModel extends BaseViewModel {
 
   @override
   Future<void> init() async {
-    _sessionModel = await _sessionRepository.createNewSession();
+    meditationModel = await _meditationRepository.createNewMeditation();
   }
 
   void startTimer() {
@@ -80,11 +85,20 @@ class SessionPageViewModel extends BaseViewModel {
       }
 
       if (elapsedSeconds >= totalDuration.inSeconds && running) {
+        // TODO: Why do we execute this if statement two times?
         running = false;
-        print("TODO: Save values about meditation");
         print(
             "Elasped time $elapsedSeconds secs, heart rates ${heartRates.toString()}");
-        Navigator.pop(context);
+        if (meditationModel != null) {
+          _allMeditationsRepository.addMeditation(meditationModel!);
+          notifyListeners();
+        } else {
+          // Handle the case where _sessionModel is null.
+          // You might want to log a warning or handle it in another appropriate way.
+          print("Warning: meditationModel is null.");
+        }
+        // TODO: Problem, navitator context null?
+        /* Navigator.pop(context); */
       }
       notifyListeners();
     });

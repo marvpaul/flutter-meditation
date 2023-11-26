@@ -61,7 +61,7 @@ class SessionPageView extends BaseView<SessionPageViewModel> {
                 Container(
                   width: 100,
                   height: 100,
-                  child: Kaleidoscope(),
+                  child: const Kaleidoscope(),
                 ),
                 SizedBox(
                   width: MediaQuery.of(context).size.width *
