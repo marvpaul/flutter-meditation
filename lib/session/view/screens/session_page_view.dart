@@ -13,7 +13,7 @@ class SessionPageView extends BaseView<SessionPageViewModel> {
   @override
   Widget build(
       BuildContext context, SessionPageViewModel viewModel, Widget? child) {
-        viewModel.context = context; 
+    viewModel.context = context;
     return Scaffold(
       body: GradientBackground(
         child: Column(

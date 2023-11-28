@@ -8,15 +8,20 @@ import 'package:injectable/injectable.dart';
 import '../../di/Setup.dart';
 import '../data/repository/impl/session_repository_local.dart';
 import '../data/repository/session_repository.dart';
+import 'package:flutter_meditation/session/data/repository/impl/binaural_beats_repository_local.dart';
+import 'package:flutter_meditation/session/data/repository/binaural_beats_repository.dart';
 
 @injectable
 class SessionPageViewModel extends BaseViewModel {
   final SessionRepository _sessionRepository = getIt<SessionRepositoryLocal>();
 
+  final BinauralBeatsRepository _binauralBeatsRepository =
+      getIt<BinauralBeatsRepositoryLocal>();
+
   List<String> breathingTechniques = ["Inhale", "Hold", "Exhale"];
   List<double> breathingDurations = [4, 7, 8];
   int stateCounter = 0;
-  bool running = false; 
+  bool running = false;
   String state = "Inhale";
   double timeLeft = 0;
   double totalTimePerState = 0;
@@ -31,14 +36,14 @@ class SessionPageViewModel extends BaseViewModel {
 
   var context;
   double heartRate = 0;
-  List<double> heartRates = <double>[]; 
+  List<double> heartRates = <double>[];
 
   SessionPageViewModel() {
     _initSession();
   }
 
   void startTimer() {
-    running = true; 
+    running = true;
     state = breathingTechniques[stateCounter];
     timeLeft = breathingDurations[stateCounter];
     totalTimePerState = breathingDurations[stateCounter];
@@ -66,9 +71,10 @@ class SessionPageViewModel extends BaseViewModel {
       }
 
       if (elapsedSeconds >= totalDuration.inSeconds && running) {
-        running = false; 
-        print("TODO: Save values about meditation"); 
-        print("Elasped time $elapsedSeconds secs, heart rates ${heartRates.toString()}"); 
+        running = false;
+        print("TODO: Save values about meditation");
+        print(
+            "Elasped time $elapsedSeconds secs, heart rates ${heartRates.toString()}");
         Navigator.pop(context);
       }
       notifyListeners();
@@ -92,9 +98,12 @@ class SessionPageViewModel extends BaseViewModel {
     heartRateTimer = Timer.periodic(Duration(seconds: 1), (timer) {
       // Simulate heart rate values
       heartRate = 60 + DateTime.now().millisecond % 60;
-      heartRates.add(heartRate); 
+      heartRates.add(heartRate);
       heartRateGraphKey.currentState?.updateLastDataPoint(FlSpot(6, heartRate));
     });
+
+    // start playing binaural beats
+    playBinauralBeats(600, 200);
   }
 
   void _nextState() {
@@ -105,6 +114,12 @@ class SessionPageViewModel extends BaseViewModel {
     state = breathingTechniques[stateCounter];
     timeLeft = breathingDurations[stateCounter];
     totalTimePerState = breathingDurations[stateCounter];
+  }
+
+  Future<bool> playBinauralBeats(
+      double frequencyLeft, double frequencyRight) async {
+    //TODO give other arguments to service
+    return await _binauralBeatsRepository.playBinauralBeats(500, 600, 0, 0, 10);
   }
 
   @override

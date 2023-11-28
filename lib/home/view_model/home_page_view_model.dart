@@ -18,9 +18,6 @@ class HomePageViewModel extends BaseViewModel {
   final MeditationRepository _meditationRepository =
       getIt<MeditationRepositoryLocal>();
 
-  final BinauralBeatsRepository _binauralBeatsRepository =
-      getIt<BinauralBeatsRepositoryLocal>();
-
   String _appbarText = "";
   String get appbarText => _appbarText;
   int get meditationDataCount => _meditationData?.length ?? 0;
@@ -51,12 +48,6 @@ class HomePageViewModel extends BaseViewModel {
     Navigator.of(context).push(
       MaterialPageRoute(builder: (context) => SettingsPageView()),
     );
-  }
-
-  Future<bool> playBinauralBeats(
-      double frequencyLeft, double frequencyRight) async {
-    //TODO give other arguments to service
-    return await _binauralBeatsRepository.playBinauralBeats(500, 600, 0, 0, 10);
   }
 
   String _getGreetingForCurrentTime() {

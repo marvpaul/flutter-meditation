@@ -1,5 +1,5 @@
-import 'package:flutter_meditation/home/data/repository/binaural_beats_repository.dart';
-import 'package:flutter_meditation/home/data/service/binaural_beats_android_service.dart';
+import 'package:flutter_meditation/session/data/repository/binaural_beats_repository.dart';
+import 'package:flutter_meditation/session/data/service/binaural_beats_android_service.dart';
 import 'package:injectable/injectable.dart';
 import '../../../../di/Setup.dart';
 
@@ -9,6 +9,8 @@ class BinauralBeatsRepositoryLocal implements BinauralBeatsRepository {
 
   final BinauralBeatsAndroidService _binauralBeatsService =
       getIt<BinauralBeatsAndroidService>();
+
+  // implement iOS version
 
   @override
   Future<bool> playBinauralBeats(double frequencyLeft, double frequencyRight,
