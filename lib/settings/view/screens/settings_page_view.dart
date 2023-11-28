@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_meditation/settings/data/model/bluetooth_device_model.dart';
 import 'package:flutter_meditation/settings/data/repository/bluetooth_connection_repository.dart';
 import '../../../base/base_view.dart';
 import '../../view_model/settings_page_view_model.dart';

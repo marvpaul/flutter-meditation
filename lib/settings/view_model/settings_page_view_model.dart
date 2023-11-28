@@ -53,10 +53,12 @@ class SettingsPageViewModel extends BaseViewModel {
   Future<void> init() async {
     _settingsModel = await _settingsRepository.getSettings();
     // _systemDevices = await _bluetoothRepository.getSystemDevices();
-    await _bluetoothRepository.init();
-    // _isConfigured = _bluetoothRepository.isConfigured();
-    _configuredDevice = _bluetoothRepository.getConfiguredDevice();
-    getConnectionState();
+    _isConfigured = _bluetoothRepository.isConfigured();
+    if(_isConfigured!){
+      _configuredDevice = _bluetoothRepository.getConfiguredDevice();
+      // _connectToDevice();
+    }
+
     notifyListeners();
   }
 
@@ -89,22 +91,28 @@ class SettingsPageViewModel extends BaseViewModel {
   void chooseBluetoothDevice(BluetoothDeviceModel? bluetoothDevice) {
     if (bluetoothDevice != null) {
       _settingsModel?.pairedDevice = bluetoothDevice;
-      _bluetoothRepository.connectToDevice(bluetoothDevice);
       _settingsRepository.saveSettings(_settingsModel!);
-      getConnectionState();
+      // _connectToDevice();
       notifyListeners();
     }
 
   }
 
-  void getConnectionState() {
-    if (_configuredDevice != null) {
-      _bluetoothRepository
-          .getConnectionState()
-          .then((value) => value?.listen((state) {
-                _connectionState = state;
-                notifyListeners();
-              }));
-    }
+  // void _connectToDevice() {
+  //   if (_configuredDevice != null) {
+  //     _bluetoothRepository.connectToDevice(_configuredDevice!);
+  //     _bluetoothRepository
+  //         .getConnectionState()
+  //         .then((value) => value?.listen((state) {
+  //               _connectionState = state;
+  //               notifyListeners();
+  //             }));
+  //   }
+  // }
+
+  void removeDevice(){
+    _bluetoothRepository.unpairDevice();
+    _isConfigured = false;
+    notifyListeners();
   }
 }

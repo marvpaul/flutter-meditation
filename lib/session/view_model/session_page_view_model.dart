@@ -6,13 +6,16 @@ import 'package:flutter_meditation/base/base_view_model.dart';
 import 'package:flutter_meditation/widgets/heart_rate_graph.dart';
 import 'package:injectable/injectable.dart';
 import '../../di/Setup.dart';
+import '../../settings/data/repository/bluetooth_connection_repository.dart';
+import '../../settings/data/service/mi_band_bluetooth_service.dart';
 import '../data/repository/impl/session_repository_local.dart';
 import '../data/repository/session_repository.dart';
 
 @injectable
 class SessionPageViewModel extends BaseViewModel {
   final SessionRepository _sessionRepository = getIt<SessionRepositoryLocal>();
-
+  final BluetoothConnectionRepository _bluetoothRepository =
+  getIt<MiBandBluetoothService>();
   List<String> breathingTechniques = ["Inhale", "Hold", "Exhale"];
   List<double> breathingDurations = [4, 7, 8];
   int stateCounter = 0;
@@ -33,8 +36,21 @@ class SessionPageViewModel extends BaseViewModel {
   double heartRate = 0;
   List<double> heartRates = <double>[]; 
 
+  bool get deviceIsConfigured => _isConfigured;
+  late bool _isConfigured;
+
   SessionPageViewModel() {
     _initSession();
+  }
+
+  @override
+  Future<void> init() async {
+    _isConfigured = _bluetoothRepository.isConfigured();
+    if(_isConfigured){
+      await _bluetoothRepository.connectToDevice();
+      getHeartRateData();
+    }
+    notifyListeners();
   }
 
   void startTimer() {
@@ -44,7 +60,7 @@ class SessionPageViewModel extends BaseViewModel {
     totalTimePerState = breathingDurations[stateCounter];
 
     double timeInMinutes = 0.1;
-    totalDuration = Duration(seconds: (timeInMinutes * 60).toInt());
+    totalDuration = Duration(seconds: (timeInMinutes * 1200).toInt());
     const updateInterval =
         Duration(milliseconds: 33); // Update the progress 30 times per second
     elapsedSeconds = 0;
@@ -91,9 +107,9 @@ class SessionPageViewModel extends BaseViewModel {
     // Start the timer to update the last data point every second
     heartRateTimer = Timer.periodic(Duration(seconds: 1), (timer) {
       // Simulate heart rate values
-      heartRate = 60 + DateTime.now().millisecond % 60;
-      heartRates.add(heartRate); 
-      heartRateGraphKey.currentState?.updateLastDataPoint(FlSpot(6, heartRate));
+      // heartRate = 60 + DateTime.now().millisecond % 60;
+      // heartRates.add(heartRate);
+      // heartRateGraphKey.currentState?.updateLastDataPoint(FlSpot(6, heartRate));
     });
   }
 
@@ -109,8 +125,19 @@ class SessionPageViewModel extends BaseViewModel {
 
   @override
   void dispose() {
+    _bluetoothRepository.stopHeartRateMeasurement();
     heartRateTimer.cancel();
     timer.cancel();
     super.dispose();
+  }
+
+  void getHeartRateData() async{
+    // _bluetoothRepository.isSupportingHeartRateTracking();
+    Stream<int> heartRateStream = await _bluetoothRepository.getHeartRate();
+    heartRateStream.listen((measurement) {
+      heartRate = measurement +.0;
+      heartRates.add(heartRate);
+      heartRateGraphKey.currentState?.updateLastDataPoint(FlSpot(6, heartRate));
+    });
   }
 }

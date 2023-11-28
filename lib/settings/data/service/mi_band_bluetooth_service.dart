@@ -1,16 +1,18 @@
+import 'dart:async';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
+import 'package:flutter_meditation/common/exception/bluetooth_device_not_configured_exception.dart';
 import 'package:flutter_meditation/settings/data/model/settings_model.dart';
 import 'package:injectable/injectable.dart';
 
-import '../../../di/Setup.dart';
 import '../model/bluetooth_device_model.dart';
 import '../repository/bluetooth_connection_repository.dart';
 import '../repository/impl/settings_repository_local.dart';
 import '../repository/settings_repository.dart';
 
-@injectable
 @singleton
+@injectable
 class MiBandBluetoothService implements BluetoothConnectionRepository {
   final Guid heartRateService = Guid("0000180d-0000-1000-8000-00805f9b34fb");
   final Guid heartRateMeasurementCharacteristic =
@@ -21,16 +23,21 @@ class MiBandBluetoothService implements BluetoothConnectionRepository {
   final List<int> stopContinuousMeasurementPayload = [0x15, 0x1, 0x0];
   final List<int> startContinuousMeasurementPayload = [0x15, 0x1, 0x1];
   final List<int> continuousMeasurementPingPayload = [0x16];
-  final SettingsRepository _settingsRepository =
-  getIt<SettingsRepositoryLocal>();
+  final SettingsRepository _settingsRepository;
   BluetoothCharacteristic? _triggerMeasurementCharacteristic;
   BluetoothCharacteristic? _currentHeartRateCharacteristic;
-  BluetoothDeviceModel? _bluetoothDevice;
+  BluetoothDevice? _bluetoothDevice;
+  Timer? heartRatePingTimer;
+  late SettingsModel _settingsModel;
 
-  @override
-  Future<void> init() async {
-    SettingsModel? settings = await _settingsRepository.getSettings();
-    _bluetoothDevice = settings?.pairedDevice;
+  MiBandBluetoothService(this._settingsRepository);
+
+  Future<void> _init() async {
+    _settingsModel = await _settingsRepository.getSettings();
+    if (_settingsModel.pairedDevice != null) {
+      _bluetoothDevice =
+          await _getDeviceByMacAddress(_settingsModel.pairedDevice!.macAddress);
+    }
   }
 
   @override
@@ -49,16 +56,21 @@ class MiBandBluetoothService implements BluetoothConnectionRepository {
   }
 
   @override
-  Future<void> connectToDevice(BluetoothDeviceModel bluetoothDevice) async {
-    BluetoothDevice? device = await _getDeviceByMacAddress(bluetoothDevice.macAddress);
-    if(device != null){
-      return device.connect();
-    }
+  Future<void> connectToDevice() async {
+    _checkDeviceIsConfigured();
+    return _bluetoothDevice!.connect();
   }
 
-  Future<void> _searchForCharacteristics(
-      BluetoothDevice bluetoothDevice) async {
-    List<BluetoothService> services = await bluetoothDevice.discoverServices();
+  @override
+  Future<void> disconnectFromDevice() async {
+    _checkDeviceIsConfigured();
+    return _bluetoothDevice!.disconnect();
+  }
+
+  Future<void> _searchForCharacteristics() async {
+    _checkDeviceIsConfigured();
+    List<BluetoothService> services =
+        await _bluetoothDevice!.discoverServices();
     for (BluetoothService service in services) {
       if (service.serviceUuid == heartRateService) {
         for (BluetoothCharacteristic characteristic
@@ -78,7 +90,7 @@ class MiBandBluetoothService implements BluetoothConnectionRepository {
   @override
   Future<bool> isSupportingHeartRateTracking(
       BluetoothDevice bluetoothDevice) async {
-    await _searchForCharacteristics(bluetoothDevice);
+    await _searchForCharacteristics();
     return _triggerMeasurementCharacteristic != null &&
         _currentHeartRateCharacteristic != null;
   }
@@ -94,31 +106,119 @@ class MiBandBluetoothService implements BluetoothConnectionRepository {
 
   @override
   Future<Stream<MiBandConnectionState>> getConnectionState() async {
-    if(_bluetoothDevice == null) {
-      return Stream<MiBandConnectionState>.fromIterable([MiBandConnectionState.unconfigured]);
-    }
-    BluetoothDevice? device = await _getDeviceByMacAddress(_bluetoothDevice!.macAddress);
-    if(device != null){
-      return device.connectionState.map((connectionState) {
+    _checkDeviceIsConfigured();
+    if (_bluetoothDevice != null) {
+      return _bluetoothDevice!.connectionState.map((connectionState) {
         debugPrint(connectionState.name);
-        if(connectionState == BluetoothConnectionState.connected){
+        if (connectionState == BluetoothConnectionState.connected) {
           return MiBandConnectionState.connected;
         }
         return MiBandConnectionState.disconnected;
       });
     }
-    debugPrint("device is null");
-    return Stream<MiBandConnectionState>.fromIterable([MiBandConnectionState.unavailable]);
+    return Stream<MiBandConnectionState>.fromIterable(
+        [MiBandConnectionState.unavailable]);
+  }
+
+  Future<MiBandConnectionState> getStatus() async {
+    Stream<MiBandConnectionState> connectionStateStream =
+        await getConnectionState();
+    return connectionStateStream.first;
+  }
+
+  void _checkDeviceIsConfigured() {
+    if (_settingsModel.pairedDevice == null) {
+      throw BluetoothDeviceNotConfiguredException();
+    }
+  }
+
+  @override
+  BluetoothDeviceModel? getConfiguredDevice(){
+    return _settingsModel.pairedDevice;
   }
 
   @override
   bool isConfigured() {
-    return _bluetoothDevice != null;
+    try {
+      _checkDeviceIsConfigured();
+      return true;
+    } catch (e) {
+      return false;
+    }
   }
 
   @override
-  BluetoothDeviceModel? getConfiguredDevice() {
-    return _bluetoothDevice;
+  Future<Stream<int>> getHeartRate() async {
+    await _searchForCharacteristics();
+    await _triggerHeartRateMeasurement();
+    try {
+      await _currentHeartRateCharacteristic?.setNotifyValue(true);
+    } on FlutterBluePlusException {
+      debugPrint("permission denied");
+    }
+    return _currentHeartRateCharacteristic!.onValueReceived
+        .map((measurement) => getHR(measurement));
+  }
+
+  @override
+  Future<void> stopHeartRateMeasurement() async {
+    heartRatePingTimer?.cancel();
+    await _triggerMeasurementCharacteristic
+        ?.write(stopContinuousMeasurementPayload);
+  }
+
+  Future<void> _triggerHeartRateMeasurement() async {
+    // stop heart monitor continuous & manual
+    await _triggerMeasurementCharacteristic
+        ?.write(stopContinuousMeasurementPayload);
+    await _triggerMeasurementCharacteristic
+        ?.write(stopManualMeasurementPayload);
+    // start continuous tracking
+    await _triggerMeasurementCharacteristic
+        ?.write(startContinuousMeasurementPayload);
+
+    heartRatePingTimer = Timer.periodic(Duration(seconds: 12), (timer) {
+      debugPrint('Send a ping to maintain continuous heart rate monitoring.');
+      _triggerMeasurementCharacteristic
+          ?.write(continuousMeasurementPingPayload);
+    });
+  }
+
+  @override
+  Future<void> unpairDevice() async {
+    _checkDeviceIsConfigured();
+    SettingsModel currentSettings = await _settingsRepository.getSettings();
+    currentSettings.pairedDevice = null;
+    _settingsRepository.saveSettings(currentSettings);
+    disconnectFromDevice();
+  }
+
+  static int getHR(List<int> values) {
+    debugPrint("get HR callled");
+    if (values.length > 1) {
+      debugPrint("received values: ${values}");
+      var binaryFlags = values[0].toRadixString(2);
+      var flagUINT = binaryFlags[binaryFlags.length - 1];
+      if (flagUINT == '0') {
+        // UINT8 bpm
+        return values[1];
+      } else if (flagUINT == '1') {
+        // UINT16 bpm
+        var hr = values[1] + (values[2] << 8);
+        return hr;
+      } else {
+        return -1;
+      }
+    } else {
+      return -1;
+    }
+  }
+
+  @factoryMethod
+  static Future<MiBandBluetoothService> create(
+      SettingsRepositoryLocal settings) async {
+    MiBandBluetoothService bluetoothService = MiBandBluetoothService(settings);
+    await bluetoothService._init();
+    return bluetoothService;
   }
 }
-

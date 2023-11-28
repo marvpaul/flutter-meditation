@@ -5,7 +5,6 @@ import 'package:flutter_meditation/settings/data/model/settings_model.dart';
 abstract class BluetoothConnectionRepository{
 
 
-  Future<void> init();
   /// Retrieve a list of devices currently connected to the system
   /// - The list includes devices connected to by *any* app
   /// - You must still call device.connect() to connect them to *your app*
@@ -15,13 +14,20 @@ abstract class BluetoothConnectionRepository{
 
   Future<bool> isSupportingHeartRateTracking(BluetoothDevice bluetoothDevice);
 
-  Future<void> connectToDevice(BluetoothDeviceModel bluetoothDevice);
+  Future<void> connectToDevice();
 
   Future<Stream<MiBandConnectionState>?> getConnectionState();
 
+  BluetoothDeviceModel? getConfiguredDevice();
+
   bool isConfigured();
 
-  BluetoothDeviceModel? getConfiguredDevice();
+  // BluetoothDeviceModel? getConfiguredDevice();
+  Future<void> unpairDevice();
+
+  Future<Stream<int>> getHeartRate();
+
+  Future<void> stopHeartRateMeasurement();
 
 }
 
