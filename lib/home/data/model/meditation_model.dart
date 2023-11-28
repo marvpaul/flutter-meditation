@@ -9,7 +9,11 @@ class MeditationModel with _$MeditationModel {
     required bool isHapticFeedbackEnabled,
     required bool shouldShowHeartRate,
     required String sound,
+    required double timestamp,
+    required Map<int, dynamic> heartRates
   }) = _MeditationModel;
+
+  
 
   factory MeditationModel.fromJson(Map<String, dynamic> json) =>
       _$MeditationModelFromJson(json);

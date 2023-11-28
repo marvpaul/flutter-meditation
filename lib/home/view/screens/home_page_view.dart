@@ -38,6 +38,7 @@ class HomePageView extends BaseView<HomePageViewModel> {
                       progress: 1,
                       onTap: () => {viewModel.navigateToSession(context)},
                     ),
+                    
                   ],
                 ),
               ),

@@ -8,7 +8,6 @@ import 'package:flutter_meditation/home/data/repository/impl/all_meditations_rep
 import 'package:flutter_meditation/home/data/repository/impl/meditation_repository_local.dart';
 import 'package:flutter_meditation/home/data/repository/all_meditations_repository.dart';
 import 'package:flutter_meditation/home/data/repository/meditation_repository.dart';
-import 'package:flutter_meditation/home/view_model/home_page_view_model.dart';
 import 'package:flutter_meditation/widgets/heart_rate_graph.dart';
 import 'package:injectable/injectable.dart';
 import '../../di/Setup.dart';
@@ -91,7 +90,7 @@ class SessionPageViewModel extends BaseViewModel {
         running = false;
         finished = true; 
         print(
-            "Elasped time $elapsedSeconds secs, heart rates ${heartRates.toString()}");
+            "Elasped time $elapsedSeconds secs, heart rates ${meditationModel?.heartRates.toString()}");
         if (meditationModel != null) {
           _allMeditationsRepository.addMeditation(meditationModel!);
           notifyListeners();
@@ -123,8 +122,8 @@ class SessionPageViewModel extends BaseViewModel {
     heartRateTimer = Timer.periodic(Duration(seconds: 1), (timer) {
       // Simulate heart rate values
       heartRate = 60 + DateTime.now().millisecond % 60;
-      heartRates.add(heartRate);
       heartRateGraphKey.currentState?.updateLastDataPoint(FlSpot(6, heartRate));
+      meditationModel?.heartRates[(elapsedSeconds*1000).toInt()] = heartRate; 
     });
 
     // start playing binaural beats

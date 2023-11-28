@@ -6,5 +6,8 @@ abstract class MeditationRepository {
   Future<MeditationModel?> getMeditation();
   Future<MeditationModel?> createNewMeditation();
   void saveMeditation(MeditationModel settings);
+  double getAverageHeartRate(MeditationModel model); 
+  double getMinHeartRate(MeditationModel model); 
+  double getMaxHeartRate(MeditationModel model); 
   void restoreMeditation();
 }

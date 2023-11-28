@@ -31,7 +31,9 @@ class MeditationRepositoryLocal implements MeditationRepository {
         duration: 120,
         isHapticFeedbackEnabled: false,
         shouldShowHeartRate: false,
-        sound: 'Option 1');
+        sound: 'Option 1',
+        timestamp: DateTime.now().millisecondsSinceEpoch / 1000.0,
+        heartRates: {});
     saveMeditation(meditationModel);
     // return default if no config was found
     return meditationModel;
@@ -47,7 +49,9 @@ class MeditationRepositoryLocal implements MeditationRepository {
         duration: 120,
         isHapticFeedbackEnabled: settings?.isHapticFeedbackEnabled ?? false,
         shouldShowHeartRate: settings?.shouldShowHeartRate ?? false,
-        sound: settings?.sound ?? 'Option 1');
+        sound: settings?.sound ?? 'Option 1',
+        timestamp: DateTime.now().millisecondsSinceEpoch / 1000.0,
+        heartRates: {});
     saveMeditation(meditationModel);
     // return default if no config was found
     return meditationModel;
@@ -59,7 +63,63 @@ class MeditationRepositoryLocal implements MeditationRepository {
         .convert(MeditationDTO(meditation: meditationModel).toJson());
     prefs.setString(MeditationRepository.sessionKey, meditatonModelJSON);
   }
-  
+  @override
+  double getAverageHeartRate(MeditationModel model) {
+    Map<int, dynamic> heartRates = model.heartRates;
+    if (heartRates.isEmpty) {
+      return 0.0; // Return 0 if the map is empty to avoid division by zero
+    }
+
+    // Calculate the sum of all values
+    dynamic sum = 0;
+    heartRates.values.forEach((value) {
+      if (value is num) {
+        sum += value;
+      }
+    });
+
+    // Calculate the average
+    double average = sum / heartRates.length;
+
+    return double.parse(average.toStringAsFixed(1)); 
+  }
+  @override
+  double getMinHeartRate(MeditationModel model) {
+    Map<int, dynamic> heartRates = model.heartRates;
+    if (heartRates.isEmpty) {
+      return 0.0; // Return 0 if the map is empty to avoid division by zero
+    }
+
+    // Calculate the sum of all values
+    dynamic min = 1000;
+    heartRates.values.forEach((value) {
+      if (value is num) {
+        if(min > value){
+          min = value; 
+        }
+      }
+    });
+    return double.parse(min.toStringAsFixed(1)); 
+  }
+  @override
+  double getMaxHeartRate(MeditationModel model) {
+    Map<int, dynamic> heartRates = model.heartRates;
+    if (heartRates.isEmpty) {
+      return 0.0; // Return 0 if the map is empty to avoid division by zero
+    }
+
+    // Calculate the sum of all values
+    double max = 0;
+    heartRates.values.forEach((value) {
+      if (value is double) {
+        if(max < value){
+          max = value; 
+        }
+      }
+    });
+    return double.parse(max.toStringAsFixed(1)); 
+  }
+
   @override
   void restoreMeditation() {
     // TODO: implement restoreMeditation
