@@ -1,10 +1,12 @@
-import 'package:flutter_meditation/base/base_view_model.dart';
-import 'package:flutter_meditation/home/data/model/meditation_model.dart';
-import 'package:flutter_meditation/home/data/repository/binaural_beats_repository.dart';
-import 'package:flutter_meditation/home/data/repository/impl/binaural_beats_repository_local.dart';
-import 'package:flutter_meditation/home/data/repository/past_meditation_repository.dart';
+import 'package:flutter/material.dart';
 import 'package:injectable/injectable.dart';
 
+import '../../../base/base_view_model.dart';
+import '../../../home/data/model/meditation_model.dart';
+import '../../../home/data/repository/past_meditation_repository.dart';
+import '../../../past_sessions/view/screens/past_sessions_page_view.dart';
+import '../../../settings/view/screens/settings_page_view.dart';
+import '../../../session/view/screens/session_page_view.dart';
 import '../../di/Setup.dart';
 import '../data/repository/impl/past_meditation_repository_local.dart';
 
@@ -31,6 +33,24 @@ class HomePageViewModel extends BaseViewModel {
 
   HomePageViewModel() {
     _appbarText = _getGreetingForCurrentTime();
+  }
+
+  void navigateToSession(var context) {
+    Navigator.of(context).push(
+      MaterialPageRoute(builder: (context) => SessionPageView()),
+    );
+  }
+
+  void navigateToSessionSummary(var context) {
+    Navigator.of(context).push(
+      MaterialPageRoute(builder: (context) => PastSessionsPageView()),
+    );
+  }
+
+  void navigateToSettings(var context) {
+    Navigator.of(context).push(
+      MaterialPageRoute(builder: (context) => SettingsPageView()),
+    );
   }
 
   Future<bool> playBinauralBeats(
