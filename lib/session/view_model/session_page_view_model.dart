@@ -14,8 +14,6 @@ import 'package:flutter_meditation/settings/data/repository/settings_repository.
 import 'package:flutter_meditation/widgets/heart_rate_graph.dart';
 import 'package:injectable/injectable.dart';
 import '../../di/Setup.dart';
-import '../data/repository/impl/session_repository_local.dart';
-import '../data/repository/session_repository.dart';
 import 'package:flutter_meditation/session/data/repository/impl/binaural_beats_repository_local.dart';
 import 'package:flutter_meditation/session/data/repository/binaural_beats_repository.dart';
 
