@@ -16,6 +16,8 @@ class PastSessionsPageViewModel extends BaseViewModel {
   final AllMeditationsRepository _meditationsRepository = getIt<AllMeditationsRepositoryLocal>();
   final MeditationRepository _meditationRepository = getIt<MeditationRepositoryLocal>();
 
+  final String pageTitle = 'Session summary'; 
+
   @override
   void init() async {
     _allMeditationsModel = await _meditationsRepository.getAllMeditation();

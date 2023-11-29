@@ -18,8 +18,6 @@ class MeditationRepositoryLocal implements MeditationRepository {
 
   @override
   Future<MeditationModel> getMeditation() async {
-    print("TODO: Delete session for testing purposes");
-    prefs.remove("session");
     final String? meditationObj =
         prefs.getString(MeditationRepository.sessionKey);
     if (meditationObj != null) {
@@ -63,9 +61,10 @@ class MeditationRepositoryLocal implements MeditationRepository {
         .convert(MeditationDTO(meditation: meditationModel).toJson());
     prefs.setString(MeditationRepository.sessionKey, meditatonModelJSON);
   }
+
   @override
   double getAverageHeartRate(MeditationModel model) {
-    Map<int, dynamic> heartRates = model.heartRates;
+    Map<int, double> heartRates = model.heartRates;
     if (heartRates.isEmpty) {
       return 0.0; // Return 0 if the map is empty to avoid division by zero
     }
@@ -73,19 +72,18 @@ class MeditationRepositoryLocal implements MeditationRepository {
     // Calculate the sum of all values
     dynamic sum = 0;
     heartRates.values.forEach((value) {
-      if (value is num) {
-        sum += value;
-      }
+      sum += value;
     });
 
     // Calculate the average
     double average = sum / heartRates.length;
 
-    return double.parse(average.toStringAsFixed(1)); 
+    return double.parse(average.toStringAsFixed(1));
   }
+
   @override
   double getMinHeartRate(MeditationModel model) {
-    Map<int, dynamic> heartRates = model.heartRates;
+    Map<int, double> heartRates = model.heartRates;
     if (heartRates.isEmpty) {
       return 0.0; // Return 0 if the map is empty to avoid division by zero
     }
@@ -93,17 +91,16 @@ class MeditationRepositoryLocal implements MeditationRepository {
     // Calculate the sum of all values
     dynamic min = 1000;
     heartRates.values.forEach((value) {
-      if (value is num) {
-        if(min > value){
-          min = value; 
-        }
+      if (min > value) {
+        min = value;
       }
     });
-    return double.parse(min.toStringAsFixed(1)); 
+    return double.parse(min.toStringAsFixed(1));
   }
+
   @override
   double getMaxHeartRate(MeditationModel model) {
-    Map<int, dynamic> heartRates = model.heartRates;
+    Map<int, double> heartRates = model.heartRates;
     if (heartRates.isEmpty) {
       return 0.0; // Return 0 if the map is empty to avoid division by zero
     }
@@ -111,13 +108,11 @@ class MeditationRepositoryLocal implements MeditationRepository {
     // Calculate the sum of all values
     double max = 0;
     heartRates.values.forEach((value) {
-      if (value is double) {
-        if(max < value){
-          max = value; 
-        }
+      if (max < value) {
+        max = value;
       }
     });
-    return double.parse(max.toStringAsFixed(1)); 
+    return double.parse(max.toStringAsFixed(1));
   }
 
   @override

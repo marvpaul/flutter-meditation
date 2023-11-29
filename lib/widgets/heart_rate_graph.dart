@@ -13,8 +13,9 @@ class HeartRateGraph extends StatefulWidget {
 }
 
 class HeartRateGraphState extends State<HeartRateGraph> {
-  List<Color> gradientColors = [Colors.orange, Colors.red];
-  
+  List<Color> colors = [Colors.orange, Colors.red]
+                  .map((color) => color.withOpacity(0.3))
+                  .toList();
 
   void refreshHeartRate() {
     setState(() {
@@ -81,7 +82,7 @@ class HeartRateGraphState extends State<HeartRateGraph> {
         show: false,
         border: Border.all(color: const Color(0xff37434d)),
       ),
-      titlesData: FlTitlesData(
+      titlesData: const FlTitlesData(
         rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
         bottomTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
         topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
@@ -96,7 +97,7 @@ class HeartRateGraphState extends State<HeartRateGraph> {
           spots: widget.viewModel.dataPoints,
           isCurved: true,
           gradient: LinearGradient(
-            colors: gradientColors,
+            colors: colors,
           ),
           barWidth: 5,
           isStrokeCapRound: true,
@@ -106,9 +107,7 @@ class HeartRateGraphState extends State<HeartRateGraph> {
           belowBarData: BarAreaData(
             show: true,
             gradient: LinearGradient(
-              colors: gradientColors
-                  .map((color) => color.withOpacity(0.3))
-                  .toList(),
+              colors: colors,
             ),
           ),
         ),

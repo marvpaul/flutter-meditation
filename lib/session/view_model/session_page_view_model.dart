@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_meditation/base/base_view_model.dart';
+import 'package:flutter_meditation/common/BreathingState.dart';
 import 'package:flutter_meditation/home/data/model/meditation_model.dart';
 import 'package:flutter_meditation/home/data/repository/impl/all_meditations_repository_local.dart';
 import 'package:flutter_meditation/home/data/repository/impl/meditation_repository_local.dart';
@@ -34,12 +35,12 @@ class SessionPageViewModel extends BaseViewModel {
   final BinauralBeatsRepository _binauralBeatsRepository =
       getIt<BinauralBeatsRepositoryLocal>();
 
-  List<String> breathingTechniques = ["Inhale", "Hold", "Exhale"];
+  List<BreathingState> breathingTechniques = [BreathingState.INHALE, BreathingState.HOLD, BreathingState.EXHALE];
   List<double> breathingDurations = [4, 7, 8];
   int stateCounter = 0;
   bool running = false;
   bool finished = false;
-  String state = "Inhale";
+  BreathingState state = BreathingState.INHALE;
   double timeLeft = 0;
   double totalTimePerState = 0;
   String activeMeditationName = "4-7-8";
@@ -89,13 +90,13 @@ class SessionPageViewModel extends BaseViewModel {
 
     timer = Timer.periodic(updateInterval, (timer) {
       progress = elapsedSeconds / totalDuration.inSeconds;
-      if (state == "Hold") {
+      if (state == BreathingState.HOLD) {
         stateProgress = 1;
         kaleidoscopeMultiplier = 0;
-      } else if (state == "Exhale") {
+      } else if (state == BreathingState.EXHALE) {
         stateProgress = timeLeft / totalTimePerState;
         kaleidoscopeMultiplier = -1;
-      } else if (state == "Inhale") {
+      } else if (state == BreathingState.INHALE) {
         stateProgress = 1 - (timeLeft / totalTimePerState);
         kaleidoscopeMultiplier = 1;
       }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_meditation/common/BreathingState.dart';
 import 'package:flutter_meditation/common/helpers.dart';
 import 'package:flutter_meditation/session/view_model/session_page_view_model.dart';
 import 'package:flutter_meditation/widgets/breathing_circle_widget.dart';
@@ -26,7 +27,7 @@ class SessionWidget extends StatelessWidget {
                   viewModel: viewModel,
                 ),
               ),
-              SizedBox(width: 16), // Adjust the width as needed
+              const SizedBox(width: 16), // Adjust the width as needed
               Expanded(
                 child: InformationBox(
                   kind: "ELAPSED TIME",
@@ -44,11 +45,11 @@ class SessionWidget extends StatelessWidget {
             onTap: () => {
               viewModel.showUI = !viewModel.showUI,
             },
-            child: Container(
+            child: SizedBox(
               width: 150,
               height: 200,
               child: BreathingCircleWidget(
-                  progress: viewModel.stateProgress, state: viewModel.state),
+                  progress: viewModel.stateProgress, state: viewModel.state.value),
             ),
           ),
         ),
@@ -56,7 +57,7 @@ class SessionWidget extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
             Expanded(
-              child: Container(
+              child: SizedBox(
                 height: 40,
                 child: ElevatedButton(
                   onPressed: () {

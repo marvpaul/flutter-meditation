@@ -15,7 +15,7 @@ class PastSessionsPageView extends BaseView<PastSessionsPageViewModel> {
         centerTitle: false,
         titleTextStyle: Theme.of(context).textTheme.headlineLarge,
         backgroundColor: Colors.black,
-        title: Text("Session summary"),
+        title: Text(viewModel.pageTitle),
       ),
       body: Container(
         decoration: const BoxDecoration(color: Colors.black),
