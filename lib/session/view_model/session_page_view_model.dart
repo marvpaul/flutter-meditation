@@ -8,6 +8,7 @@ import 'package:flutter_meditation/home/data/repository/impl/all_meditations_rep
 import 'package:flutter_meditation/home/data/repository/impl/meditation_repository_local.dart';
 import 'package:flutter_meditation/home/data/repository/all_meditations_repository.dart';
 import 'package:flutter_meditation/home/data/repository/meditation_repository.dart';
+import 'package:flutter_meditation/home/view/screens/home_page_view.dart';
 import 'package:flutter_meditation/widgets/heart_rate_graph.dart';
 import 'package:injectable/injectable.dart';
 import '../../di/Setup.dart';
@@ -31,7 +32,7 @@ class SessionPageViewModel extends BaseViewModel {
   List<double> breathingDurations = [4, 7, 8];
   int stateCounter = 0;
   bool running = false;
-  bool finished = false; 
+  bool finished = false;
   String state = "Inhale";
   double timeLeft = 0;
   double totalTimePerState = 0;
@@ -48,23 +49,15 @@ class SessionPageViewModel extends BaseViewModel {
   double heartRate = 0;
   List<double> heartRates = <double>[];
 
-  SessionPageViewModel() {
-    _initSession();
-  }
-
-  @override
-  Future<void> init() async {
+  void initWithContext(BuildContext context) async{
     meditationModel = await _meditationRepository.createNewMeditation();
-  }
-
-  void startTimer(BuildContext context) {
+    _initSession();
     running = true;
     state = breathingTechniques[stateCounter];
     timeLeft = breathingDurations[stateCounter];
     totalTimePerState = breathingDurations[stateCounter];
 
-    double timeInMinutes = 0.1;
-    totalDuration = Duration(seconds: (timeInMinutes * 60).toInt());
+    totalDuration = Duration(seconds: meditationModel?.duration??0);
     const updateInterval =
         Duration(milliseconds: 33); // Update the progress 30 times per second
     elapsedSeconds = 0;
@@ -88,13 +81,23 @@ class SessionPageViewModel extends BaseViewModel {
       if (elapsedSeconds >= totalDuration.inSeconds && running) {
         // TODO: Why do we execute this if statement two times?
         running = false;
-        finished = true; 
-        print(
-            "Elasped time $elapsedSeconds secs, heart rates ${meditationModel?.heartRates.toString()}");
+        finished = true;
         if (meditationModel != null) {
           _allMeditationsRepository.addMeditation(meditationModel!);
-          notifyListeners();
-          Navigator.pop(context);
+          notifyListeners();/* 
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (context) => HomePageView(),
+            ),
+          ); */
+          Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(
+              builder: (context) => HomePageView(),
+            ),
+            (Route<dynamic> route) => false,
+          );
         } else {
           // Handle the case where _sessionModel is null.
           // You might want to log a warning or handle it in another appropriate way.
@@ -123,7 +126,7 @@ class SessionPageViewModel extends BaseViewModel {
       // Simulate heart rate values
       heartRate = 60 + DateTime.now().millisecond % 60;
       heartRateGraphKey.currentState?.updateLastDataPoint(FlSpot(6, heartRate));
-      meditationModel?.heartRates[(elapsedSeconds*1000).toInt()] = heartRate; 
+      meditationModel?.heartRates[(elapsedSeconds * 1000).toInt()] = heartRate;
     });
 
     // start playing binaural beats

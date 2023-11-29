@@ -15,7 +15,7 @@ class SessionPageView extends BaseView<SessionPageViewModel> {
   Widget build(
       BuildContext context, SessionPageViewModel viewModel, Widget? child) {
     if (!viewModel.running && !viewModel.finished) {
-      viewModel.startTimer(context);
+      viewModel.initWithContext(context);
     }
     return Scaffold(
       body: GradientBackground(
