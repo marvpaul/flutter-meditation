@@ -45,6 +45,12 @@ class SettingsPageViewModel extends BaseViewModel {
       _saveSettingsAndNotify();
     }
   }
+  toggleKaleidoscope(bool isEnabled) {
+    if (_settingsModel != null) {
+      _settingsModel!.kaleidoscope = isEnabled;
+      _saveSettingsAndNotify();
+    }
+  }
 
   changeList(String name, String value) {
     if (_settingsModel != null) {

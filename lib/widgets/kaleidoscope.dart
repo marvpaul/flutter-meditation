@@ -4,9 +4,13 @@ import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_meditation/session/view_model/session_page_view_model.dart';
 
 class Kaleidoscope extends StatefulWidget {
-  const Kaleidoscope({Key? key}) : super(key: key);
+  final Widget child;
+  final SessionPageViewModel viewModel;
+
+  const Kaleidoscope({Key? key, required this.child, required this.viewModel}) : super(key: key);
 
   @override
   _KaleidoscopeState createState() => _KaleidoscopeState();
@@ -36,10 +40,11 @@ class _KaleidoscopeState extends State<Kaleidoscope>
       // trigger a repaint
     });
 
-    timer = Timer.periodic(const Duration(milliseconds: 30), (timer) {
+    timer = Timer.periodic(const Duration(milliseconds: 33), (timer) {
       if (!mounted) return; // check if the widget is still mounted
       setState(() {
-        delta += 1 / 33 * 5;
+        
+        delta += widget.viewModel.kaleidoscopeMultiplier * (1 / 33 * 5);
       });
     });
   }
@@ -52,7 +57,7 @@ class _KaleidoscopeState extends State<Kaleidoscope>
 
   @override
   void dispose() {
-    timer.cancel(); 
+    timer.cancel();
     super.dispose();
   }
 
@@ -61,7 +66,13 @@ class _KaleidoscopeState extends State<Kaleidoscope>
     if (shader == null || image == null) {
       return const Center(child: CircularProgressIndicator());
     } else {
-      return CustomPaint(painter: MyFancyPainter(shader!, delta, image!));
+      return Stack(
+        fit: StackFit.expand,
+        children: [
+          CustomPaint(painter: MyFancyPainter(shader!, delta, image!)),
+          Positioned.fill(child: widget.child),
+        ],
+      );
     }
   }
 }
@@ -74,7 +85,7 @@ class MyFancyPainter extends CustomPainter {
 
   MyFancyPainter(FragmentShader fragmentShader, this.time, this.image)
       : shader = fragmentShader;
-
+  
   @override
   void paint(Canvas canvas, Size size) {
     if (paintObj == null) {
@@ -82,7 +93,7 @@ class MyFancyPainter extends CustomPainter {
       shader.setFloat(0, size.width);
       shader.setFloat(1, size.height);
       // TODO: Put time in here
-      shader.setFloat(2, 0);
+      shader.setFloat(2,time);
       shader.setImageSampler(0, image);
 
       paintObj!.shader = shader;

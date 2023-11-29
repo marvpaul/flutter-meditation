@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_meditation/base/base_view_model.dart';
@@ -9,6 +8,9 @@ import 'package:flutter_meditation/home/data/repository/impl/meditation_reposito
 import 'package:flutter_meditation/home/data/repository/all_meditations_repository.dart';
 import 'package:flutter_meditation/home/data/repository/meditation_repository.dart';
 import 'package:flutter_meditation/home/view/screens/home_page_view.dart';
+import 'package:flutter_meditation/settings/data/model/settings_model.dart';
+import 'package:flutter_meditation/settings/data/repository/impl/settings_repository_local.dart';
+import 'package:flutter_meditation/settings/data/repository/settings_repository.dart';
 import 'package:flutter_meditation/widgets/heart_rate_graph.dart';
 import 'package:injectable/injectable.dart';
 import '../../di/Setup.dart';
@@ -20,10 +22,16 @@ import 'package:flutter_meditation/session/data/repository/binaural_beats_reposi
 @injectable
 class SessionPageViewModel extends BaseViewModel {
   MeditationModel? meditationModel;
+  SettingsModel? settingsModel;
   final MeditationRepository _meditationRepository =
       getIt<MeditationRepositoryLocal>();
   final AllMeditationsRepository _allMeditationsRepository =
       getIt<AllMeditationsRepositoryLocal>();
+  final SettingsRepository _settingsRepository =
+      getIt<SettingsRepositoryLocal>();
+
+  bool showUI = true;
+  double kaleidoscopeMultiplier = 0;
 
   final BinauralBeatsRepository _binauralBeatsRepository =
       getIt<BinauralBeatsRepositoryLocal>();
@@ -49,15 +57,34 @@ class SessionPageViewModel extends BaseViewModel {
   double heartRate = 0;
   List<double> heartRates = <double>[];
 
-  void initWithContext(BuildContext context) async{
+  int nrDatapoints = 6;
+  List<FlSpot> dataPoints = [];
+
+  void updateHeartRate() {
+    List<double> lastHeartRates =
+        meditationModel!.heartRates.values.toList(growable: false);
+    int startIndex = (lastHeartRates.length - 1 - nrDatapoints) > 0
+        ? (lastHeartRates.length - 1 - nrDatapoints)
+        : 0;
+    lastHeartRates = lastHeartRates
+        .getRange(startIndex, lastHeartRates.length)
+        .toList(growable: false);
+    dataPoints.removeRange(0, dataPoints.length);
+    for (int i = 0; i < lastHeartRates.length; i++) {
+      dataPoints.add(FlSpot(i.toDouble(), lastHeartRates[i]));
+    }
+  }
+
+  void initWithContext(BuildContext context) async {
     meditationModel = await _meditationRepository.createNewMeditation();
+    settingsModel = await _settingsRepository.getSettings();
     _initSession();
     running = true;
     state = breathingTechniques[stateCounter];
     timeLeft = breathingDurations[stateCounter];
     totalTimePerState = breathingDurations[stateCounter];
 
-    totalDuration = Duration(seconds: meditationModel?.duration??0);
+    totalDuration = Duration(seconds: meditationModel?.duration ?? 0);
     const updateInterval =
         Duration(milliseconds: 33); // Update the progress 30 times per second
     elapsedSeconds = 0;
@@ -66,10 +93,13 @@ class SessionPageViewModel extends BaseViewModel {
       progress = elapsedSeconds / totalDuration.inSeconds;
       if (state == "Hold") {
         stateProgress = 1;
+        kaleidoscopeMultiplier = 0;
       } else if (state == "Exhale") {
         stateProgress = timeLeft / totalTimePerState;
+        kaleidoscopeMultiplier = -1;
       } else if (state == "Inhale") {
         stateProgress = 1 - (timeLeft / totalTimePerState);
+        kaleidoscopeMultiplier = 1;
       }
 
       elapsedSeconds += 33 / 1000;
@@ -79,18 +109,10 @@ class SessionPageViewModel extends BaseViewModel {
       }
 
       if (elapsedSeconds >= totalDuration.inSeconds && running) {
-        // TODO: Why do we execute this if statement two times?
         running = false;
         finished = true;
         if (meditationModel != null) {
           _allMeditationsRepository.addMeditation(meditationModel!);
-          notifyListeners();/* 
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(
-              builder: (context) => HomePageView(),
-            ),
-          ); */
           Navigator.pushAndRemoveUntil(
             context,
             MaterialPageRoute(
@@ -99,12 +121,8 @@ class SessionPageViewModel extends BaseViewModel {
             (Route<dynamic> route) => false,
           );
         } else {
-          // Handle the case where _sessionModel is null.
-          // You might want to log a warning or handle it in another appropriate way.
           print("Warning: meditationModel is null.");
         }
-        // TODO: Problem, navitator context null?
-        /* Navigator.pop(context); */
       }
       notifyListeners();
     });
@@ -124,9 +142,9 @@ class SessionPageViewModel extends BaseViewModel {
     // Start the timer to update the last data point every second
     heartRateTimer = Timer.periodic(Duration(seconds: 1), (timer) {
       // Simulate heart rate values
-      heartRate = 60 + DateTime.now().millisecond % 60;
-      heartRateGraphKey.currentState?.updateLastDataPoint(FlSpot(6, heartRate));
+      heartRate = 60 + DateTime.now().microsecondsSinceEpoch % 60;
       meditationModel?.heartRates[(elapsedSeconds * 1000).toInt()] = heartRate;
+      heartRateGraphKey.currentState?.refreshHeartRate();
     });
 
     // start playing binaural beats
