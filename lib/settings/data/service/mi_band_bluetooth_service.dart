@@ -109,7 +109,6 @@ class MiBandBluetoothService implements BluetoothConnectionRepository {
     _checkDeviceIsConfigured();
     if (_bluetoothDevice != null) {
       return _bluetoothDevice!.connectionState.map((connectionState) {
-        debugPrint(connectionState.name);
         if (connectionState == BluetoothConnectionState.connected) {
           return MiBandConnectionState.connected;
         }
@@ -191,6 +190,14 @@ class MiBandBluetoothService implements BluetoothConnectionRepository {
     currentSettings.pairedDevice = null;
     _settingsRepository.saveSettings(currentSettings);
     disconnectFromDevice();
+  }
+
+  @override
+  Future<void> setDevice(BluetoothDeviceModel bluetoothDevice) async {
+    _settingsModel.pairedDevice = bluetoothDevice;
+    _bluetoothDevice =
+        await _getDeviceByMacAddress(_settingsModel.pairedDevice!.macAddress);
+    _settingsRepository.saveSettings(_settingsModel);
   }
 
   static int getHR(List<int> values) {

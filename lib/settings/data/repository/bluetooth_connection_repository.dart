@@ -22,7 +22,7 @@ abstract class BluetoothConnectionRepository{
 
   bool isConfigured();
 
-  // BluetoothDeviceModel? getConfiguredDevice();
+  Future<void>  setDevice(BluetoothDeviceModel bluetoothDevice);
   Future<void> unpairDevice();
 
   Future<Stream<int>> getHeartRate();

@@ -22,12 +22,11 @@ class HomePageView extends BaseView<HomePageViewModel> {
             elevation: 0,
             title: Text("Setup Mi Band"),
           ),
-
           SetupBluetoothDeviceView(onTap: viewModel.selectBluetoothDevice, onSkip: viewModel.skipSetup, devices: viewModel.systemDevices),
         ]),
       ));
     }
-
+    debugPrint("is configured: ${viewModel.deviceIsConfigured}");
     return Scaffold(
       body: GradientBackground(
         child: Column(
@@ -40,6 +39,18 @@ class HomePageView extends BaseView<HomePageViewModel> {
               elevation: 0,
               title: Text(viewModel.appbarText),
               actions: [
+                if(!viewModel.deviceIsConfigured)
+                  Icon(
+                    Icons.watch_off,
+                    color: Colors.red,
+                    size: 30.0,
+                  ),
+                if(viewModel.deviceIsConfigured)
+                  Icon(
+                    Icons.watch,
+                    color: viewModel.watchIconColor,
+                    size: 30.0,
+                  ),
                 IconButton(
                   icon: const Icon(Icons.settings_rounded),
                   onPressed: () {

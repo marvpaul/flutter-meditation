@@ -21,24 +21,31 @@ class HomePageViewModel extends BaseViewModel {
   List<MeditationModel>? _meditationData;
 
   final SettingsRepository _settingsRepository =
-  getIt<SettingsRepositoryLocal>();
+      getIt<SettingsRepositoryLocal>();
   final BluetoothConnectionRepository _bluetoothRepository =
-  getIt<MiBandBluetoothService>();
-  final MeditationRepository _meditationRepository = getIt<MeditationRepositoryLocal>();
+      getIt<MiBandBluetoothService>();
+  final MeditationRepository _meditationRepository =
+      getIt<MeditationRepositoryLocal>();
 
   SettingsModel? _settingsModel;
 
-
   bool get deviceIsConfigured => _isConfigured;
+
+  Color get watchIconColor => _watchIconColor ?? Colors.red;
+
   bool get skippedSetup => _skippedSetup;
+
   List<BluetoothDeviceModel>? get systemDevices => _systemDevices;
   late bool _isConfigured;
   List<BluetoothDeviceModel>? _systemDevices;
   bool _skippedSetup = false;
 
   String _appbarText = "";
+
   String get appbarText => _appbarText;
+
   int get meditationDataCount => _meditationData?.length ?? 0;
+  Color? _watchIconColor;
 
   @override
   void init() async {
@@ -46,6 +53,9 @@ class HomePageViewModel extends BaseViewModel {
     _systemDevices = await _bluetoothRepository.getSystemDevices();
     _settingsModel = await _settingsRepository.getSettings();
     _meditationData = await _meditationRepository.getAllMeditation();
+    if (_isConfigured) {
+      _connectToDeviceAndListenForStatus();
+    }
     notifyListeners();
   }
 
@@ -53,7 +63,7 @@ class HomePageViewModel extends BaseViewModel {
     _appbarText = _getGreetingForCurrentTime();
   }
 
-   void navigateToSession(var context) {
+  void navigateToSession(var context) {
     Navigator.of(context).push(
       MaterialPageRoute(builder: (context) => SessionPageView()),
     );
@@ -64,24 +74,31 @@ class HomePageViewModel extends BaseViewModel {
       MaterialPageRoute(builder: (context) => PastSessionsPageView()),
     );
   }
+
   void navigateToSettings(var context) {
-     Navigator.of(context).push(
-                      MaterialPageRoute(
-                          builder: (context) => SettingsPageView()),
-                    );
+    Navigator.of(context).push(
+      MaterialPageRoute(builder: (context) => SettingsPageView()),
+    );
   }
 
-  void skipSetup(){
+  void skipSetup() {
     debugPrint("skipping setup");
     _skippedSetup = true;
     notifyListeners();
   }
 
-  void selectBluetoothDevice(BluetoothDeviceModel bluetoothDevice){
-    _settingsModel?.pairedDevice = bluetoothDevice;
-    _settingsRepository.saveSettings(_settingsModel!);
+  void selectBluetoothDevice(BluetoothDeviceModel bluetoothDevice) async {
+    await _bluetoothRepository.setDevice(bluetoothDevice);
     _isConfigured = true;
+    _connectToDeviceAndListenForStatus();
     notifyListeners();
+  }
+
+  void _connectToDeviceAndListenForStatus() async {
+    if (_isConfigured) {
+      await _bluetoothRepository.connectToDevice();
+      _setWatchIconColorByStatus();
+    }
   }
 
   String _getGreetingForCurrentTime() {
@@ -97,4 +114,18 @@ class HomePageViewModel extends BaseViewModel {
     }
   }
 
+  void _setWatchIconColorByStatus() async {
+    Stream<MiBandConnectionState>? statusStream =
+        await _bluetoothRepository.getConnectionState();
+    if (statusStream != null) {
+      statusStream.listen((status) {
+        if (status == MiBandConnectionState.connected) {
+          _watchIconColor = Colors.green;
+        } else if (status == MiBandConnectionState.disconnected) {
+          _watchIconColor = Colors.orange;
+        }
+        notifyListeners();
+      });
+    }
+  }
 }
