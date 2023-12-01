@@ -1,49 +1,33 @@
 import 'dart:async';
-
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_meditation/session/view_model/session_page_view_model.dart';
 
 class HeartRateGraph extends StatefulWidget {
-  const HeartRateGraph({super.key});
+  final SessionPageViewModel viewModel;
+  const HeartRateGraph({Key? key, required this.viewModel}) : super(key: key);
+
 
   @override
   State<HeartRateGraph> createState() => HeartRateGraphState();
 }
 
 class HeartRateGraphState extends State<HeartRateGraph> {
-  List<Color> gradientColors = [Colors.orange, Colors.red];
+  List<Color> colors = [Colors.orange, Colors.red]
+                  .map((color) => color.withOpacity(0.3))
+                  .toList();
 
-  bool showAvg = false;
-
-  Timer? updateTimer;
-
-  List<FlSpot> dataPoints = [
-    FlSpot(0, 90),
-    FlSpot(1, 120),
-    FlSpot(2, 130),
-    FlSpot(3, 150),
-    FlSpot(4, 120),
-    FlSpot(5, 111),
-    FlSpot(6, 100),
-  ];
-
-  // Method to update the last data point
-  void updateLastDataPoint(FlSpot updatedDataPoint) {
+  void refreshHeartRate() {
     setState(() {
-      for (int i = 0; i < dataPoints.length - 1; i++) {
-        dataPoints[i] = FlSpot(i.toDouble(), dataPoints[i + 1].y);
-      }
-      if (dataPoints.isNotEmpty) {
-        dataPoints[dataPoints.length - 1] = updatedDataPoint;
-      }
+      widget.viewModel.updateHeartRate();
     });
   }
 
   double maximumValue() {
     double max = 0;
-    for (int i = 0; i < dataPoints.length; i++) {
-      if (dataPoints[i].y > max) {
-        max = dataPoints[i].y;
+    for (int i = 0; i < widget.viewModel.dataPoints.length; i++) {
+      if (widget.viewModel.dataPoints[i].y > max) {
+        max = widget.viewModel.dataPoints[i].y;
       }
     }
     return max;
@@ -51,9 +35,9 @@ class HeartRateGraphState extends State<HeartRateGraph> {
 
   double minimumValue() {
     double min = 200;
-    for (int i = 0; i < dataPoints.length; i++) {
-      if (dataPoints[i].y < min) {
-        min = dataPoints[i].y;
+    for (int i = 0; i < widget.viewModel.dataPoints.length; i++) {
+      if (widget.viewModel.dataPoints[i].y < min) {
+        min = widget.viewModel.dataPoints[i].y;
       }
     }
     return min;
@@ -61,30 +45,23 @@ class HeartRateGraphState extends State<HeartRateGraph> {
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: <Widget>[
-        AspectRatio(
-          aspectRatio: 1.70,
-          child: Padding(
-            padding: const EdgeInsets.only(
-              right: 18,
-              left: 12,
-              top: 24,
-              bottom: 12,
-            ),
-            child: LineChart(
-              mainData(),
-            ),
-          ),
+    return ClipRRect(
+      borderRadius:
+          BorderRadius.circular(12.0),
+      child: Container(
+        height: 200,
+        width: 200,
+        child: LineChart(
+          mainData(),
         ),
-       ],
+      ),
     );
   }
 
   LineChartData mainData() {
     return LineChartData(
       gridData: FlGridData(
-        show: true,
+        show: false,
         drawVerticalLine: true,
         horizontalInterval: 10,
         verticalInterval: 1,
@@ -102,24 +79,25 @@ class HeartRateGraphState extends State<HeartRateGraph> {
         },
       ),
       borderData: FlBorderData(
-        show: true,
+        show: false,
         border: Border.all(color: const Color(0xff37434d)),
       ),
-      titlesData: FlTitlesData(
+      titlesData: const FlTitlesData(
         rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
         bottomTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
         topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+        leftTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
       ),
       minX: 0,
       maxX: 6,
       minY: 40 /* minimumValue() */,
-      maxY: 140 /* maximumValue() */,
+      maxY: 155 /* maximumValue() */,
       lineBarsData: [
         LineChartBarData(
-          spots: dataPoints,
+          spots: widget.viewModel.dataPoints,
           isCurved: true,
           gradient: LinearGradient(
-            colors: gradientColors,
+            colors: colors,
           ),
           barWidth: 5,
           isStrokeCapRound: true,
@@ -129,9 +107,7 @@ class HeartRateGraphState extends State<HeartRateGraph> {
           belowBarData: BarAreaData(
             show: true,
             gradient: LinearGradient(
-              colors: gradientColors
-                  .map((color) => color.withOpacity(0.3))
-                  .toList(),
+              colors: colors,
             ),
           ),
         ),

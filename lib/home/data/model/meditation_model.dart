@@ -6,7 +6,14 @@ part 'meditation_model.g.dart';
 class MeditationModel with _$MeditationModel {
   factory MeditationModel({
     required int duration,
+    required bool isHapticFeedbackEnabled,
+    required bool shouldShowHeartRate,
+    required String sound,
+    required double timestamp,
+    required Map<int, double> heartRates
   }) = _MeditationModel;
+
+
 
   factory MeditationModel.fromJson(Map<String, dynamic> json) =>
       _$MeditationModelFromJson(json);

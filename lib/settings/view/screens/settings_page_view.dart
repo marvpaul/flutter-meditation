@@ -46,6 +46,16 @@ class SettingsPageView extends BaseView<SettingsPageViewModel> {
               ),
               ListTile(
                 enableFeedback: false,
+                title: Text('Kaleidoscope'),
+                trailing: Switch(
+                  value: viewModel.settings?.kaleidoscope ?? false,
+                  onChanged: (isEnabled) {
+                    viewModel.toggleKaleidoscope(isEnabled);
+                  },
+                ),
+              ),
+              ListTile(
+                enableFeedback: false,
                 title: Text(viewModel.soundName),
                 trailing: DropdownButton<String>(
                   value: viewModel.settings?.sound ?? "Option 1",

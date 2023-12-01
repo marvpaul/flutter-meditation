@@ -38,6 +38,7 @@ class HomePageView extends BaseView<HomePageViewModel> {
                       progress: 1,
                       onTap: () => {viewModel.navigateToSession(context)},
                     ),
+                    
                   ],
                 ),
               ),
@@ -47,7 +48,7 @@ class HomePageView extends BaseView<HomePageViewModel> {
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       floatingActionButton: PastMeditationsCardView(
-        meditationSessionEntries: viewModel.meditationDataCount,
+        meditationSessionEntries: viewModel.meditations?.length??0,
         onPressed: () {
           viewModel.navigateToSessionSummary(context);
         },
