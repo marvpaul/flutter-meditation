@@ -15,7 +15,7 @@ import android.util.Log
 
 class MainActivity: FlutterActivity() {
     private val CHANNEL = "htw.berlin.de/public_health/binaural_beats"
-    private val toneGenerator = ToneGenerator()
+    private lateinit var toneGenerator :ToneGenerator;
     private val LOG_TAG = "FLUTTER_APP"
 
     override fun configureFlutterEngine(@NonNull flutterEngine: FlutterEngine) {
@@ -51,6 +51,7 @@ class MainActivity: FlutterActivity() {
 
     private fun playBinauralBeat(frequencyLeft: Double?, frequencyRight: Double?, result: MethodChannel.Result){
         if (frequencyLeft != null && frequencyRight != null) {
+            toneGenerator = ToneGenerator()
             toneGenerator.generateTone(frequencyLeft, frequencyRight, context)
             result.success(true)
         } else {
@@ -70,7 +71,7 @@ class ToneGenerator(){
     private lateinit var audioTrack: AudioTrack
     private var bufferSize = 0
     private val sampleRate = 44100 // Standard-Abtastfrequenz
-    private val duration = 1.0 // Beispiel-Dauer des Tons in Sekunden
+    private val duration = 3.0 // Beispiel-Dauer des Tons in Sekunden
     private var isPlaying = false
 
     fun stopPlayingTone(){
@@ -107,7 +108,10 @@ class ToneGenerator(){
                 val amplitude = currentVolume.toFloat() / maxVolume.toFloat()
 
                 val pcmData = generateStereoSinWave(bufferSize, frequencyLeft, frequencyRight, amplitude)
-                audioTrack.write(pcmData, 0, bufferSize)
+
+                if (isPlaying){
+                    audioTrack.write(pcmData, 0, bufferSize)
+                }
             }
         }
     }

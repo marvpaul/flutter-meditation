@@ -65,24 +65,9 @@ class SessionWidget extends StatelessWidget {
                   viewModel.playBinauralBeats();
                 },
                 child: Icon(
-                  Icons.change_circle,
-                  color: Theme.of(context).colorScheme.surface,
-                  size: 36.0,
-                ),
-              ),
-            ),
-            Padding(
-              padding: EdgeInsets.only(right: 16.0, bottom: 25.0),
-              child: GestureDetector(
-                onTap: () {
-                  if (viewModel.isPlaying) {
-                    viewModel.stopBinauralBeats();
-                  } else {
-                    viewModel.playBinauralBeats();
-                  }
-                },
-                child: Icon(
-                  viewModel.isPlaying ? Icons.headset : Icons.headset_off,
+                  viewModel.isPlaying
+                      ? Icons.change_circle
+                      : Icons.change_circle_outlined,
                   color: Theme.of(context).colorScheme.surface,
                   size: 36.0,
                 ),
