@@ -49,9 +49,46 @@ class SessionWidget extends StatelessWidget {
               width: 150,
               height: 200,
               child: BreathingCircleWidget(
-                  progress: viewModel.stateProgress, state: viewModel.state.value),
+                  progress: viewModel.stateProgress,
+                  state: viewModel.state.value),
             ),
           ),
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            Padding(
+              padding: EdgeInsets.only(right: 16.0, bottom: 25.0),
+              child: GestureDetector(
+                onTap: () {
+                  viewModel.stopBinauralBeats();
+                  viewModel.playBinauralBeats();
+                },
+                child: Icon(
+                  Icons.change_circle,
+                  color: Theme.of(context).colorScheme.surface,
+                  size: 36.0,
+                ),
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.only(right: 16.0, bottom: 25.0),
+              child: GestureDetector(
+                onTap: () {
+                  if (viewModel.isPlaying) {
+                    viewModel.stopBinauralBeats();
+                  } else {
+                    viewModel.playBinauralBeats();
+                  }
+                },
+                child: Icon(
+                  viewModel.isPlaying ? Icons.headset : Icons.headset_off,
+                  color: Theme.of(context).colorScheme.surface,
+                  size: 36.0,
+                ),
+              ),
+            )
+          ],
         ),
         Row(
           mainAxisAlignment: MainAxisAlignment.end,
@@ -86,7 +123,7 @@ class SessionWidget extends StatelessWidget {
                 ),
               ),
             ),
-            const SizedBox(width: 8), 
+            const SizedBox(width: 8),
             Expanded(
               child: Container(
                 height: 40,

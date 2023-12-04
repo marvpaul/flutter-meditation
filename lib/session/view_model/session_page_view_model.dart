@@ -35,7 +35,11 @@ class SessionPageViewModel extends BaseViewModel {
   final BinauralBeatsRepository _binauralBeatsRepository =
       getIt<BinauralBeatsRepositoryLocal>();
 
-  List<BreathingState> breathingTechniques = [BreathingState.INHALE, BreathingState.HOLD, BreathingState.EXHALE];
+  List<BreathingState> breathingTechniques = [
+    BreathingState.INHALE,
+    BreathingState.HOLD,
+    BreathingState.EXHALE
+  ];
   List<double> breathingDurations = [4, 7, 8];
   int stateCounter = 0;
   bool running = false;
@@ -58,6 +62,9 @@ class SessionPageViewModel extends BaseViewModel {
 
   int nrDatapoints = 6;
   List<FlSpot> dataPoints = [];
+
+  // binaural beats fields
+  bool isPlaying = false;
 
   void updateHeartRate() {
     List<double> lastHeartRates =
@@ -147,7 +154,8 @@ class SessionPageViewModel extends BaseViewModel {
     });
 
     // start playing binaural beats
-    playBinauralBeats(600, 200);
+    playBinauralBeats();
+    isPlaying = true;
   }
 
   void _nextState() {
@@ -160,10 +168,14 @@ class SessionPageViewModel extends BaseViewModel {
     totalTimePerState = breathingDurations[stateCounter];
   }
 
-  Future<bool> playBinauralBeats(
-      double frequencyLeft, double frequencyRight) async {
-    //TODO give other arguments to service
-    return await _binauralBeatsRepository.playBinauralBeats(500, 600, 0, 0, 10);
+  Future<bool> playBinauralBeats() async {
+    isPlaying = true;
+    return await _binauralBeatsRepository.playBinauralBeats();
+  }
+
+  Future<void> stopBinauralBeats() async {
+    isPlaying = false;
+    await _binauralBeatsRepository.stopBinauralBeats();
   }
 
   @override

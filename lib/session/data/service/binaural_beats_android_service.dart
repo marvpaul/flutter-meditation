@@ -18,15 +18,10 @@ class BinauralBeatsAndroidService {
   // note that this method is the implementation for Android
   // we need low level access to native audio stream librarys to play the binaural beats
   Future<bool> playBinauralBeatAndroid(
-      double frequencyLeft,
-      double frequencyRight,
-      double volumeLeft,
-      double volumeRight,
-      double duration) async {
+      double frequencyLeft, double frequencyRight) async {
     log("playBinauralBeatAndroid called with frequencyLeft: $frequencyLeft, frequencyRight: $frequencyRight");
 
     try {
-      // TODO: give other parameters to native code
       bool? isPlaying = await platform.invokeMethod<bool>('playBinauralBeat', {
         'frequencyLeft': frequencyLeft,
         'frequencyRight': frequencyRight,
@@ -39,6 +34,16 @@ class BinauralBeatsAndroidService {
     } on PlatformException catch (e) {
       log("Error playing binaural beat: '${e.message}'.");
       return false;
+    }
+  }
+
+  Future<void> stopBinauralBeatAndroid() async {
+    log("stopBinauralBeatAndroid called");
+
+    try {
+      await platform.invokeMethod<void>('stopBinauralBeat');
+    } on PlatformException catch (e) {
+      log("Error stopping binaural beat: '${e.message}'.");
     }
   }
 }

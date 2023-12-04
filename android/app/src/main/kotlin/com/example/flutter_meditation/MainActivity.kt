@@ -16,12 +16,15 @@ import android.util.Log
 class MainActivity: FlutterActivity() {
     private val CHANNEL = "htw.berlin.de/public_health/binaural_beats"
     private val toneGenerator = ToneGenerator()
+    private val LOG_TAG = "FLUTTER_APP"
 
     override fun configureFlutterEngine(@NonNull flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
 
         // create the message channel object to get the caller data from flutter
         MethodChannel(flutterEngine.dartExecutor.binaryMessenger, CHANNEL).setMethodCallHandler { call, result ->
+            Log.d(LOG_TAG, "Method channel call registered")
+
             try {
                 val frequencyLeft = call.argument<Double>("frequencyLeft")
                 val frequencyRight = call.argument<Double>("frequencyRight")
@@ -29,9 +32,11 @@ class MainActivity: FlutterActivity() {
                 // here we check which method is called from flutter
                 when (call.method) {
                     "playBinauralBeat" -> {
+                        Log.d(LOG_TAG, "playBinauralBeat called")
                         playBinauralBeat(frequencyLeft, frequencyRight, result);
                     }
                     "stopBinauralBeat" -> {
+                        Log.d(LOG_TAG, "stopBinauralBeat called")
                         stopBinauralBeat(result);
                     }
                     else -> {
@@ -65,10 +70,11 @@ class ToneGenerator(){
     private lateinit var audioTrack: AudioTrack
     private var bufferSize = 0
     private val sampleRate = 44100 // Standard-Abtastfrequenz
-    private val duration = 3.0 // Beispiel-Dauer des Tons in Sekunden
+    private val duration = 1.0 // Beispiel-Dauer des Tons in Sekunden
     private var isPlaying = false
 
     fun stopPlayingTone(){
+        Log.d("FLUTTER_APP", "Stop coroutine playing sound")
         isPlaying = false
     }
 
@@ -94,6 +100,7 @@ class ToneGenerator(){
         val maxVolume = audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC)
 
         // asynchrone Ausführung in CoRoutine
+        Log.d("FLUTTER_APP", "Start coroutine playing sound")
         GlobalScope.launch {
             while (isPlaying) {
                 val currentVolume = audioManager.getStreamVolume(AudioManager.STREAM_MUSIC)
