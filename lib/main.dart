@@ -9,14 +9,12 @@ import 'package:provider/provider.dart';
 import 'di/Setup.dart';
 import 'home/view_model/home_page_view_model.dart';
 
-
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await configureInjection(Environment.prod);
   await getIt.allReady();
   runApp(const MyApp());
 }
-
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
