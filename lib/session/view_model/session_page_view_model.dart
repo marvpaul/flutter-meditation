@@ -2,7 +2,6 @@ import 'dart:async';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_meditation/base/base_view_model.dart';
-import 'package:flutter_meditation/common/BreathingState.dart';
 import 'package:flutter_meditation/home/data/model/meditation_model.dart';
 import 'package:flutter_meditation/home/data/repository/impl/all_meditations_repository_local.dart';
 import 'package:flutter_meditation/home/data/repository/impl/meditation_repository_local.dart';
@@ -81,9 +80,6 @@ class SessionPageViewModel extends BaseViewModel {
     breathingPattern = await _breathingPatternRepository.getBreathingPatternByName("4-7-8");
     meditationModel = await _meditationRepository.createNewMeditation();
     settingsModel = await _settingsRepository.getSettings();
-
-    print("Counter" + stateCounter.toString()); 
-    print("Counter" + breathingPattern!.steps[stateCounter].type.toString()); 
 
     state = breathingPattern!.steps[stateCounter].type;
     timeLeft =  breathingPattern!.steps[stateCounter].duration;

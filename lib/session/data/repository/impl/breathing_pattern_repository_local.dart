@@ -15,15 +15,12 @@ class BreathingPatternRepositoryLocal implements BreathingPatternRepository {
 
   @override
   Future<BreathingPatternModel> getBreathingPatternByName(String name) async {
-    // TODO: implement getBreathingPatternByName
     AllBreathingPatterns patterns = await getOrCreateBreathingPatterns();
     return patterns.patternMap[name]!;  
   }
 
   @override
   Future<AllBreathingPatterns> getOrCreateBreathingPatterns() async {
-    prefs.clear(); 
-    // Get from local storage
     final String? allBreathingPatternsJson =
         prefs.getString(BreathingPatternRepository.allBreathingPatternsKey);
     if (allBreathingPatternsJson != null) {
@@ -34,7 +31,6 @@ class BreathingPatternRepositoryLocal implements BreathingPatternRepository {
     }
     
     Map<String, BreathingPatternModel> breathingPatternsMap = <String, BreathingPatternModel>{};
-    print("Create new breathings!"); 
 
     // 4-7-8
     BreathingPatternModel fourSevenEight = BreathingPatternModel(
