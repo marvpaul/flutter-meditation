@@ -14,13 +14,15 @@ class BreathingPatternRepositoryLocal implements BreathingPatternRepository {
   BreathingPatternRepositoryLocal(this.prefs);
 
   @override
-  Future<BreathingPatternModel> getBreathingPatternByName(String name) {
+  Future<BreathingPatternModel> getBreathingPatternByName(String name) async {
     // TODO: implement getBreathingPatternByName
-    throw UnimplementedError();
+    AllBreathingPatterns patterns = await getOrCreateBreathingPatterns();
+    return patterns.patternMap[name]!;  
   }
 
   @override
   Future<AllBreathingPatterns> getOrCreateBreathingPatterns() async {
+    prefs.clear(); 
     // Get from local storage
     final String? allBreathingPatternsJson =
         prefs.getString(BreathingPatternRepository.allBreathingPatternsKey);
@@ -30,30 +32,59 @@ class BreathingPatternRepositoryLocal implements BreathingPatternRepository {
               JsonDecoder().convert(allBreathingPatternsJson))
           .allBreathingPatterns;
     }
+    
+    Map<String, BreathingPatternModel> breathingPatternsMap = <String, BreathingPatternModel>{};
+    print("Create new breathings!"); 
 
-    // Create all
-    AllBreathingPatterns breathingPatterns = AllBreathingPatterns();
+    // 4-7-8
     BreathingPatternModel fourSevenEight = BreathingPatternModel(
         name: "4-7-8",
         steps: [
-          BreathingPatternStep(type: BreathingStepType.inhale, duration: 4),
-          BreathingPatternStep(type: BreathingStepType.hold, duration: 7),
-          BreathingPatternStep(type: BreathingStepType.exhale, duration: 8),
+          BreathingPatternStep(type: BreathingStepType.INHALE, duration: 4),
+          BreathingPatternStep(type: BreathingStepType.HOLD, duration: 7),
+          BreathingPatternStep(type: BreathingStepType.EXHALE, duration: 8),
         ],
         multiplier: 1.0);
+    breathingPatternsMap["4-7-8"] = fourSevenEight; 
 
-    print("Create new breathings!"); 
-    breathingPatterns.patternMap["4-7-8"] = fourSevenEight; 
+    // Coherent 
+    BreathingPatternModel coherent = BreathingPatternModel(
+        name: "Coherent",
+        steps: [
+          BreathingPatternStep(type: BreathingStepType.INHALE, duration: 0.5),
+          BreathingPatternStep(type: BreathingStepType.EXHALE, duration: 0.5),
+        ],
+        multiplier: 1.0);
+    breathingPatternsMap["Coherent"] = coherent; 
+
+    BreathingPatternModel box = BreathingPatternModel(
+        name: "Box",
+        steps: [
+          BreathingPatternStep(type: BreathingStepType.INHALE, duration: 4.0),
+          BreathingPatternStep(type: BreathingStepType.HOLD, duration: 4.0),
+          BreathingPatternStep(type: BreathingStepType.EXHALE, duration: 4.0),
+          BreathingPatternStep(type: BreathingStepType.HOLD, duration: 4.0),
+        ],
+        multiplier: 1.0);
+    breathingPatternsMap["Box"] = box; 
+
+    BreathingPatternModel twoToOne = BreathingPatternModel(
+        name: "1:2",
+        steps: [
+          BreathingPatternStep(type: BreathingStepType.INHALE, duration: 4.0),
+          BreathingPatternStep(type: BreathingStepType.EXHALE, duration: 8.0)
+        ],
+        multiplier: 1.0);
+    breathingPatternsMap["1:2"] = twoToOne; 
+
+    AllBreathingPatterns breathingPatterns = AllBreathingPatterns(breathingPatternsMap);
     saveAllBreathingPatterns(breathingPatterns);
-    // return default if no config was found
     return breathingPatterns;
   }
 
   @override
   void saveAllBreathingPatterns(AllBreathingPatterns allBreathingPatterns) {
     final String patternsJson = JsonEncoder().convert(AllBreathingPatternsDTO(allBreathingPatterns: allBreathingPatterns).toJson());
-    print("Save all breathings"); 
-    print("JSON" + patternsJson); 
     prefs.setString(BreathingPatternRepository.allBreathingPatternsKey, patternsJson);
   }
 }

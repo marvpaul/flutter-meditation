@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_meditation/common/BreathingState.dart';
 import 'package:flutter_meditation/common/helpers.dart';
+import 'package:flutter_meditation/session/data/model/breathing_pattern_model.dart';
 import 'package:flutter_meditation/session/view_model/session_page_view_model.dart';
 import 'package:flutter_meditation/widgets/breathing_circle_widget.dart';
 import 'package:flutter_meditation/widgets/information_box.dart';

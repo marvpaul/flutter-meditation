@@ -3,14 +3,27 @@ part 'breathing_pattern_model.freezed.dart';
 part 'breathing_pattern_model.g.dart';
 
 enum BreathingStepType {
-  inhale,
-  hold,
-  exhale,
+  HOLD,
+  INHALE,
+  EXHALE,
+}
+
+extension BreathingStateExtension on BreathingStepType {
+  String get value {
+    switch (this) {
+      case BreathingStepType.HOLD:
+        return 'Hold';
+      case BreathingStepType.INHALE:
+        return 'Inhale';
+      case BreathingStepType.EXHALE:
+        return 'Exhale';
+    }
+  }
 }
 
 class BreathingPatternStep {
   final BreathingStepType type;
-  final int duration;
+  final double duration;
 
   BreathingPatternStep({
     required this.type,
@@ -20,7 +33,7 @@ class BreathingPatternStep {
   factory BreathingPatternStep.fromJson(Map<String, dynamic> json) {
     return BreathingPatternStep(
       type: BreathingStepType.values[json['type']],
-      duration: json['duration'] as int,
+      duration: json['duration'] as double,
     );
   }
 
