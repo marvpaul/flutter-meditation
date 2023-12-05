@@ -72,6 +72,25 @@ class SettingsPageView extends BaseView<SettingsPageViewModel> {
                   }).toList(),
                 ),
               ),
+
+              ListTile(
+                enableFeedback: false,
+                title: const Text('Breathing pattern'),
+                trailing: DropdownButton<String>(
+                  value: viewModel.settings?.breathingPattern ?? "4-7-8",
+                  onChanged: (String? newValue) {
+                    viewModel.changeList(
+                        'Breathing pattern', newValue ?? '4-7-8');
+                  },
+                  items: viewModel.breathingPatternOptions
+                      .map<DropdownMenuItem<String>>((String value) {
+                    return DropdownMenuItem<String>(
+                      value: value,
+                      child: Text(value),
+                    );
+                  }).toList(),
+                ),
+              ),
             ],
           ),
           Padding(

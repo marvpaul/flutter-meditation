@@ -9,6 +9,7 @@ class SettingsModel with _$SettingsModel {
     @Default(false) bool shouldShowHeartRate,
     @Default(false) bool kaleidoscope,
     @Default('Option 1') String sound,
+    @Default('4-7-8') String breathingPattern,
   }) = _SettingsModel;
 
   factory SettingsModel.fromJson(Map<String, dynamic> json) =>

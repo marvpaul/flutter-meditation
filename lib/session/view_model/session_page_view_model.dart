@@ -77,9 +77,9 @@ class SessionPageViewModel extends BaseViewModel {
   }
 
   void initWithContext(BuildContext context) async {
-    breathingPattern = await _breathingPatternRepository.getBreathingPatternByName("4-7-8");
     meditationModel = await _meditationRepository.createNewMeditation();
     settingsModel = await _settingsRepository.getSettings();
+    breathingPattern = await _breathingPatternRepository.getBreathingPatternByName(settingsModel!.breathingPattern);
 
     state = breathingPattern!.steps[stateCounter].type;
     timeLeft =  breathingPattern!.steps[stateCounter].duration;

@@ -19,6 +19,12 @@ class SettingsPageViewModel extends BaseViewModel {
     'Option 3',
     'Option 4',
   ];
+  List<String> breathingPatternOptions = <String>[
+    '4-7-8',
+    'Coherent',
+    '1:2',
+    'Box',
+  ];
   String get hapticFeedbackName => _hapticFeedbackName;
   final String _hapticFeedbackName = "Haptic Feedback";
   String get heartRateName => _heartRateName;
@@ -56,8 +62,10 @@ class SettingsPageViewModel extends BaseViewModel {
     if (_settingsModel != null) {
       if (name == _soundName) {
         _settingsModel!.sound = value;
-        _saveSettingsAndNotify();
+      }else if(name == 'Breathing pattern'){
+        _settingsModel!.breathingPattern = value; 
       }
+        _saveSettingsAndNotify();
     }
   }
   
