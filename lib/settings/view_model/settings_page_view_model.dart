@@ -1,4 +1,5 @@
 import 'package:flutter_meditation/base/base_view_model.dart';
+import 'package:flutter_meditation/session/data/model/breathing_pattern_model.dart';
 import 'package:flutter_meditation/settings/data/model/settings_model.dart';
 import 'package:injectable/injectable.dart';
 
@@ -20,10 +21,10 @@ class SettingsPageViewModel extends BaseViewModel {
     'Option 4',
   ];
   List<String> breathingPatternOptions = <String>[
-    '4-7-8',
-    'Coherent',
-    '1:2',
-    'Box',
+    BreathingPatternType.fourSevenEight.value,
+    BreathingPatternType.box.value,
+    BreathingPatternType.coherent.value,
+    BreathingPatternType.oneTwo.value,
   ];
   String get hapticFeedbackName => _hapticFeedbackName;
   final String _hapticFeedbackName = "Haptic Feedback";
@@ -51,6 +52,7 @@ class SettingsPageViewModel extends BaseViewModel {
       _saveSettingsAndNotify();
     }
   }
+
   toggleKaleidoscope(bool isEnabled) {
     if (_settingsModel != null) {
       _settingsModel!.kaleidoscope = isEnabled;
@@ -62,17 +64,26 @@ class SettingsPageViewModel extends BaseViewModel {
     if (_settingsModel != null) {
       if (name == _soundName) {
         _settingsModel!.sound = value;
-      }else if(name == 'Breathing pattern'){
-        _settingsModel!.breathingPattern = value; 
+      } else if (name == 'Breathing pattern') {
+        if (value == '4-7-8') {
+          _settingsModel!.breathingPattern =
+              BreathingPatternType.fourSevenEight;
+        } else if (value == '1:2') {
+          _settingsModel!.breathingPattern = BreathingPatternType.oneTwo;
+        } else if (value == 'Coherent') {
+          _settingsModel!.breathingPattern = BreathingPatternType.coherent;
+        } else if (value == 'Box') {
+          _settingsModel!.breathingPattern = BreathingPatternType.box;
+        }
       }
-        _saveSettingsAndNotify();
+      _saveSettingsAndNotify();
     }
   }
-  
-  void _saveSettingsAndNotify(){
+
+  void _saveSettingsAndNotify() {
     if (_settingsModel != null) {
-        _settingsRepository.saveSettings(_settingsModel!);
-        notifyListeners();
+      _settingsRepository.saveSettings(_settingsModel!);
+      notifyListeners();
     }
   }
 }

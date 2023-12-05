@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_meditation/session/data/model/breathing_pattern_model.dart';
 import '../../../base/base_view.dart';
 import '../../view_model/settings_page_view_model.dart';
 
@@ -77,7 +78,7 @@ class SettingsPageView extends BaseView<SettingsPageViewModel> {
                 enableFeedback: false,
                 title: const Text('Breathing pattern'),
                 trailing: DropdownButton<String>(
-                  value: viewModel.settings?.breathingPattern ?? "4-7-8",
+                  value: viewModel.settings?.breathingPattern.value ?? BreathingPatternType.fourSevenEight.value,
                   onChanged: (String? newValue) {
                     viewModel.changeList(
                         'Breathing pattern', newValue ?? '4-7-8');

@@ -21,6 +21,28 @@ extension BreathingStateExtension on BreathingStepType {
   }
 }
 
+enum BreathingPatternType { 
+    fourSevenEight,
+    coherent,
+    box,
+    oneTwo
+}
+
+extension BreathingTypeExtension on BreathingPatternType {
+  String get value {
+    switch (this) {
+      case BreathingPatternType.fourSevenEight:
+        return '4-7-8';
+      case BreathingPatternType.coherent:
+        return 'Coherent';
+      case BreathingPatternType.box:
+        return 'Box';
+      case BreathingPatternType.oneTwo:
+        return '1:2';
+    }
+  }
+}
+
 class BreathingPatternStep {
   final BreathingStepType type;
   final double duration;
@@ -48,7 +70,7 @@ class BreathingPatternStep {
 @unfreezed
 class BreathingPatternModel with _$BreathingPatternModel {
   factory BreathingPatternModel(
-      {@Default('4-7-8') String name,
+      {@Default(BreathingPatternType.fourSevenEight) BreathingPatternType type,
       @Default([]) List<BreathingPatternStep> steps,
       @Default(1.0) double multiplier}) = _BreathingPatternModel;
 

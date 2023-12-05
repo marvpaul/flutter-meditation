@@ -79,10 +79,11 @@ class SessionPageViewModel extends BaseViewModel {
   void initWithContext(BuildContext context) async {
     meditationModel = await _meditationRepository.createNewMeditation();
     settingsModel = await _settingsRepository.getSettings();
-    breathingPattern = await _breathingPatternRepository.getBreathingPatternByName(settingsModel!.breathingPattern);
+    breathingPattern = await _breathingPatternRepository
+        .getBreathingPatternByName(settingsModel!.breathingPattern);
 
     state = breathingPattern!.steps[stateCounter].type;
-    timeLeft =  breathingPattern!.steps[stateCounter].duration;
+    timeLeft = breathingPattern!.steps[stateCounter].duration;
     totalTimePerState = breathingPattern!.steps[stateCounter].duration;
     _initSession();
     running = true;
@@ -95,8 +96,14 @@ class SessionPageViewModel extends BaseViewModel {
     timer = Timer.periodic(updateInterval, (timer) {
       progress = elapsedSeconds / totalDuration.inSeconds;
       if (state == BreathingStepType.HOLD) {
-        stateProgress = 1;
-        kaleidoscopeMultiplier = 0;
+        if (stateCounter == 1) {
+          // Hold after Inhale
+          stateProgress = 1;
+        } else {
+          // Hold after exhale
+          stateProgress = 0;
+        }
+          kaleidoscopeMultiplier = 0;
       } else if (state == BreathingStepType.EXHALE) {
         stateProgress = timeLeft / totalTimePerState;
         kaleidoscopeMultiplier = -1;
@@ -138,7 +145,7 @@ class SessionPageViewModel extends BaseViewModel {
     }
 
     state = breathingPattern!.steps[stateCounter].type;
-    timeLeft =  breathingPattern!.steps[stateCounter].duration;
+    timeLeft = breathingPattern!.steps[stateCounter].duration;
     totalTimePerState = breathingPattern!.steps[stateCounter].duration;
   }
 

@@ -4,6 +4,6 @@ import 'package:flutter_meditation/session/data/model/breathing_pattern_model.da
 abstract class BreathingPatternRepository {
   static const String allBreathingPatternsKey = "breathings";
   Future<AllBreathingPatterns> getOrCreateBreathingPatterns();
-  Future<BreathingPatternModel> getBreathingPatternByName(String name);
+  Future<BreathingPatternModel> getBreathingPatternByName(BreathingPatternType name);
   void saveAllBreathingPatterns(AllBreathingPatterns patterns);
 }

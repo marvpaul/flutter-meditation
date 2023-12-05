@@ -7,7 +7,7 @@ part 'all_breathing_patterns_model.g.dart';
 @freezed
 class AllBreathingPatterns with _$AllBreathingPatterns {
   factory AllBreathingPatterns(
-    Map<String, BreathingPatternModel> patternMap,
+    List<BreathingPatternModel> pattern,
   ) = _AllBreathingPatterns;
 
   factory AllBreathingPatterns.fromJson(Map<String, dynamic> json) =>
