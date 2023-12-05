@@ -9,6 +9,9 @@ import 'package:flutter_meditation/home/data/repository/impl/meditation_reposito
 import 'package:flutter_meditation/home/data/repository/all_meditations_repository.dart';
 import 'package:flutter_meditation/home/data/repository/meditation_repository.dart';
 import 'package:flutter_meditation/home/view/screens/home_page_view.dart';
+import 'package:flutter_meditation/session/data/model/all_breathing_patterns_model.dart';
+import 'package:flutter_meditation/session/data/repository/breathing_pattern_repository.dart';
+import 'package:flutter_meditation/session/data/repository/impl/breathing_pattern_repository_local.dart';
 import 'package:flutter_meditation/settings/data/model/settings_model.dart';
 import 'package:flutter_meditation/settings/data/repository/impl/settings_repository_local.dart';
 import 'package:flutter_meditation/settings/data/repository/settings_repository.dart';
@@ -21,9 +24,12 @@ import 'package:flutter_meditation/session/data/repository/binaural_beats_reposi
 @injectable
 class SessionPageViewModel extends BaseViewModel {
   MeditationModel? meditationModel;
+  AllBreathingPatterns? allBreathingPatterns;
   SettingsModel? settingsModel;
   final MeditationRepository _meditationRepository =
       getIt<MeditationRepositoryLocal>();
+  final BreathingPatternRepository _breathingPatternRepository =
+      getIt<BreathingPatternRepositoryLocal>();
   final AllMeditationsRepository _allMeditationsRepository =
       getIt<AllMeditationsRepositoryLocal>();
   final SettingsRepository _settingsRepository =
@@ -75,6 +81,7 @@ class SessionPageViewModel extends BaseViewModel {
   }
 
   void initWithContext(BuildContext context) async {
+    allBreathingPatterns = await _breathingPatternRepository.getOrCreateBreathingPatterns();
     meditationModel = await _meditationRepository.createNewMeditation();
     settingsModel = await _settingsRepository.getSettings();
     _initSession();
