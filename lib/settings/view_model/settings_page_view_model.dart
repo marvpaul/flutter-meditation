@@ -18,11 +18,9 @@ class SettingsPageViewModel extends BaseViewModel {
 
   SettingsModel? get settings => _settingsModel;
 
-  bool? get deviceIsConfigured => _isConfigured;
-  bool? _isConfigured;
+  bool get deviceIsConfigured => _isConfigured ;
+  late bool _isConfigured;
   BluetoothDeviceModel? _configuredDevice;
-
-  // List<BluetoothDeviceModel>? get systemDevices => _systemDevices;
 
   BluetoothDeviceModel? get configuredDevice => _configuredDevice;
 
@@ -30,8 +28,6 @@ class SettingsPageViewModel extends BaseViewModel {
   MiBandConnectionState? _connectionState;
 
   SettingsModel? _settingsModel;
-  // List<BluetoothDeviceModel>? _systemDevices;
-
   List<String> soundOptions = <String>[
     'Option 1',
     'Option 2',
@@ -48,17 +44,16 @@ class SettingsPageViewModel extends BaseViewModel {
   String get soundName => _soundName;
   final String _soundName = "Sound";
   final String bluetoothName = "Bluetooth";
+  final String bluetoothSettingsHeading = "Bluetooth connection";
+  final String unpairText = "Unpair";
 
   @override
   Future<void> init() async {
     _settingsModel = await _settingsRepository.getSettings();
-    // _systemDevices = await _bluetoothRepository.getSystemDevices();
     _isConfigured = _bluetoothRepository.isConfigured();
-    if(_isConfigured!){
+    if(_isConfigured){
       _configuredDevice = _bluetoothRepository.getConfiguredDevice();
-      // _connectToDevice();
     }
-
     notifyListeners();
   }
 
@@ -92,25 +87,11 @@ class SettingsPageViewModel extends BaseViewModel {
     if (bluetoothDevice != null) {
       _settingsModel?.pairedDevice = bluetoothDevice;
       _settingsRepository.saveSettings(_settingsModel!);
-      // _connectToDevice();
       notifyListeners();
     }
-
   }
 
-  // void _connectToDevice() {
-  //   if (_configuredDevice != null) {
-  //     _bluetoothRepository.connectToDevice(_configuredDevice!);
-  //     _bluetoothRepository
-  //         .getConnectionState()
-  //         .then((value) => value?.listen((state) {
-  //               _connectionState = state;
-  //               notifyListeners();
-  //             }));
-  //   }
-  // }
-
-  void removeDevice(){
+  void unpairDevice(){
     _bluetoothRepository.unpairDevice();
     _isConfigured = false;
     notifyListeners();

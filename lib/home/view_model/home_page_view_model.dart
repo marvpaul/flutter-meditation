@@ -9,10 +9,7 @@ import '../../../settings/view/screens/settings_page_view.dart';
 import '../../../session/view/screens/session_page_view.dart';
 import '../../di/Setup.dart';
 import '../../settings/data/model/bluetooth_device_model.dart';
-import '../../settings/data/model/settings_model.dart';
 import '../../settings/data/repository/bluetooth_connection_repository.dart';
-import '../../settings/data/repository/impl/settings_repository_local.dart';
-import '../../settings/data/repository/settings_repository.dart';
 import '../../settings/data/service/mi_band_bluetooth_service.dart';
 import '../data/repository/impl/past_meditation_repository_local.dart';
 
@@ -20,14 +17,10 @@ import '../data/repository/impl/past_meditation_repository_local.dart';
 class HomePageViewModel extends BaseViewModel {
   List<MeditationModel>? _meditationData;
 
-  final SettingsRepository _settingsRepository =
-      getIt<SettingsRepositoryLocal>();
   final BluetoothConnectionRepository _bluetoothRepository =
       getIt<MiBandBluetoothService>();
   final MeditationRepository _meditationRepository =
       getIt<MeditationRepositoryLocal>();
-
-  SettingsModel? _settingsModel;
 
   bool get deviceIsConfigured => _isConfigured;
 
@@ -41,6 +34,7 @@ class HomePageViewModel extends BaseViewModel {
   bool _skippedSetup = false;
 
   String _appbarText = "";
+  final String setupWatchText = "Watch Setup";
 
   String get appbarText => _appbarText;
 
@@ -51,10 +45,9 @@ class HomePageViewModel extends BaseViewModel {
   void init() async {
     _isConfigured = _bluetoothRepository.isConfigured();
     _systemDevices = await _bluetoothRepository.getSystemDevices();
-    _settingsModel = await _settingsRepository.getSettings();
     _meditationData = await _meditationRepository.getAllMeditation();
-    if (_isConfigured) {
-      _connectToDeviceAndListenForStatus();
+    if(_isConfigured){
+      _listenForWatchStatus();
     }
     notifyListeners();
   }
@@ -78,11 +71,13 @@ class HomePageViewModel extends BaseViewModel {
   void navigateToSettings(var context) {
     Navigator.of(context).push(
       MaterialPageRoute(builder: (context) => SettingsPageView()),
-    );
+    ).whenComplete(() {
+      _isConfigured = _bluetoothRepository.isConfigured();
+      notifyListeners();
+    });
   }
 
   void skipSetup() {
-    debugPrint("skipping setup");
     _skippedSetup = true;
     notifyListeners();
   }
@@ -90,15 +85,8 @@ class HomePageViewModel extends BaseViewModel {
   void selectBluetoothDevice(BluetoothDeviceModel bluetoothDevice) async {
     await _bluetoothRepository.setDevice(bluetoothDevice);
     _isConfigured = true;
-    _connectToDeviceAndListenForStatus();
+    _listenForWatchStatus();
     notifyListeners();
-  }
-
-  void _connectToDeviceAndListenForStatus() async {
-    if (_isConfigured) {
-      await _bluetoothRepository.connectToDevice();
-      _setWatchIconColorByStatus();
-    }
   }
 
   String _getGreetingForCurrentTime() {
@@ -114,15 +102,16 @@ class HomePageViewModel extends BaseViewModel {
     }
   }
 
-  void _setWatchIconColorByStatus() async {
+  void _listenForWatchStatus() async {
     Stream<MiBandConnectionState>? statusStream =
         await _bluetoothRepository.getConnectionState();
     if (statusStream != null) {
-      statusStream.listen((status) {
+      statusStream.listen((status) async {
         if (status == MiBandConnectionState.connected) {
           _watchIconColor = Colors.green;
         } else if (status == MiBandConnectionState.disconnected) {
           _watchIconColor = Colors.orange;
+          await _bluetoothRepository.connectToDevice();
         }
         notifyListeners();
       });

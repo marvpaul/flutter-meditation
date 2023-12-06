@@ -36,8 +36,8 @@ class SessionPageViewModel extends BaseViewModel {
   double heartRate = 0;
   List<double> heartRates = <double>[]; 
 
-  bool get deviceIsConfigured => _isConfigured;
-  late bool _isConfigured;
+  bool get deviceIsConnected => _isConnected;
+  late bool _isConnected;
 
   SessionPageViewModel() {
     _initSession();
@@ -45,9 +45,8 @@ class SessionPageViewModel extends BaseViewModel {
 
   @override
   Future<void> init() async {
-    _isConfigured = _bluetoothRepository.isConfigured();
-    if(_isConfigured){
-      await _bluetoothRepository.connectToDevice();
+    _isConnected = _bluetoothRepository.isAvailableAndConnected();
+    if(_isConnected){
       getHeartRateData();
     }
     notifyListeners();
@@ -132,7 +131,6 @@ class SessionPageViewModel extends BaseViewModel {
   }
 
   void getHeartRateData() async{
-    // _bluetoothRepository.isSupportingHeartRateTracking();
     Stream<int> heartRateStream = await _bluetoothRepository.getHeartRate();
     heartRateStream.listen((measurement) {
       heartRate = measurement +.0;

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_meditation/home/view/screens/setup_bluetooh_device_view.dart';
+import 'package:flutter_meditation/home/view/screens/setup_bluetooth_device_view.dart';
 import 'package:flutter_meditation/widgets/circle_widget.dart';
 import 'package:flutter_meditation/widgets/gradient_background.dart';
 import '../../../base/base_view.dart';
@@ -20,13 +20,15 @@ class HomePageView extends BaseView<HomePageViewModel> {
             titleTextStyle: Theme.of(context).textTheme.headlineLarge,
             backgroundColor: Colors.transparent,
             elevation: 0,
-            title: Text("Setup Mi Band"),
+            title: Text(viewModel.setupWatchText),
           ),
-          SetupBluetoothDeviceView(onTap: viewModel.selectBluetoothDevice, onSkip: viewModel.skipSetup, devices: viewModel.systemDevices),
+          SetupBluetoothDeviceView(
+              onTap: viewModel.selectBluetoothDevice,
+              onSkip: viewModel.skipSetup,
+              devices: viewModel.systemDevices),
         ]),
       ));
     }
-    debugPrint("is configured: ${viewModel.deviceIsConfigured}");
     return Scaffold(
       body: GradientBackground(
         child: Column(
@@ -39,13 +41,13 @@ class HomePageView extends BaseView<HomePageViewModel> {
               elevation: 0,
               title: Text(viewModel.appbarText),
               actions: [
-                if(!viewModel.deviceIsConfigured)
-                  Icon(
+                if (!viewModel.deviceIsConfigured)
+                  const Icon(
                     Icons.watch_off,
                     color: Colors.red,
                     size: 30.0,
                   ),
-                if(viewModel.deviceIsConfigured)
+                if (viewModel.deviceIsConfigured)
                   Icon(
                     Icons.watch,
                     color: viewModel.watchIconColor,
@@ -59,8 +61,6 @@ class HomePageView extends BaseView<HomePageViewModel> {
                 ),
               ],
             ),
-            // if(!viewModel.deviceIsConfigured)
-
             Expanded(
               child: Center(
                 child: Column(

@@ -22,6 +22,8 @@ abstract class BluetoothConnectionRepository{
 
   bool isConfigured();
 
+  bool isAvailableAndConnected();
+
   Future<void>  setDevice(BluetoothDeviceModel bluetoothDevice);
   Future<void> unpairDevice();
 

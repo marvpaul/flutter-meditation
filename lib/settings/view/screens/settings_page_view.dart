@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_meditation/settings/data/repository/bluetooth_connection_repository.dart';
 import '../../../base/base_view.dart';
 import '../../view_model/settings_page_view_model.dart';
 
@@ -12,6 +11,7 @@ class SettingsPageView extends BaseView<SettingsPageViewModel> {
     if(viewModel.settings == null){
       return const Scaffold();
     }
+    debugPrint("current state: ${viewModel.connectionState.name}");
     return Scaffold(
       appBar: AppBar(
         centerTitle: false,
@@ -90,44 +90,24 @@ class SettingsPageView extends BaseView<SettingsPageViewModel> {
               ),
             ],
           ),
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Text(
-              'Bluetooth connection',
-              style: TextStyle(
-                fontSize: 14.0,
-                color: Theme.of(context).colorScheme.surfaceTint,
+          if(viewModel.deviceIsConfigured) ...[
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Text(viewModel.bluetoothSettingsHeading,
+                style: TextStyle(
+                  fontSize: 14.0,
+                  color: Theme.of(context).colorScheme.surfaceTint,
+                ),
               ),
             ),
-          ),
-          // ListTile(
-          //   enableFeedback: false,
-          //   title: Text(viewModel.bluetoothName),
-          //   trailing: DropdownButton<BluetoothDeviceModel>(
-          //     hint: Text("Select a Bluetooth device"),
-          //     onChanged: (BluetoothDeviceModel? bluetoothDevice) {
-          //       viewModel.chooseBluetoothDevice(bluetoothDevice);
-          //     },
-          //     // items: [],
-          //     items: viewModel.systemDevices
-          //         ?.map((BluetoothDeviceModel bluetoothDevice) {
-          //       return DropdownMenuItem<BluetoothDeviceModel>(
-          //         value: bluetoothDevice,
-          //         child: Text(
-          //           bluetoothDevice.advName,
-          //         ),
-          //       );
-          //     }).toList(),
-          //   ),
-          // ),
-          if(viewModel.connectionState != MiBandConnectionState.unconfigured) ...[
             ListTile(
               enableFeedback: false,
               title: Text(viewModel.configuredDevice!.advName),
-              trailing: Text(viewModel.connectionState.name),
+              trailing: TextButton(onPressed: viewModel.unpairDevice,
+                child: Text(viewModel.unpairText),
+              ),
             ),
           ]
-
         ],
       ),
     );

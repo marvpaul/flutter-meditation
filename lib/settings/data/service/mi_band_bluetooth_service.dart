@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:flutter_meditation/common/exception/bluetooth_device_not_configured_exception.dart';
 import 'package:flutter_meditation/settings/data/model/settings_model.dart';
@@ -61,8 +60,7 @@ class MiBandBluetoothService implements BluetoothConnectionRepository {
     return _bluetoothDevice!.connect();
   }
 
-  @override
-  Future<void> disconnectFromDevice() async {
+  Future<void> _disconnectFromDevice() async {
     _checkDeviceIsConfigured();
     return _bluetoothDevice!.disconnect();
   }
@@ -150,11 +148,7 @@ class MiBandBluetoothService implements BluetoothConnectionRepository {
   Future<Stream<int>> getHeartRate() async {
     await _searchForCharacteristics();
     await _triggerHeartRateMeasurement();
-    try {
-      await _currentHeartRateCharacteristic?.setNotifyValue(true);
-    } on FlutterBluePlusException {
-      debugPrint("permission denied");
-    }
+    await _currentHeartRateCharacteristic?.setNotifyValue(true);
     return _currentHeartRateCharacteristic!.onValueReceived
         .map((measurement) => getHR(measurement));
   }
@@ -176,8 +170,7 @@ class MiBandBluetoothService implements BluetoothConnectionRepository {
     await _triggerMeasurementCharacteristic
         ?.write(startContinuousMeasurementPayload);
 
-    heartRatePingTimer = Timer.periodic(Duration(seconds: 12), (timer) {
-      debugPrint('Send a ping to maintain continuous heart rate monitoring.');
+    heartRatePingTimer = Timer.periodic(const Duration(seconds: 12), (timer) {
       _triggerMeasurementCharacteristic
           ?.write(continuousMeasurementPingPayload);
     });
@@ -186,10 +179,9 @@ class MiBandBluetoothService implements BluetoothConnectionRepository {
   @override
   Future<void> unpairDevice() async {
     _checkDeviceIsConfigured();
-    SettingsModel currentSettings = await _settingsRepository.getSettings();
-    currentSettings.pairedDevice = null;
-    _settingsRepository.saveSettings(currentSettings);
-    disconnectFromDevice();
+    await _disconnectFromDevice();
+    _settingsModel.pairedDevice = null;
+    _settingsRepository.saveSettings(_settingsModel);
   }
 
   @override
@@ -201,9 +193,7 @@ class MiBandBluetoothService implements BluetoothConnectionRepository {
   }
 
   static int getHR(List<int> values) {
-    debugPrint("get HR callled");
     if (values.length > 1) {
-      debugPrint("received values: ${values}");
       var binaryFlags = values[0].toRadixString(2);
       var flagUINT = binaryFlags[binaryFlags.length - 1];
       if (flagUINT == '0') {
@@ -227,5 +217,13 @@ class MiBandBluetoothService implements BluetoothConnectionRepository {
     MiBandBluetoothService bluetoothService = MiBandBluetoothService(settings);
     await bluetoothService._init();
     return bluetoothService;
+  }
+
+  @override
+  bool isAvailableAndConnected() {
+    if(isConfigured() && _bluetoothDevice != null){
+      return _bluetoothDevice!.isConnected;
+    }
+    return false;
   }
 }
