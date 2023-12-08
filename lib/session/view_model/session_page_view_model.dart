@@ -2,13 +2,15 @@ import 'dart:async';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_meditation/base/base_view_model.dart';
-import 'package:flutter_meditation/common/BreathingState.dart';
 import 'package:flutter_meditation/home/data/model/meditation_model.dart';
 import 'package:flutter_meditation/home/data/repository/impl/all_meditations_repository_local.dart';
 import 'package:flutter_meditation/home/data/repository/impl/meditation_repository_local.dart';
 import 'package:flutter_meditation/home/data/repository/all_meditations_repository.dart';
 import 'package:flutter_meditation/home/data/repository/meditation_repository.dart';
 import 'package:flutter_meditation/home/view/screens/home_page_view.dart';
+import 'package:flutter_meditation/session/data/model/breathing_pattern_model.dart';
+import 'package:flutter_meditation/session/data/repository/breathing_pattern_repository.dart';
+import 'package:flutter_meditation/session/data/repository/impl/breathing_pattern_repository_local.dart';
 import 'package:flutter_meditation/settings/data/model/settings_model.dart';
 import 'package:flutter_meditation/settings/data/repository/impl/settings_repository_local.dart';
 import 'package:flutter_meditation/settings/data/repository/settings_repository.dart';
@@ -21,9 +23,12 @@ import 'package:flutter_meditation/session/data/repository/binaural_beats_reposi
 @injectable
 class SessionPageViewModel extends BaseViewModel {
   MeditationModel? meditationModel;
+  BreathingPatternModel? breathingPattern;
   SettingsModel? settingsModel;
   final MeditationRepository _meditationRepository =
       getIt<MeditationRepositoryLocal>();
+  final BreathingPatternRepository _breathingPatternRepository =
+      getIt<BreathingPatternRepositoryLocal>();
   final AllMeditationsRepository _allMeditationsRepository =
       getIt<AllMeditationsRepositoryLocal>();
   final SettingsRepository _settingsRepository =
@@ -35,15 +40,12 @@ class SessionPageViewModel extends BaseViewModel {
   final BinauralBeatsRepository _binauralBeatsRepository =
       getIt<BinauralBeatsRepositoryLocal>();
 
-  List<BreathingState> breathingTechniques = [BreathingState.INHALE, BreathingState.HOLD, BreathingState.EXHALE];
-  List<double> breathingDurations = [4, 7, 8];
   int stateCounter = 0;
   bool running = false;
   bool finished = false;
-  BreathingState state = BreathingState.INHALE;
+  BreathingStepType state = BreathingStepType.INHALE;
   double timeLeft = 0;
   double totalTimePerState = 0;
-  String activeMeditationName = "4-7-8";
   double progress = 0.0;
   double stateProgress = 0.0;
   late Timer timer, heartRateTimer;
@@ -77,11 +79,14 @@ class SessionPageViewModel extends BaseViewModel {
   void initWithContext(BuildContext context) async {
     meditationModel = await _meditationRepository.createNewMeditation();
     settingsModel = await _settingsRepository.getSettings();
+    breathingPattern = await _breathingPatternRepository
+        .getBreathingPatternByName(settingsModel!.breathingPattern);
+
+    state = breathingPattern!.steps[stateCounter].type;
+    timeLeft = breathingPattern!.steps[stateCounter].duration;
+    totalTimePerState = breathingPattern!.steps[stateCounter].duration;
     _initSession();
     running = true;
-    state = breathingTechniques[stateCounter];
-    timeLeft = breathingDurations[stateCounter];
-    totalTimePerState = breathingDurations[stateCounter];
 
     totalDuration = Duration(seconds: meditationModel?.duration ?? 0);
     const updateInterval =
@@ -90,20 +95,26 @@ class SessionPageViewModel extends BaseViewModel {
 
     timer = Timer.periodic(updateInterval, (timer) {
       progress = elapsedSeconds / totalDuration.inSeconds;
-      if (state == BreathingState.HOLD) {
-        stateProgress = 1;
-        kaleidoscopeMultiplier = 0;
-      } else if (state == BreathingState.EXHALE) {
+      if (state == BreathingStepType.HOLD) {
+        if (stateCounter == 1) {
+          // Hold after Inhale
+          stateProgress = 1;
+        } else {
+          // Hold after exhale
+          stateProgress = 0;
+        }
+          kaleidoscopeMultiplier = 0;
+      } else if (state == BreathingStepType.EXHALE) {
         stateProgress = timeLeft / totalTimePerState;
         kaleidoscopeMultiplier = -1;
-      } else if (state == BreathingState.INHALE) {
+      } else if (state == BreathingStepType.INHALE) {
         stateProgress = 1 - (timeLeft / totalTimePerState);
         kaleidoscopeMultiplier = 1;
       }
 
       elapsedSeconds += 33 / 1000;
       timeLeft -= 33 / 1000;
-      if (timeLeft < 0 && activeMeditationName != "Meditation timer") {
+      if (timeLeft < 0) {
         nextState();
       }
 
@@ -129,12 +140,13 @@ class SessionPageViewModel extends BaseViewModel {
 
   void nextState() {
     stateCounter++;
-    if (breathingTechniques.length <= stateCounter) {
+    if (breathingPattern!.steps.length <= stateCounter) {
       stateCounter = 0;
     }
-    state = breathingTechniques[stateCounter];
-    timeLeft = breathingDurations[stateCounter];
-    totalTimePerState = breathingDurations[stateCounter];
+
+    state = breathingPattern!.steps[stateCounter].type;
+    timeLeft = breathingPattern!.steps[stateCounter].duration;
+    totalTimePerState = breathingPattern!.steps[stateCounter].duration;
   }
 
   void _initSession() {
@@ -148,16 +160,6 @@ class SessionPageViewModel extends BaseViewModel {
 
     // start playing binaural beats
     playBinauralBeats(600, 200);
-  }
-
-  void _nextState() {
-    stateCounter++;
-    if (breathingTechniques.length <= stateCounter) {
-      stateCounter = 0;
-    }
-    state = breathingTechniques[stateCounter];
-    timeLeft = breathingDurations[stateCounter];
-    totalTimePerState = breathingDurations[stateCounter];
   }
 
   Future<bool> playBinauralBeats(
