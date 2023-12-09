@@ -133,6 +133,7 @@ class SettingsPageView extends BaseView<SettingsPageViewModel> {
             ListTile(
               enableFeedback: false,
               title: Text(viewModel.configuredDevice!.advName),
+              subtitle: Text(viewModel.configuredDevice!.macAddress),
               trailing: TextButton(onPressed: viewModel.unpairDevice,
                 child: Text(viewModel.unpairText),
               ),

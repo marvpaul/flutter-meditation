@@ -63,7 +63,7 @@ class SettingsPageViewModel extends BaseViewModel {
     notifyListeners();
   }
 
-  toggleHapticFeedback(bool isEnabled) {
+  void toggleHapticFeedback(bool isEnabled) {
     if (_settingsModel != null) {
       _settingsModel!.isHapticFeedbackEnabled = isEnabled;
       _saveSettingsAndNotify();
@@ -77,7 +77,7 @@ class SettingsPageViewModel extends BaseViewModel {
     }
   }
 
-  toggleKaleidoscope(bool isEnabled) {
+  void toggleKaleidoscope(bool isEnabled) {
     if (_settingsModel != null) {
       _settingsModel!.kaleidoscope = isEnabled;
       _saveSettingsAndNotify();
@@ -88,9 +88,19 @@ class SettingsPageViewModel extends BaseViewModel {
     if (_settingsModel != null) {
       if (name == _soundName) {
         _settingsModel!.sound = value;
-        notifyListeners();
-        _settingsRepository.saveSettings(_settingsModel!);
+      } else if (name == 'Breathing pattern') {
+        if (value == '4-7-8') {
+          _settingsModel!.breathingPattern =
+              BreathingPatternType.fourSevenEight;
+        } else if (value == '1:2') {
+          _settingsModel!.breathingPattern = BreathingPatternType.oneTwo;
+        } else if (value == 'Coherent') {
+          _settingsModel!.breathingPattern = BreathingPatternType.coherent;
+        } else if (value == 'Box') {
+          _settingsModel!.breathingPattern = BreathingPatternType.box;
+        }
       }
+      _saveSettingsAndNotify();
     }
   }
 
@@ -106,20 +116,6 @@ class SettingsPageViewModel extends BaseViewModel {
     _bluetoothRepository.unpairDevice();
     _isConfigured = false;
     notifyListeners();
-      } else if (name == 'Breathing pattern') {
-        if (value == '4-7-8') {
-          _settingsModel!.breathingPattern =
-              BreathingPatternType.fourSevenEight;
-        } else if (value == '1:2') {
-          _settingsModel!.breathingPattern = BreathingPatternType.oneTwo;
-        } else if (value == 'Coherent') {
-          _settingsModel!.breathingPattern = BreathingPatternType.coherent;
-        } else if (value == 'Box') {
-          _settingsModel!.breathingPattern = BreathingPatternType.box;
-        }
-      }
-      _saveSettingsAndNotify();
-    }
   }
 
   void _saveSettingsAndNotify() {

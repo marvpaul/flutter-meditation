@@ -44,7 +44,7 @@ class MeditationRepositoryLocal implements MeditationRepository {
     SettingsRepository settingsRepository = getIt<SettingsRepositoryLocal>();
     SettingsModel? settings = await settingsRepository.getSettings();
     MeditationModel meditationModel = MeditationModel(
-        duration: 20,
+        duration: 120,
         isHapticFeedbackEnabled: settings?.isHapticFeedbackEnabled ?? false,
         shouldShowHeartRate: settings?.shouldShowHeartRate ?? false,
         sound: settings?.sound ?? 'Option 1',

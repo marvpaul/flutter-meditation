@@ -19,10 +19,9 @@ import 'package:injectable/injectable.dart';
 import '../../di/Setup.dart';
 import 'package:flutter_meditation/session/data/repository/impl/binaural_beats_repository_local.dart';
 import 'package:flutter_meditation/session/data/repository/binaural_beats_repository.dart';
+
 import '../../settings/data/repository/bluetooth_connection_repository.dart';
 import '../../settings/data/service/mi_band_bluetooth_service.dart';
-import '../data/repository/impl/session_repository_local.dart';
-import '../data/repository/session_repository.dart';
 
 @injectable
 class SessionPageViewModel extends BaseViewModel {
@@ -30,25 +29,22 @@ class SessionPageViewModel extends BaseViewModel {
   BreathingPatternModel? breathingPattern;
   SettingsModel? settingsModel;
   final MeditationRepository _meditationRepository =
-      getIt<MeditationRepositoryLocal>();
+  getIt<MeditationRepositoryLocal>();
   final BreathingPatternRepository _breathingPatternRepository =
-      getIt<BreathingPatternRepositoryLocal>();
+  getIt<BreathingPatternRepositoryLocal>();
   final AllMeditationsRepository _allMeditationsRepository =
-      getIt<AllMeditationsRepositoryLocal>();
+  getIt<AllMeditationsRepositoryLocal>();
   final SettingsRepository _settingsRepository =
-      getIt<SettingsRepositoryLocal>();
+  getIt<SettingsRepositoryLocal>();
+  final BluetoothConnectionRepository _bluetoothRepository =
+  getIt<MiBandBluetoothService>();
 
   bool showUI = true;
   double kaleidoscopeMultiplier = 0;
 
   final BinauralBeatsRepository _binauralBeatsRepository =
-      getIt<BinauralBeatsRepositoryLocal>();
+  getIt<BinauralBeatsRepositoryLocal>();
 
-  final SessionRepository _sessionRepository = getIt<SessionRepositoryLocal>();
-  final BluetoothConnectionRepository _bluetoothRepository =
-  getIt<MiBandBluetoothService>();
-  List<String> breathingTechniques = ["Inhale", "Hold", "Exhale"];
-  List<double> breathingDurations = [4, 7, 8];
   int stateCounter = 0;
   bool running = false;
   bool finished = false;
@@ -61,22 +57,21 @@ class SessionPageViewModel extends BaseViewModel {
   Duration totalDuration = const Duration();
   double elapsedSeconds = 0;
   final GlobalKey<HeartRateGraphState> heartRateGraphKey =
-      GlobalKey<HeartRateGraphState>();
+  GlobalKey<HeartRateGraphState>();
 
   var context;
   double heartRate = 0;
   List<double> heartRates = <double>[];
 
-  bool get deviceIsConnected => _isConnected;
-  late bool _isConnected;
-
-  SessionPageViewModel() {
   int nrDatapoints = 6;
   List<FlSpot> dataPoints = [];
 
+  bool get deviceIsConnected => _isConnected;
+  late bool _isConnected;
+
   void updateHeartRate() {
     List<double> lastHeartRates =
-        meditationModel!.heartRates.values.toList(growable: false);
+    meditationModel!.heartRates.values.toList(growable: false);
     int startIndex = (lastHeartRates.length - 1 - nrDatapoints) > 0
         ? (lastHeartRates.length - 1 - nrDatapoints)
         : 0;
@@ -90,6 +85,11 @@ class SessionPageViewModel extends BaseViewModel {
   }
 
   void initWithContext(BuildContext context) async {
+    _isConnected = _bluetoothRepository.isAvailableAndConnected();
+    if(_isConnected){
+      getHeartRateData();
+    }
+
     meditationModel = await _meditationRepository.createNewMeditation();
     settingsModel = await _settingsRepository.getSettings();
     breathingPattern = await _breathingPatternRepository
@@ -99,29 +99,11 @@ class SessionPageViewModel extends BaseViewModel {
     timeLeft = breathingPattern!.steps[stateCounter].duration;
     totalTimePerState = breathingPattern!.steps[stateCounter].duration;
     _initSession();
-  }
-
-  @override
-  Future<void> init() async {
-    _isConnected = _bluetoothRepository.isAvailableAndConnected();
-    if(_isConnected){
-      getHeartRateData();
-    }
-    notifyListeners();
-  }
-
-  void startTimer() {
-    running = true; 
-    state = breathingTechniques[stateCounter];
-    timeLeft = breathingDurations[stateCounter];
-    totalTimePerState = breathingDurations[stateCounter];
     running = true;
 
-    double timeInMinutes = 0.1;
-    totalDuration = Duration(seconds: (timeInMinutes * 1200).toInt());
     totalDuration = Duration(seconds: meditationModel?.duration ?? 0);
     const updateInterval =
-        Duration(milliseconds: 33); // Update the progress 30 times per second
+    Duration(milliseconds: 33); // Update the progress 30 times per second
     elapsedSeconds = 0;
 
     timer = Timer.periodic(updateInterval, (timer) {
@@ -134,7 +116,7 @@ class SessionPageViewModel extends BaseViewModel {
           // Hold after exhale
           stateProgress = 0;
         }
-          kaleidoscopeMultiplier = 0;
+        kaleidoscopeMultiplier = 0;
       } else if (state == BreathingStepType.EXHALE) {
         stateProgress = timeLeft / totalTimePerState;
         kaleidoscopeMultiplier = -1;
@@ -159,7 +141,7 @@ class SessionPageViewModel extends BaseViewModel {
             MaterialPageRoute(
               builder: (context) => HomePageView(),
             ),
-            (Route<dynamic> route) => false,
+                (Route<dynamic> route) => false,
           );
         } else {
           print("Warning: meditationModel is null.");
@@ -184,9 +166,9 @@ class SessionPageViewModel extends BaseViewModel {
     // Start the timer to update the last data point every second
     heartRateTimer = Timer.periodic(Duration(seconds: 1), (timer) {
       // Simulate heart rate values
-      heartRate = 60 + DateTime.now().microsecondsSinceEpoch % 60;
-      meditationModel?.heartRates[(elapsedSeconds * 1000).toInt()] = heartRate;
-      heartRateGraphKey.currentState?.refreshHeartRate();
+      // heartRate = 60 + DateTime.now().microsecondsSinceEpoch % 60;
+      // meditationModel?.heartRates[(elapsedSeconds * 1000).toInt()] = heartRate;
+      // heartRateGraphKey.currentState?.refreshHeartRate();
     });
 
     // start playing binaural beats
@@ -199,11 +181,18 @@ class SessionPageViewModel extends BaseViewModel {
     return await _binauralBeatsRepository.playBinauralBeats(500, 600, 0, 0, 10);
   }
 
+  void getHeartRateData() async{
+    Stream<int> heartRateStream = await _bluetoothRepository.getHeartRate();
+    heartRateStream.listen((measurement) {
+      heartRate = measurement +.0;
+      meditationModel?.heartRates[(elapsedSeconds * 1000).toInt()] = heartRate;
+      heartRateGraphKey.currentState?.refreshHeartRate();
+    });
+  }
+
   @override
   void dispose() {
     _bluetoothRepository.stopHeartRateMeasurement();
-    heartRateTimer.cancel();
-    timer.cancel();
     if (heartRateTimer.isActive) {
       heartRateTimer.cancel();
     }
@@ -211,14 +200,5 @@ class SessionPageViewModel extends BaseViewModel {
       timer.cancel();
     }
     super.dispose();
-  }
-
-  void getHeartRateData() async{
-    Stream<int> heartRateStream = await _bluetoothRepository.getHeartRate();
-    heartRateStream.listen((measurement) {
-      heartRate = measurement +.0;
-      heartRates.add(heartRate);
-      heartRateGraphKey.currentState?.updateLastDataPoint(FlSpot(6, heartRate));
-    });
   }
 }

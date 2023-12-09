@@ -12,11 +12,6 @@ class SetupBluetoothDeviceView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Replace this with your logic to get the list of Bluetooth devices
-    // devices = [BluetoothDeviceModel(macAddress: "mac", advName: "deviceA"),
-    //   BluetoothDeviceModel(macAddress: "mac", advName: "deviceB"),
-    //   BluetoothDeviceModel(macAddress: "mac", advName: "deviceC"),
-    //   BluetoothDeviceModel(macAddress: "mac", advName: "deviceD")];
     return Expanded(
         child: Center(
       child: Column(
@@ -35,6 +30,7 @@ class SetupBluetoothDeviceView extends StatelessWidget {
               itemBuilder: (context, index) {
                 return ListTile(
                   title: Text(devices![index].advName),
+                  subtitle: Text(devices![index].macAddress),
                   onTap: () {
                     debugPrint("clicked on ${devices![index].advName}");
                     onTap(devices![index]);
