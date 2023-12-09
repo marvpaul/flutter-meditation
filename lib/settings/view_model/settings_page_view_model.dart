@@ -1,5 +1,6 @@
 import 'package:flutter_meditation/base/base_view_model.dart';
 import 'package:flutter_meditation/settings/data/model/bluetooth_device_model.dart';
+import 'package:flutter_meditation/session/data/model/breathing_pattern_model.dart';
 import 'package:flutter_meditation/settings/data/model/settings_model.dart';
 import 'package:flutter_meditation/settings/data/service/mi_band_bluetooth_service.dart';
 import 'package:injectable/injectable.dart';
@@ -34,13 +35,17 @@ class SettingsPageViewModel extends BaseViewModel {
     'Option 3',
     'Option 4',
   ];
+  List<String> breathingPatternOptions = <String>[
+    BreathingPatternType.fourSevenEight.value,
+    BreathingPatternType.box.value,
+    BreathingPatternType.coherent.value,
+    BreathingPatternType.oneTwo.value,
+  ];
 
   String get hapticFeedbackName => _hapticFeedbackName;
   final String _hapticFeedbackName = "Haptic Feedback";
-
   String get heartRateName => _heartRateName;
   final String _heartRateName = "Heart Rate";
-
   String get soundName => _soundName;
   final String _soundName = "Sound";
   final String bluetoothName = "Bluetooth";
@@ -50,6 +55,7 @@ class SettingsPageViewModel extends BaseViewModel {
   @override
   Future<void> init() async {
     _settingsModel = await _settingsRepository.getSettings();
+    notifyListeners();
     _isConfigured = _bluetoothRepository.isConfigured();
     if(_isConfigured){
       _configuredDevice = _bluetoothRepository.getConfiguredDevice();
@@ -57,25 +63,30 @@ class SettingsPageViewModel extends BaseViewModel {
     notifyListeners();
   }
 
-  void toggleHapticFeedback(bool isEnabled) {
+  toggleHapticFeedback(bool isEnabled) {
     if (_settingsModel != null) {
       _settingsModel!.isHapticFeedbackEnabled = isEnabled;
-      _settingsRepository.saveSettings(_settingsModel!);
-      notifyListeners();
+      _saveSettingsAndNotify();
     }
   }
 
   void toggleShouldShowHeartRate(bool isEnabled) {
     if (_settingsModel != null) {
       _settingsModel!.shouldShowHeartRate = isEnabled;
-      notifyListeners();
-      _settingsRepository.saveSettings(_settingsModel!);
+      _saveSettingsAndNotify();
+    }
+  }
+
+  toggleKaleidoscope(bool isEnabled) {
+    if (_settingsModel != null) {
+      _settingsModel!.kaleidoscope = isEnabled;
+      _saveSettingsAndNotify();
     }
   }
 
   void changeList(String name, String value) {
     if (_settingsModel != null) {
-      if (name == soundName) {
+      if (name == _soundName) {
         _settingsModel!.sound = value;
         notifyListeners();
         _settingsRepository.saveSettings(_settingsModel!);
@@ -95,5 +106,26 @@ class SettingsPageViewModel extends BaseViewModel {
     _bluetoothRepository.unpairDevice();
     _isConfigured = false;
     notifyListeners();
+      } else if (name == 'Breathing pattern') {
+        if (value == '4-7-8') {
+          _settingsModel!.breathingPattern =
+              BreathingPatternType.fourSevenEight;
+        } else if (value == '1:2') {
+          _settingsModel!.breathingPattern = BreathingPatternType.oneTwo;
+        } else if (value == 'Coherent') {
+          _settingsModel!.breathingPattern = BreathingPatternType.coherent;
+        } else if (value == 'Box') {
+          _settingsModel!.breathingPattern = BreathingPatternType.box;
+        }
+      }
+      _saveSettingsAndNotify();
+    }
+  }
+
+  void _saveSettingsAndNotify() {
+    if (_settingsModel != null) {
+      _settingsRepository.saveSettings(_settingsModel!);
+      notifyListeners();
+    }
   }
 }

@@ -11,6 +11,8 @@ final getIt = GetIt.instance;
   asExtension: false, // default
 )
 
+
+
 @injectableInit
 Future<void> configureInjection(String env) async {
   await $initGetIt(getIt, environment: env);

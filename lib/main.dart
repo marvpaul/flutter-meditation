@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_meditation/home/view/screens/home_page_view.dart';
+import 'package:flutter_meditation/past_sessions/view_model/past_sessions_page_view_model.dart';
+import 'package:flutter_meditation/session/view_model/session_page_view_model.dart';
 import 'package:flutter_meditation/settings/view_model/settings_page_view_model.dart';
 import 'package:injectable/injectable.dart';
 import 'package:provider/provider.dart';
@@ -26,6 +28,8 @@ class MyApp extends StatelessWidget {
       providers: [
         ChangeNotifierProvider.value(value: HomePageViewModel()),
         ChangeNotifierProvider.value(value: SettingsPageViewModel()),
+        ChangeNotifierProvider.value(value: SessionPageViewModel()),
+        ChangeNotifierProvider.value(value: PastSessionsPageViewModel()),
       ],
       child: MaterialApp(
         theme: ThemeData(

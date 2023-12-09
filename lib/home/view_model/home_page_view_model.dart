@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_meditation/home/data/repository/all_meditations_repository.dart';
 import 'package:injectable/injectable.dart';
 
 import '../../../base/base_view_model.dart';
 import '../../../home/data/model/meditation_model.dart';
-import '../../../home/data/repository/past_meditation_repository.dart';
 import '../../../past_sessions/view/screens/past_sessions_page_view.dart';
 import '../../../settings/view/screens/settings_page_view.dart';
 import '../../../session/view/screens/session_page_view.dart';
@@ -12,10 +12,12 @@ import '../../settings/data/model/bluetooth_device_model.dart';
 import '../../settings/data/repository/bluetooth_connection_repository.dart';
 import '../../settings/data/service/mi_band_bluetooth_service.dart';
 import '../data/repository/impl/past_meditation_repository_local.dart';
+import '../data/repository/impl/all_meditations_repository_local.dart';
 
 @injectable
 class HomePageViewModel extends BaseViewModel {
-  List<MeditationModel>? _meditationData;
+  List<MeditationModel>? get meditations => _allMeditationsModel;
+  List<MeditationModel>? _allMeditationsModel;
 
   final BluetoothConnectionRepository _bluetoothRepository =
       getIt<MiBandBluetoothService>();
@@ -32,6 +34,8 @@ class HomePageViewModel extends BaseViewModel {
   late bool _isConfigured;
   List<BluetoothDeviceModel>? _systemDevices;
   bool _skippedSetup = false;
+  // TODO discuss to move this to a separate view model for past meditations
+  final AllMeditationsRepository _meditationRepository = getIt<AllMeditationsRepositoryLocal>();
 
   String _appbarText = "";
   final String setupWatchText = "Watch Setup";
@@ -49,6 +53,7 @@ class HomePageViewModel extends BaseViewModel {
     if(_isConfigured){
       _listenForWatchStatus();
     }
+    _allMeditationsModel = await _meditationRepository.getAllMeditation();
     notifyListeners();
   }
 
@@ -87,6 +92,9 @@ class HomePageViewModel extends BaseViewModel {
     _isConfigured = true;
     _listenForWatchStatus();
     notifyListeners();
+    Navigator.of(context).push(
+      MaterialPageRoute(builder: (context) => SettingsPageView()),
+    );
   }
 
   String _getGreetingForCurrentTime() {

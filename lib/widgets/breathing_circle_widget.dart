@@ -16,8 +16,16 @@ class BreathingCircleWidget extends StatelessWidget {
           shape: BoxShape.circle,
           color: Color.fromRGBO(217, 217, 217, 0.4),
         ),
-        width: 240 + 20 * progress, // Use the animated value for width
-        height: 240 + 20 * progress, // Use the animated value for height
+        width: 140 + 100 * progress, // Use the animated value for width
+        height: 140 + 100 * progress, // Use the animated value for height
+      ),
+      Container(
+        decoration: const BoxDecoration(
+          shape: BoxShape.circle,
+          color: Color.fromRGBO(217, 217, 217, 0.4),
+        ),
+        width: 240 , // Use the animated value for width
+        height: 240, // Use the animated value for height
       ),
       Container(
         decoration: const BoxDecoration(

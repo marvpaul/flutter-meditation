@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_meditation/session/data/model/breathing_pattern_model.dart';
 import '../../../base/base_view.dart';
 import '../../view_model/settings_page_view_model.dart';
 
@@ -45,25 +46,54 @@ class SettingsPageView extends BaseView<SettingsPageViewModel> {
                   },
                 ),
               ),
+              ListTile(
+                enableFeedback: false,
+                title: Text('Kaleidoscope'),
+                trailing: Switch(
+                  value: viewModel.settings?.kaleidoscope ?? false,
+                  onChanged: (isEnabled) {
+                    viewModel.toggleKaleidoscope(isEnabled);
+                  },
+                ),
+              ),
+              ListTile(
+                enableFeedback: false,
+                title: Text(viewModel.soundName),
+                trailing: DropdownButton<String>(
+                  value: viewModel.settings?.sound ?? "Option 1",
+                  onChanged: (String? newValue) {
+                    viewModel.changeList(
+                        viewModel.soundName, newValue ?? 'Option 1');
+                  },
+                  items: viewModel.soundOptions
+                      .map<DropdownMenuItem<String>>((String value) {
+                    return DropdownMenuItem<String>(
+                      value: value,
+                      child: Text(value),
+                    );
+                  }).toList(),
+                ),
+              ),
+
+              ListTile(
+                enableFeedback: false,
+                title: const Text('Breathing pattern'),
+                trailing: DropdownButton<String>(
+                  value: viewModel.settings?.breathingPattern.value ?? BreathingPatternType.fourSevenEight.value,
+                  onChanged: (String? newValue) {
+                    viewModel.changeList(
+                        'Breathing pattern', newValue ?? '4-7-8');
+                  },
+                  items: viewModel.breathingPatternOptions
+                      .map<DropdownMenuItem<String>>((String value) {
+                    return DropdownMenuItem<String>(
+                      value: value,
+                      child: Text(value),
+                    );
+                  }).toList(),
+                ),
+              ),
             ],
-          ),
-          ListTile(
-            enableFeedback: false,
-            title: Text(viewModel.soundName),
-            trailing: DropdownButton<String>(
-              value: viewModel.settings?.sound ?? "Option 1",
-              onChanged: (String? newValue) {
-                viewModel.changeList(
-                    viewModel.soundName, newValue ?? 'Option 1');
-              },
-              items: viewModel.soundOptions
-                  .map<DropdownMenuItem<String>>((String value) {
-                return DropdownMenuItem<String>(
-                  value: value,
-                  child: Text(value),
-                );
-              }).toList(),
-            ),
           ),
           Padding(
             padding: const EdgeInsets.all(16.0),
