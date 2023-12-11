@@ -35,6 +35,18 @@ class SettingsPageViewModel extends BaseViewModel {
     'Option 3',
     'Option 4',
   ];
+  List<String> kaleidoscopeImageOptions = <String>[
+    'Arctic',
+    'Aurora',
+    'Circle',
+    'City',
+    'Golden',
+    'Japan',
+    'Metropolis',
+    'Nature',
+    'Plants',
+    'Skyline'
+  ];
   List<String> breathingPatternOptions = <String>[
     BreathingPatternType.fourSevenEight.value,
     BreathingPatternType.box.value,
@@ -48,6 +60,8 @@ class SettingsPageViewModel extends BaseViewModel {
   final String _heartRateName = "Heart Rate";
   String get soundName => _soundName;
   final String _soundName = "Sound";
+  String get kaleidoscopeImageName => _kaleidoscopeImageName;
+  final String _kaleidoscopeImageName = "Kaleidoscope image";
   final String bluetoothName = "Bluetooth";
   final String bluetoothSettingsHeading = "Bluetooth connection";
   final String unpairText = "Unpair";
@@ -99,6 +113,9 @@ class SettingsPageViewModel extends BaseViewModel {
         } else if (value == 'Box') {
           _settingsModel!.breathingPattern = BreathingPatternType.box;
         }
+      } else if (name == kaleidoscopeImageName) {
+        _settingsModel!.kaleidoscopeImage = value;
+        print("Set image to" + name);
       }
       _saveSettingsAndNotify();
     }

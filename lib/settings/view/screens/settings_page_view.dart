@@ -58,6 +58,24 @@ class SettingsPageView extends BaseView<SettingsPageViewModel> {
               ),
               ListTile(
                 enableFeedback: false,
+                title: Text(viewModel.kaleidoscopeImageName),
+                trailing: DropdownButton<String>(
+                  value: viewModel.settings?.kaleidoscopeImage ?? "Arctic",
+                  onChanged: (String? newValue) {
+                    viewModel.changeList(
+                        viewModel.kaleidoscopeImageName, newValue ?? 'Arctic');
+                  },
+                  items: viewModel.kaleidoscopeImageOptions
+                      .map<DropdownMenuItem<String>>((String value) {
+                    return DropdownMenuItem<String>(
+                      value: value,
+                      child: Text(value),
+                    );
+                  }).toList(),
+                ),
+              ),
+              ListTile(
+                enableFeedback: false,
                 title: Text(viewModel.soundName),
                 trailing: DropdownButton<String>(
                   value: viewModel.settings?.sound ?? "Option 1",

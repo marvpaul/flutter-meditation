@@ -1,8 +1,10 @@
 import 'dart:async';
+import 'dart:math';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_meditation/base/base_view_model.dart';
 import 'package:flutter_meditation/home/data/model/meditation_model.dart';
+import 'package:flutter_meditation/home/data/model/session_parameter_model.dart';
 import 'package:flutter_meditation/home/data/repository/impl/all_meditations_repository_local.dart';
 import 'package:flutter_meditation/home/data/repository/impl/meditation_repository_local.dart';
 import 'package:flutter_meditation/home/data/repository/all_meditations_repository.dart';
@@ -69,9 +71,20 @@ class SessionPageViewModel extends BaseViewModel {
   bool get deviceIsConnected => _isConnected;
   late bool _isConnected;
 
+  SessionParameterModel getLatestSessionParamaters() {
+    return _meditationRepository.getLatestSessionParamaters(meditationModel!);
+  }
+
+  int numberOfStateChanges = 0;
+
   void updateHeartRate() {
-    List<double> lastHeartRates =
-    meditationModel!.heartRates.values.toList(growable: false);
+    List<double> lastHeartRates = [];
+    for (int i = 0; i < meditationModel!.sessionParameters.length; i++) {
+      lastHeartRates.addAll(meditationModel!
+          .sessionParameters[i].heartRates.values
+          .toList(growable: false));
+    }
+
     int startIndex = (lastHeartRates.length - 1 - nrDatapoints) > 0
         ? (lastHeartRates.length - 1 - nrDatapoints)
         : 0;
@@ -96,14 +109,16 @@ class SessionPageViewModel extends BaseViewModel {
         .getBreathingPatternByName(settingsModel!.breathingPattern);
 
     state = breathingPattern!.steps[stateCounter].type;
-    timeLeft = breathingPattern!.steps[stateCounter].duration;
-    totalTimePerState = breathingPattern!.steps[stateCounter].duration;
+    timeLeft = breathingPattern!.steps[stateCounter].duration *
+        getLatestSessionParamaters().breathingMultiplier;
+    totalTimePerState = breathingPattern!.steps[stateCounter].duration *
+        getLatestSessionParamaters().breathingMultiplier;
     _initSession();
     running = true;
 
     totalDuration = Duration(seconds: meditationModel?.duration ?? 0);
     const updateInterval =
-    Duration(milliseconds: 33); // Update the progress 30 times per second
+        Duration(milliseconds: 33); // Update the progress 30 times per second
     elapsedSeconds = 0;
 
     timer = Timer.periodic(updateInterval, (timer) {
@@ -129,6 +144,12 @@ class SessionPageViewModel extends BaseViewModel {
       timeLeft -= 33 / 1000;
       if (timeLeft < 0) {
         nextState();
+        numberOfStateChanges++;
+        if (numberOfStateChanges >= 6) {
+          numberOfStateChanges = 0;
+          print("Changing params");
+          changeSessionParams();
+        }
       }
 
       if (elapsedSeconds >= totalDuration.inSeconds && running) {
@@ -151,6 +172,45 @@ class SessionPageViewModel extends BaseViewModel {
     });
   }
 
+  String getRandomVisualization() {
+    List<String> fileNames = [
+      'Arctic',
+      'Aurora',
+      'Circle',
+      'City',
+      'Golden',
+      'Japan',
+      'Metropolis',
+      'Nature',
+      'Plants',
+      'Skyline'
+    ];
+
+    Random random = Random();
+    int randomIndex = random.nextInt(fileNames.length);
+    return fileNames[randomIndex];
+  }
+
+  double getRandomBreathingMultiplier() {
+    Random random = Random();
+    // Generate a random double between 0.5 and 1.5
+    return 0.5 + random.nextDouble();
+  }
+
+  int getRandomBinauralBeats() {
+    Random random = Random();
+    return random.nextInt(31);
+  }
+
+  void changeSessionParams() {
+    meditationModel!.sessionParameters.add(SessionParameterModel(
+        visualization: getRandomVisualization(),
+        binauralFrequency: getRandomBinauralBeats(),
+        breathingMultiplier: getRandomBreathingMultiplier(),
+        breathingPattern: BreathingPatternType.fourSevenEight,
+        heartRates: {}));
+  }
+
   void nextState() {
     stateCounter++;
     if (breathingPattern!.steps.length <= stateCounter) {
@@ -158,17 +218,20 @@ class SessionPageViewModel extends BaseViewModel {
     }
 
     state = breathingPattern!.steps[stateCounter].type;
-    timeLeft = breathingPattern!.steps[stateCounter].duration;
-    totalTimePerState = breathingPattern!.steps[stateCounter].duration;
+    timeLeft = breathingPattern!.steps[stateCounter].duration *
+        getLatestSessionParamaters().breathingMultiplier;
+    totalTimePerState = breathingPattern!.steps[stateCounter].duration *
+        getLatestSessionParamaters().breathingMultiplier;
   }
 
   void _initSession() {
     // Start the timer to update the last data point every second
     heartRateTimer = Timer.periodic(Duration(seconds: 1), (timer) {
       // Simulate heart rate values
-      // heartRate = 60 + DateTime.now().microsecondsSinceEpoch % 60;
-      // meditationModel?.heartRates[(elapsedSeconds * 1000).toInt()] = heartRate;
-      // heartRateGraphKey.currentState?.refreshHeartRate();
+      heartRate = 60 + DateTime.now().microsecondsSinceEpoch % 60;
+      _meditationRepository.addHeartRate(
+          meditationModel!, (elapsedSeconds * 1000).toInt(), heartRate);
+      heartRateGraphKey.currentState?.refreshHeartRate();
     });
 
     // start playing binaural beats
@@ -181,11 +244,12 @@ class SessionPageViewModel extends BaseViewModel {
     return await _binauralBeatsRepository.playBinauralBeats(500, 600, 0, 0, 10);
   }
 
-  void getHeartRateData() async{
+  void getHeartRateData() async {
     Stream<int> heartRateStream = await _bluetoothRepository.getHeartRate();
     heartRateStream.listen((measurement) {
-      heartRate = measurement +.0;
-      meditationModel?.heartRates[(elapsedSeconds * 1000).toInt()] = heartRate;
+      heartRate = measurement + .0;
+      _meditationRepository.addHeartRate(
+          meditationModel!, (elapsedSeconds * 1000).toInt(), heartRate);
       heartRateGraphKey.currentState?.refreshHeartRate();
     });
   }

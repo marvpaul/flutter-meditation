@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_meditation/session/data/dto/all_breathing_patterns_dto.dart';
 import 'package:flutter_meditation/session/data/model/all_breathing_patterns_model.dart';

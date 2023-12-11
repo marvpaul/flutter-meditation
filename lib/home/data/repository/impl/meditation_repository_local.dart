@@ -4,6 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_meditation/di/Setup.dart';
 import 'package:flutter_meditation/home/data/dto/meditation_dto.dart';
 import 'package:flutter_meditation/home/data/model/meditation_model.dart';
+import 'package:flutter_meditation/home/data/model/session_parameter_model.dart';
+import 'package:flutter_meditation/session/data/model/all_breathing_patterns_model.dart';
+import 'package:flutter_meditation/session/data/model/breathing_pattern_model.dart';
+import 'package:flutter_meditation/session/data/repository/breathing_pattern_repository.dart';
+import 'package:flutter_meditation/session/data/repository/impl/breathing_pattern_repository_local.dart';
 import 'package:flutter_meditation/settings/data/model/settings_model.dart';
 import 'package:flutter_meditation/settings/data/repository/impl/settings_repository_local.dart';
 import 'package:flutter_meditation/settings/data/repository/settings_repository.dart';
@@ -31,7 +36,7 @@ class MeditationRepositoryLocal implements MeditationRepository {
         shouldShowHeartRate: false,
         sound: 'Option 1',
         timestamp: DateTime.now().millisecondsSinceEpoch / 1000.0,
-        heartRates: {});
+        sessionParameters: []);
     saveMeditation(meditationModel);
     // return default if no config was found
     return meditationModel;
@@ -42,14 +47,23 @@ class MeditationRepositoryLocal implements MeditationRepository {
     print("Create new meditation, fetch params from settings!");
     // TODO: Fetch duration
     SettingsRepository settingsRepository = getIt<SettingsRepositoryLocal>();
+    BreathingPatternRepository breathingPatternRepository = getIt<BreathingPatternRepositoryLocal>();
     SettingsModel? settings = await settingsRepository.getSettings();
+    BreathingPatternModel pattern = await breathingPatternRepository.getBreathingPatternByName(settings.breathingPattern);
     MeditationModel meditationModel = MeditationModel(
         duration: 120,
         isHapticFeedbackEnabled: settings?.isHapticFeedbackEnabled ?? false,
         shouldShowHeartRate: settings?.shouldShowHeartRate ?? false,
         sound: settings?.sound ?? 'Option 1',
         timestamp: DateTime.now().millisecondsSinceEpoch / 1000.0,
-        heartRates: {});
+        sessionParameters: [
+          SessionParameterModel(
+              visualization: settings.kaleidoscopeImage,
+              binauralFrequency: settings.binauralBeatFrequency,
+              breathingMultiplier: pattern.multiplier,
+              breathingPattern: settings.breathingPattern,
+              heartRates: {})
+        ]);
     saveMeditation(meditationModel);
     // return default if no config was found
     return meditationModel;
@@ -64,7 +78,10 @@ class MeditationRepositoryLocal implements MeditationRepository {
 
   @override
   double getAverageHeartRate(MeditationModel model) {
-    Map<int, double> heartRates = model.heartRates;
+    Map<int, double> heartRates = {};
+    model.sessionParameters.forEach((element) {
+      heartRates.addAll(element.heartRates);
+    });
     if (heartRates.isEmpty) {
       return 0.0; // Return 0 if the map is empty to avoid division by zero
     }
@@ -83,7 +100,10 @@ class MeditationRepositoryLocal implements MeditationRepository {
 
   @override
   double getMinHeartRate(MeditationModel model) {
-    Map<int, double> heartRates = model.heartRates;
+    Map<int, double> heartRates = {};
+    model.sessionParameters.forEach((element) {
+      heartRates.addAll(element.heartRates);
+    });
     if (heartRates.isEmpty) {
       return 0.0; // Return 0 if the map is empty to avoid division by zero
     }
@@ -100,7 +120,10 @@ class MeditationRepositoryLocal implements MeditationRepository {
 
   @override
   double getMaxHeartRate(MeditationModel model) {
-    Map<int, double> heartRates = model.heartRates;
+    Map<int, double> heartRates = {};
+    model.sessionParameters.forEach((element) {
+      heartRates.addAll(element.heartRates);
+    });
     if (heartRates.isEmpty) {
       return 0.0; // Return 0 if the map is empty to avoid division by zero
     }
@@ -113,6 +136,34 @@ class MeditationRepositoryLocal implements MeditationRepository {
       }
     });
     return double.parse(max.toStringAsFixed(1));
+  }
+
+  @override
+  void addHeartRate(MeditationModel model, int timestamp, double heartRate) {
+    if (model.sessionParameters.isEmpty) {
+      model.sessionParameters.add(SessionParameterModel(
+          visualization: "Arctic",
+          binauralFrequency: 30,
+          breathingMultiplier: 1.0,
+          breathingPattern: BreathingPatternType.fourSevenEight,
+          heartRates: {timestamp: heartRate}));
+    } else {
+      model.sessionParameters[model.sessionParameters.length - 1]
+          .heartRates[timestamp] = heartRate;
+    }
+  }
+
+  @override
+  SessionParameterModel getLatestSessionParamaters(MeditationModel model) {
+    if (!model.sessionParameters.isEmpty) {
+      return model.sessionParameters[model.sessionParameters.length - 1];
+    }
+    return SessionParameterModel(
+        visualization: 'Arctic',
+        binauralFrequency: 30,
+        breathingMultiplier: 1.0,
+        breathingPattern: BreathingPatternType.fourSevenEight,
+        heartRates: {});
   }
 
   @override
