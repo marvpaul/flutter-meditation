@@ -12,6 +12,7 @@ class SettingsPageView extends BaseView<SettingsPageViewModel> {
     if(viewModel.settings == null){
       return const Scaffold();
     }
+    debugPrint("current state: ${viewModel.connectionState.name}");
     return Scaffold(
       appBar: AppBar(
         centerTitle: false,
@@ -119,6 +120,25 @@ class SettingsPageView extends BaseView<SettingsPageViewModel> {
               ),
             ],
           ),
+          if(viewModel.deviceIsConfigured) ...[
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Text(viewModel.bluetoothSettingsHeading,
+                style: TextStyle(
+                  fontSize: 14.0,
+                  color: Theme.of(context).colorScheme.surfaceTint,
+                ),
+              ),
+            ),
+            ListTile(
+              enableFeedback: false,
+              title: Text(viewModel.configuredDevice!.advName),
+              subtitle: Text(viewModel.configuredDevice!.macAddress),
+              trailing: TextButton(onPressed: viewModel.unpairDevice,
+                child: Text(viewModel.unpairText),
+              ),
+            ),
+          ]
         ],
       ),
     );
