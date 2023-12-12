@@ -5,7 +5,6 @@ import 'package:flutter_meditation/di/Setup.dart';
 import 'package:flutter_meditation/home/data/dto/meditation_dto.dart';
 import 'package:flutter_meditation/home/data/model/meditation_model.dart';
 import 'package:flutter_meditation/home/data/model/session_parameter_model.dart';
-import 'package:flutter_meditation/session/data/model/all_breathing_patterns_model.dart';
 import 'package:flutter_meditation/session/data/model/breathing_pattern_model.dart';
 import 'package:flutter_meditation/session/data/repository/breathing_pattern_repository.dart';
 import 'package:flutter_meditation/session/data/repository/impl/breathing_pattern_repository_local.dart';
@@ -31,7 +30,7 @@ class MeditationRepositoryLocal implements MeditationRepository {
           .meditation;
     }
     MeditationModel meditationModel = MeditationModel(
-        duration: 20,
+        duration: 120,
         isHapticFeedbackEnabled: false,
         shouldShowHeartRate: false,
         sound: 'Option 1',
@@ -52,9 +51,9 @@ class MeditationRepositoryLocal implements MeditationRepository {
     BreathingPatternModel pattern = await breathingPatternRepository.getBreathingPatternByName(settings.breathingPattern);
     MeditationModel meditationModel = MeditationModel(
         duration: 120,
-        isHapticFeedbackEnabled: settings?.isHapticFeedbackEnabled ?? false,
-        shouldShowHeartRate: settings?.shouldShowHeartRate ?? false,
-        sound: settings?.sound ?? 'Option 1',
+        isHapticFeedbackEnabled: settings.isHapticFeedbackEnabled,
+        shouldShowHeartRate: settings.shouldShowHeartRate,
+        sound: settings.sound,
         timestamp: DateTime.now().millisecondsSinceEpoch / 1000.0,
         sessionParameters: [
           SessionParameterModel(

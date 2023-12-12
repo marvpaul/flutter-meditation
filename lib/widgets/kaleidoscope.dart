@@ -1,8 +1,6 @@
 import 'dart:async';
-import 'dart:math';
 import 'dart:ui';
 import 'dart:ui' as ui;
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_meditation/session/view_model/session_page_view_model.dart';

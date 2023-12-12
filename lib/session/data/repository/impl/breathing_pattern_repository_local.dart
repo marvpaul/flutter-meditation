@@ -15,7 +15,7 @@ class BreathingPatternRepositoryLocal implements BreathingPatternRepository {
   @override
   Future<BreathingPatternModel> getBreathingPatternByName(BreathingPatternType type) async {
     AllBreathingPatterns patterns = await getOrCreateBreathingPatterns();
-    return patterns.pattern!.firstWhere((element) => element.type == type);
+    return patterns.pattern.firstWhere((element) => element.type == type);
   }
 
   @override

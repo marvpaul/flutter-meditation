@@ -225,14 +225,16 @@ class SessionPageViewModel extends BaseViewModel {
   }
 
   void _initSession() {
-    // Start the timer to update the last data point every second
-    heartRateTimer = Timer.periodic(Duration(seconds: 1), (timer) {
-      // Simulate heart rate values
-      heartRate = 60 + DateTime.now().microsecondsSinceEpoch % 60;
-      _meditationRepository.addHeartRate(
-          meditationModel!, (elapsedSeconds * 1000).toInt(), heartRate);
-      heartRateGraphKey.currentState?.refreshHeartRate();
-    });
+    if (!_bluetoothRepository.isAvailableAndConnected()) {
+      // Start the timer to update the last data point every second
+      heartRateTimer = Timer.periodic(Duration(seconds: 1), (timer) {
+        // Simulate heart rate values
+        heartRate = 60 + DateTime.now().microsecondsSinceEpoch % 60;
+        _meditationRepository.addHeartRate(
+            meditationModel!, (elapsedSeconds * 1000).toInt(), heartRate);
+        heartRateGraphKey.currentState?.refreshHeartRate();
+      });
+    }
 
     // start playing binaural beats
     playBinauralBeats(600, 200);
@@ -257,7 +259,7 @@ class SessionPageViewModel extends BaseViewModel {
   @override
   void dispose() {
     _bluetoothRepository.stopHeartRateMeasurement();
-    if (heartRateTimer.isActive) {
+    if ( heartRateTimer.isActive) {
       heartRateTimer.cancel();
     }
     if (timer.isActive) {
