@@ -15,7 +15,6 @@ import 'package:flutter_meditation/session/data/repository/breathing_pattern_rep
 import 'package:flutter_meditation/session/data/repository/impl/breathing_pattern_repository_local.dart';
 import 'package:flutter_meditation/settings/data/model/settings_model.dart';
 import 'package:flutter_meditation/settings/data/repository/impl/settings_repository_local.dart';
-import 'package:flutter_meditation/settings/data/repository/settings_repository.dart';
 import 'package:flutter_meditation/widgets/heart_rate_graph.dart';
 import 'package:injectable/injectable.dart';
 import '../../di/Setup.dart';
@@ -72,7 +71,16 @@ class SessionPageViewModel extends BaseViewModel {
   late bool _isConnected;
 
   SessionParameterModel getLatestSessionParamaters() {
-    return _meditationRepository.getLatestSessionParamaters(meditationModel!);
+    if (meditationModel != null) {
+      return _meditationRepository.getLatestSessionParamaters(meditationModel!);
+    } else {
+      return SessionParameterModel(
+          visualization: 'Arctic',
+          binauralFrequency: 30,
+          breathingMultiplier: 1.0,
+          breathingPattern: BreathingPatternType.fourSevenEight,
+          heartRates: []);
+    }
   }
 
   int numberOfStateChanges = 0;
@@ -80,9 +88,9 @@ class SessionPageViewModel extends BaseViewModel {
   void updateHeartRate() {
     List<double> lastHeartRates = [];
     for (int i = 0; i < meditationModel!.sessionParameters.length; i++) {
-      lastHeartRates.addAll(meditationModel!
-          .sessionParameters[i].heartRates.values
-          .toList(growable: false));
+      meditationModel!.sessionParameters[i].heartRates.forEach((element) {
+        lastHeartRates.add(element.heartRate);
+      });
     }
 
     int startIndex = (lastHeartRates.length - 1 - nrDatapoints) > 0
@@ -172,23 +180,24 @@ class SessionPageViewModel extends BaseViewModel {
     });
   }
 
-  String getRandomVisualization() {
-    List<String> fileNames = [
-      'Arctic',
-      'Aurora',
-      'Circle',
-      'City',
-      'Golden',
-      'Japan',
-      'Metropolis',
-      'Nature',
-      'Plants',
-      'Skyline'
-    ];
+  void cancelSession() {
+    if (running) {
+      running = false;
+      if (meditationModel != null) {
+        meditationModel!.duration = elapsedSeconds.toInt(); 
+        print(meditationModel);
+        _allMeditationsRepository.addMeditation(meditationModel!);
+      } else {
+        print("Warning: meditationModel is null.");
+      }
+    }
+  }
 
+  String getRandomVisualization() {
     Random random = Random();
-    int randomIndex = random.nextInt(fileNames.length);
-    return fileNames[randomIndex];
+    int randomIndex =
+        random.nextInt(_settingsRepository.kaleidoscopeOptions.length);
+    return _settingsRepository.kaleidoscopeOptions[randomIndex];
   }
 
   double getRandomBreathingMultiplier() {
@@ -208,7 +217,7 @@ class SessionPageViewModel extends BaseViewModel {
         binauralFrequency: getRandomBinauralBeats(),
         breathingMultiplier: getRandomBreathingMultiplier(),
         breathingPattern: BreathingPatternType.fourSevenEight,
-        heartRates: {}));
+        heartRates: []));
   }
 
   void nextState() {
@@ -258,8 +267,10 @@ class SessionPageViewModel extends BaseViewModel {
 
   @override
   void dispose() {
+    cancelSession();
+
     _bluetoothRepository.stopHeartRateMeasurement();
-    if ( heartRateTimer.isActive) {
+    if (heartRateTimer.isActive) {
       heartRateTimer.cancel();
     }
     if (timer.isActive) {

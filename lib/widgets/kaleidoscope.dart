@@ -25,7 +25,7 @@ class _KaleidoscopeState extends State<Kaleidoscope>
   String loadedImage = '';
 
   void loadImage() async {
-    String imageToLoad = widget.viewModel.getLatestSessionParamaters().visualization; 
+    String imageToLoad = widget.viewModel.getLatestSessionParamaters().visualization??'Arctic'; 
     if(imageToLoad == ''){
       imageToLoad = 'Arctic'; 
     }

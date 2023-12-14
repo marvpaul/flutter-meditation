@@ -111,6 +111,24 @@ class SettingsPageView extends BaseView<SettingsPageViewModel> {
                   }).toList(),
                 ),
               ),
+              ListTile(
+                enableFeedback: false,
+                title: const Text('Meditation duration'),
+                trailing: DropdownButton<int>(
+                  value: viewModel.settings?.meditationDuration,
+                  onChanged: (int? newValue) {
+                    viewModel.changeList(
+                        'Meditation duration', newValue);
+                  },
+                  items: viewModel.meditationDurationOptions
+                      .map<DropdownMenuItem<int>>((int value) {
+                    return DropdownMenuItem<int>(
+                      value: value,
+                      child: Text(value.toString()),
+                    );
+                  }).toList(),
+                ),
+              ),
             ],
           ),
           Padding(

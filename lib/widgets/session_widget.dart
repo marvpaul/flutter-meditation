@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_meditation/common/helpers.dart';
+import 'package:flutter_meditation/home/view/screens/home_page_view.dart';
 import 'package:flutter_meditation/session/data/model/breathing_pattern_model.dart';
 import 'package:flutter_meditation/session/view_model/session_page_view_model.dart';
 import 'package:flutter_meditation/widgets/breathing_circle_widget.dart';
@@ -49,7 +50,8 @@ class SessionWidget extends StatelessWidget {
               width: 150,
               height: 200,
               child: BreathingCircleWidget(
-                  progress: viewModel.stateProgress, state: viewModel.state.value),
+                  progress: viewModel.stateProgress,
+                  state: viewModel.state.value),
             ),
           ),
         ),
@@ -86,13 +88,19 @@ class SessionWidget extends StatelessWidget {
                 ),
               ),
             ),
-            const SizedBox(width: 8), 
+            const SizedBox(width: 8),
             Expanded(
               child: Container(
                 height: 40,
                 child: ElevatedButton(
                   onPressed: () {
-                    Navigator.pop(context);
+                    Navigator.pushAndRemoveUntil(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => HomePageView(),
+                      ),
+                      (Route<dynamic> route) => false,
+                    );
                   },
                   style: ElevatedButton.styleFrom(
                     primary: Theme.of(context).colorScheme.primary,

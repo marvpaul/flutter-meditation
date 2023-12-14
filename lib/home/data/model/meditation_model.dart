@@ -11,7 +11,8 @@ class MeditationModel with _$MeditationModel {
     required bool shouldShowHeartRate,
     required String sound,
     required double timestamp,
-    required List<SessionParameterModel> sessionParameters
+    required List<SessionParameterModel> sessionParameters,
+    required bool completedSession
   }) = _MeditationModel;
 
 

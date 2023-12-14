@@ -1,8 +1,7 @@
 import 'dart:convert';
-
-import 'package:flutter/material.dart';
 import 'package:flutter_meditation/di/Setup.dart';
 import 'package:flutter_meditation/home/data/dto/meditation_dto.dart';
+import 'package:flutter_meditation/home/data/model/heartrate_measurement_model.dart';
 import 'package:flutter_meditation/home/data/model/meditation_model.dart';
 import 'package:flutter_meditation/home/data/model/session_parameter_model.dart';
 import 'package:flutter_meditation/session/data/model/breathing_pattern_model.dart';
@@ -21,48 +20,31 @@ class MeditationRepositoryLocal implements MeditationRepository {
   MeditationRepositoryLocal(this.prefs);
 
   @override
-  Future<MeditationModel> getMeditation() async {
-    final String? meditationObj =
-        prefs.getString(MeditationRepository.sessionKey);
-    if (meditationObj != null) {
-      debugPrint(meditationObj);
-      return MeditationDTO.fromJson(JsonDecoder().convert(meditationObj))
-          .meditation;
-    }
-    MeditationModel meditationModel = MeditationModel(
-        duration: 120,
-        isHapticFeedbackEnabled: false,
-        shouldShowHeartRate: false,
-        sound: 'Option 1',
-        timestamp: DateTime.now().millisecondsSinceEpoch / 1000.0,
-        sessionParameters: []);
-    saveMeditation(meditationModel);
-    // return default if no config was found
-    return meditationModel;
-  }
-
-  @override
   Future<MeditationModel> createNewMeditation() async {
     print("Create new meditation, fetch params from settings!");
     // TODO: Fetch duration
     SettingsRepository settingsRepository = getIt<SettingsRepositoryLocal>();
-    BreathingPatternRepository breathingPatternRepository = getIt<BreathingPatternRepositoryLocal>();
+    BreathingPatternRepository breathingPatternRepository =
+        getIt<BreathingPatternRepositoryLocal>();
     SettingsModel? settings = await settingsRepository.getSettings();
-    BreathingPatternModel pattern = await breathingPatternRepository.getBreathingPatternByName(settings.breathingPattern);
+    BreathingPatternModel pattern = await breathingPatternRepository
+        .getBreathingPatternByName(settings.breathingPattern);
     MeditationModel meditationModel = MeditationModel(
-        duration: 120,
+        duration: settings.meditationDuration*60,
         isHapticFeedbackEnabled: settings.isHapticFeedbackEnabled,
         shouldShowHeartRate: settings.shouldShowHeartRate,
         sound: settings.sound,
         timestamp: DateTime.now().millisecondsSinceEpoch / 1000.0,
         sessionParameters: [
           SessionParameterModel(
-              visualization: settings.kaleidoscopeImage,
+              visualization:
+                  settings.kaleidoscope ? settings.kaleidoscopeImage : null,
               binauralFrequency: settings.binauralBeatFrequency,
               breathingMultiplier: pattern.multiplier,
               breathingPattern: settings.breathingPattern,
-              heartRates: {})
-        ]);
+              heartRates: [])
+        ],
+        completedSession: false);
     saveMeditation(meditationModel);
     // return default if no config was found
     return meditationModel;
@@ -77,7 +59,7 @@ class MeditationRepositoryLocal implements MeditationRepository {
 
   @override
   double getAverageHeartRate(MeditationModel model) {
-    Map<int, double> heartRates = {};
+    List<HeartrateMeasurementModel> heartRates = [];
     model.sessionParameters.forEach((element) {
       heartRates.addAll(element.heartRates);
     });
@@ -87,8 +69,8 @@ class MeditationRepositoryLocal implements MeditationRepository {
 
     // Calculate the sum of all values
     dynamic sum = 0;
-    heartRates.values.forEach((value) {
-      sum += value;
+    heartRates.forEach((value) {
+      sum += value.heartRate;
     });
 
     // Calculate the average
@@ -99,7 +81,7 @@ class MeditationRepositoryLocal implements MeditationRepository {
 
   @override
   double getMinHeartRate(MeditationModel model) {
-    Map<int, double> heartRates = {};
+    List<HeartrateMeasurementModel> heartRates = [];
     model.sessionParameters.forEach((element) {
       heartRates.addAll(element.heartRates);
     });
@@ -109,9 +91,9 @@ class MeditationRepositoryLocal implements MeditationRepository {
 
     // Calculate the sum of all values
     dynamic min = 1000;
-    heartRates.values.forEach((value) {
-      if (min > value) {
-        min = value;
+    heartRates.forEach((value) {
+      if (min > value.heartRate) {
+        min = value.heartRate;
       }
     });
     return double.parse(min.toStringAsFixed(1));
@@ -119,7 +101,7 @@ class MeditationRepositoryLocal implements MeditationRepository {
 
   @override
   double getMaxHeartRate(MeditationModel model) {
-    Map<int, double> heartRates = {};
+    List<HeartrateMeasurementModel> heartRates = [];
     model.sessionParameters.forEach((element) {
       heartRates.addAll(element.heartRates);
     });
@@ -129,9 +111,9 @@ class MeditationRepositoryLocal implements MeditationRepository {
 
     // Calculate the sum of all values
     double max = 0;
-    heartRates.values.forEach((value) {
-      if (max < value) {
-        max = value;
+    heartRates.forEach((value) {
+      if (max < value.heartRate) {
+        max = value.heartRate;
       }
     });
     return double.parse(max.toStringAsFixed(1));
@@ -145,10 +127,14 @@ class MeditationRepositoryLocal implements MeditationRepository {
           binauralFrequency: 30,
           breathingMultiplier: 1.0,
           breathingPattern: BreathingPatternType.fourSevenEight,
-          heartRates: {timestamp: heartRate}));
+          heartRates: [
+            HeartrateMeasurementModel(
+                timestamp: timestamp, heartRate: heartRate)
+          ]));
     } else {
-      model.sessionParameters[model.sessionParameters.length - 1]
-          .heartRates[timestamp] = heartRate;
+      model.sessionParameters[model.sessionParameters.length - 1].heartRates
+          .add(HeartrateMeasurementModel(
+              timestamp: timestamp, heartRate: heartRate));
     }
   }
 
@@ -162,7 +148,7 @@ class MeditationRepositoryLocal implements MeditationRepository {
         binauralFrequency: 30,
         breathingMultiplier: 1.0,
         breathingPattern: BreathingPatternType.fourSevenEight,
-        heartRates: {});
+        heartRates: []);
   }
 
   @override

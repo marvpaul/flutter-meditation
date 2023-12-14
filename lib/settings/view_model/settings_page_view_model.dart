@@ -35,18 +35,8 @@ class SettingsPageViewModel extends BaseViewModel {
     'Option 3',
     'Option 4',
   ];
-  List<String> kaleidoscopeImageOptions = <String>[
-    'Arctic',
-    'Aurora',
-    'Circle',
-    'City',
-    'Golden',
-    'Japan',
-    'Metropolis',
-    'Nature',
-    'Plants',
-    'Skyline'
-  ];
+  List<String> kaleidoscopeImageOptions = []; 
+  List<int> meditationDurationOptions = [];
   List<String> breathingPatternOptions = <String>[
     BreathingPatternType.fourSevenEight.value,
     BreathingPatternType.box.value,
@@ -71,9 +61,11 @@ class SettingsPageViewModel extends BaseViewModel {
     _settingsModel = await _settingsRepository.getSettings();
     notifyListeners();
     _isConfigured = _bluetoothRepository.isConfigured();
-    if(_isConfigured){
+    if (_isConfigured) {
       _configuredDevice = _bluetoothRepository.getConfiguredDevice();
     }
+    kaleidoscopeImageOptions = _settingsRepository.kaleidoscopeOptions;
+    meditationDurationOptions = _settingsRepository.meditationDurationOptions;
     notifyListeners();
   }
 
@@ -98,7 +90,7 @@ class SettingsPageViewModel extends BaseViewModel {
     }
   }
 
-  void changeList(String name, String value) {
+  void changeList(String name, dynamic value) {
     if (_settingsModel != null) {
       if (name == _soundName) {
         _settingsModel!.sound = value;
@@ -116,6 +108,8 @@ class SettingsPageViewModel extends BaseViewModel {
       } else if (name == kaleidoscopeImageName) {
         _settingsModel!.kaleidoscopeImage = value;
         print("Set image to" + name);
+      } else if (name == 'Meditation duration') {
+        _settingsModel!.meditationDuration = value;
       }
       _saveSettingsAndNotify();
     }
