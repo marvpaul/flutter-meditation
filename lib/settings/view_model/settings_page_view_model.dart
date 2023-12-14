@@ -12,20 +12,21 @@ import '../data/repository/settings_repository.dart';
 
 @injectable
 class SettingsPageViewModel extends BaseViewModel {
-  final SettingsRepository _settingsRepository =
+  final SettingsRepositoryLocal _settingsRepository =
       getIt<SettingsRepositoryLocal>();
   final BluetoothConnectionRepository _bluetoothRepository =
       getIt<MiBandBluetoothService>();
 
   SettingsModel? get settings => _settingsModel;
 
-  bool get deviceIsConfigured => _isConfigured ;
+  bool get deviceIsConfigured => _isConfigured;
   late bool _isConfigured;
   BluetoothDeviceModel? _configuredDevice;
 
   BluetoothDeviceModel? get configuredDevice => _configuredDevice;
 
-  MiBandConnectionState get connectionState => _connectionState ?? MiBandConnectionState.unavailable;
+  MiBandConnectionState get connectionState =>
+      _connectionState ?? MiBandConnectionState.unavailable;
   MiBandConnectionState? _connectionState;
 
   SettingsModel? _settingsModel;
@@ -123,7 +124,7 @@ class SettingsPageViewModel extends BaseViewModel {
     }
   }
 
-  void unpairDevice(){
+  void unpairDevice() {
     _bluetoothRepository.unpairDevice();
     _isConfigured = false;
     notifyListeners();

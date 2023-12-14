@@ -98,7 +98,7 @@ class MyFancyPainter extends CustomPainter {
 
   MyFancyPainter(FragmentShader fragmentShader, this.time, this.image)
       : shader = fragmentShader;
-  
+
   @override
   void paint(Canvas canvas, Size size) {
     if (paintObj == null) {

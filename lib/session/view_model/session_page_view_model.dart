@@ -30,21 +30,21 @@ class SessionPageViewModel extends BaseViewModel {
   BreathingPatternModel? breathingPattern;
   SettingsModel? settingsModel;
   final MeditationRepository _meditationRepository =
-  getIt<MeditationRepositoryLocal>();
+      getIt<MeditationRepositoryLocal>();
   final BreathingPatternRepository _breathingPatternRepository =
-  getIt<BreathingPatternRepositoryLocal>();
+      getIt<BreathingPatternRepositoryLocal>();
   final AllMeditationsRepository _allMeditationsRepository =
-  getIt<AllMeditationsRepositoryLocal>();
-  final SettingsRepository _settingsRepository =
-  getIt<SettingsRepositoryLocal>();
+      getIt<AllMeditationsRepositoryLocal>();
+  final SettingsRepositoryLocal _settingsRepository =
+      getIt<SettingsRepositoryLocal>();
   final BluetoothConnectionRepository _bluetoothRepository =
-  getIt<MiBandBluetoothService>();
+      getIt<MiBandBluetoothService>();
 
   bool showUI = true;
   double kaleidoscopeMultiplier = 0;
 
   final BinauralBeatsRepository _binauralBeatsRepository =
-  getIt<BinauralBeatsRepositoryLocal>();
+      getIt<BinauralBeatsRepositoryLocal>();
 
   int stateCounter = 0;
   bool running = false;
@@ -58,7 +58,7 @@ class SessionPageViewModel extends BaseViewModel {
   Duration totalDuration = const Duration();
   double elapsedSeconds = 0;
   final GlobalKey<HeartRateGraphState> heartRateGraphKey =
-  GlobalKey<HeartRateGraphState>();
+      GlobalKey<HeartRateGraphState>();
 
   var context;
   double heartRate = 0;
@@ -107,7 +107,7 @@ class SessionPageViewModel extends BaseViewModel {
 
   void initWithContext(BuildContext context) async {
     _isConnected = _bluetoothRepository.isAvailableAndConnected();
-    if(_isConnected){
+    if (_isConnected) {
       getHeartRateData();
     }
 
@@ -164,13 +164,14 @@ class SessionPageViewModel extends BaseViewModel {
         running = false;
         finished = true;
         if (meditationModel != null) {
+          meditationModel!.completedSession = true;
           _allMeditationsRepository.addMeditation(meditationModel!);
           Navigator.pushAndRemoveUntil(
             context,
             MaterialPageRoute(
               builder: (context) => HomePageView(),
             ),
-                (Route<dynamic> route) => false,
+            (Route<dynamic> route) => false,
           );
         } else {
           print("Warning: meditationModel is null.");
