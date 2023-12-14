@@ -64,8 +64,8 @@ class SettingsPageViewModel extends BaseViewModel {
     if (_isConfigured) {
       _configuredDevice = _bluetoothRepository.getConfiguredDevice();
     }
-    kaleidoscopeImageOptions = _settingsRepository.kaleidoscopeOptions;
-    meditationDurationOptions = _settingsRepository.meditationDurationOptions;
+    kaleidoscopeImageOptions = _settingsRepository.kaleidoscopeOptions??[];
+    meditationDurationOptions = _settingsRepository.meditationDurationOptions??[];
     notifyListeners();
   }
 

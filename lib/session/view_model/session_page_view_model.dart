@@ -196,8 +196,8 @@ class SessionPageViewModel extends BaseViewModel {
   String getRandomVisualization() {
     Random random = Random();
     int randomIndex =
-        random.nextInt(_settingsRepository.kaleidoscopeOptions.length);
-    return _settingsRepository.kaleidoscopeOptions[randomIndex];
+        random.nextInt(_settingsRepository.kaleidoscopeOptions!= null?_settingsRepository.kaleidoscopeOptions!.length:0);
+    return _settingsRepository.kaleidoscopeOptions![randomIndex];
   }
 
   double getRandomBreathingMultiplier() {
