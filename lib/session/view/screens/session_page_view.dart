@@ -14,35 +14,41 @@ class SessionPageView extends BaseView<SessionPageViewModel> {
     if (!viewModel.running && !viewModel.finished) {
       viewModel.initWithContext(context);
     }
+    // return Scaffold(
+    //   body: viewModel.settingsModel?.kaleidoscope??false ? Kaleidoscope(
+    //     viewModel: viewModel,
+    //     child: // Column(
+    //     //   children: [
+    //         // AppBar(
+    //         //   centerTitle: false,
+    //         //   titleTextStyle: Theme.of(context).textTheme.headlineLarge,
+    //         //   backgroundColor: Colors.transparent,
+    //         //   elevation: 0,
+    //         // ),
+    //         // SessionWidget(viewModel: viewModel)
+    //     Container()
+    //       // ],
+    //     // ),
+    //   ):GradientBackground(
+    //     child: Column(
+    //       children: [
+    //         AppBar(
+    //           centerTitle: false,
+    //           titleTextStyle: Theme.of(context).textTheme.headlineLarge,
+    //           backgroundColor: Colors.transparent,
+    //           elevation: 0,
+    //         ),
+    //         SessionWidget(viewModel: viewModel)
+    //       ],
+    //     ),
+    //   ),
+    // );
+
     return Scaffold(
-      body: viewModel.getLatestSessionParamaters().visualization != null
-          ? Kaleidoscope(
-              viewModel: viewModel,
-              child: Column(
-                children: [
-                  AppBar(
-                    centerTitle: false,
-                    titleTextStyle: Theme.of(context).textTheme.headlineLarge,
-                    backgroundColor: Colors.transparent,
-                    elevation: 0,
-                  ),
-                  SessionWidget(viewModel: viewModel)
-                ],
-              ),
-            )
-          : GradientBackground(
-              child: Column(
-                children: [
-                  AppBar(
-                    centerTitle: false,
-                    titleTextStyle: Theme.of(context).textTheme.headlineLarge,
-                    backgroundColor: Colors.transparent,
-                    elevation: 0,
-                  ),
-                  SessionWidget(viewModel: viewModel)
-                ],
-              ),
-            ),
+      body: Kaleidoscope(
+        viewModel: viewModel,
+        child: SessionWidget(viewModel: viewModel)
+      ),
     );
   }
 }
