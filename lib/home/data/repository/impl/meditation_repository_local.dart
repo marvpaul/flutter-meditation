@@ -33,12 +33,12 @@ class MeditationRepositoryLocal implements MeditationRepository {
         duration: settings.meditationDuration*60,
         isHapticFeedbackEnabled: settings.isHapticFeedbackEnabled,
         shouldShowHeartRate: settings.shouldShowHeartRate,
-        sound: settings.sound,
         timestamp: DateTime.now().millisecondsSinceEpoch / 1000.0,
         sessionParameters: [
           SessionParameterModel(
               visualization:
                   settings.kaleidoscope ? settings.kaleidoscopeImage : null,
+              // TODO: either get an optimized frequency from the trained model or use a default value
               binauralFrequency: settings.binauralBeatFrequency,
               breathingMultiplier: pattern.multiplier,
               breathingPattern: settings.breathingPattern,

@@ -9,7 +9,6 @@ class MeditationModel with _$MeditationModel {
     required int duration,
     required bool isHapticFeedbackEnabled,
     required bool shouldShowHeartRate,
-    required String sound,
     required double timestamp,
     required List<SessionParameterModel> sessionParameters,
     required bool completedSession
