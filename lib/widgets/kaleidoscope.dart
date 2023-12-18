@@ -105,13 +105,14 @@ class MyFancyPainter extends CustomPainter {
       paintObj = Paint();
       shader.setFloat(0, size.width);
       shader.setFloat(1, size.height);
-      // TODO: Put time in here
-      shader.setFloat(2,time);
+      shader.setFloat(2, time);
       shader.setImageSampler(0, image);
 
       paintObj!.shader = shader;
+      //paintObj?.color = Colors.red;  
     }
 
+    //canvas.drawRect(Offset.zero & size, paintObj!);
     canvas.drawRect(Offset.zero & size, paintObj!);
   }
 
