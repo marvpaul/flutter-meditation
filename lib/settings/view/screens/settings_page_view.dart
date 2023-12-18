@@ -34,6 +34,7 @@ class SettingsPageView extends BaseView<SettingsPageViewModel> {
             ),
           ),
           ListView(
+            physics: const NeverScrollableScrollPhysics(),
             shrinkWrap: true,
             children: [
               ListTile(
@@ -76,20 +77,12 @@ class SettingsPageView extends BaseView<SettingsPageViewModel> {
               ),
               ListTile(
                 enableFeedback: false,
-                title: Text(viewModel.soundName),
-                trailing: DropdownButton<String>(
-                  value: viewModel.settings?.sound ?? "Option 1",
-                  onChanged: (String? newValue) {
-                    viewModel.changeList(
-                        viewModel.soundName, newValue ?? 'Option 1');
+                title: Text(viewModel.isBinauralBeatEnabledDisplayText),
+                trailing: Switch(
+                  value: viewModel.settings?.isBinauralBeatEnabled ?? false,
+                  onChanged: (isEnabled) {
+                    viewModel.toggleBinauralBeat(isEnabled);
                   },
-                  items: viewModel.soundOptions
-                      .map<DropdownMenuItem<String>>((String value) {
-                    return DropdownMenuItem<String>(
-                      value: value,
-                      child: Text(value),
-                    );
-                  }).toList(),
                 ),
               ),
 

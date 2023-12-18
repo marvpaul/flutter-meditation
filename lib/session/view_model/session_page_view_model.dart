@@ -112,7 +112,8 @@ class SessionPageViewModel extends BaseViewModel {
     }
 
     meditationModel = await _meditationRepository.createNewMeditation();
-    settingsModel = await _settingsRepository.getSettings();
+    final SettingsModel currentSettings = await _settingsRepository.getSettings();
+    settingsModel = currentSettings;
     breathingPattern = await _breathingPatternRepository
         .getBreathingPatternByName(settingsModel!.breathingPattern);
 
@@ -121,7 +122,7 @@ class SessionPageViewModel extends BaseViewModel {
         getLatestSessionParamaters().breathingMultiplier;
     totalTimePerState = breathingPattern!.steps[stateCounter].duration *
         getLatestSessionParamaters().breathingMultiplier;
-    _initSession();
+    _initSession(currentSettings);
     running = true;
 
     totalDuration = Duration(seconds: meditationModel?.duration ?? 0);
@@ -234,7 +235,7 @@ class SessionPageViewModel extends BaseViewModel {
         getLatestSessionParamaters().breathingMultiplier;
   }
 
-  void _initSession() {
+  void _initSession(SettingsModel settings) {
     if (!_bluetoothRepository.isAvailableAndConnected()) {
       // Start the timer to update the last data point every second
       heartRateTimer = Timer.periodic(Duration(seconds: 1), (timer) {
@@ -246,14 +247,15 @@ class SessionPageViewModel extends BaseViewModel {
       });
     }
 
-    // start playing binaural beats
-    playBinauralBeats(600, 200);
+    if (settings.isBinauralBeatEnabled) {
+      playBinauralBeats(500, 600);
+    }
   }
 
   Future<bool> playBinauralBeats(
       double frequencyLeft, double frequencyRight) async {
     //TODO give other arguments to service
-    return await _binauralBeatsRepository.playBinauralBeats(500, 600, 0, 0, 10);
+    return await _binauralBeatsRepository.playBinauralBeats(frequencyLeft, frequencyRight, 0, 0, 10);
   }
 
   void getHeartRateData() async {

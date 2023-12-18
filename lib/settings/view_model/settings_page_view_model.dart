@@ -49,8 +49,7 @@ class SettingsPageViewModel extends BaseViewModel {
   final String _hapticFeedbackName = "Haptic Feedback";
   String get heartRateName => _heartRateName;
   final String _heartRateName = "Heart Rate";
-  String get soundName => _soundName;
-  final String _soundName = "Sound";
+  final String isBinauralBeatEnabledDisplayText = "Binaural Beats";
   String get kaleidoscopeImageName => _kaleidoscopeImageName;
   final String _kaleidoscopeImageName = "Kaleidoscope image";
   final String bluetoothName = "Bluetooth";
@@ -91,11 +90,16 @@ class SettingsPageViewModel extends BaseViewModel {
     }
   }
 
+  void toggleBinauralBeat(bool isEnabled) {
+    if (_settingsModel != null) {
+      _settingsModel!.isBinauralBeatEnabled = isEnabled;
+      _saveSettingsAndNotify();
+    }
+  }
+
   void changeList(String name, dynamic value) {
     if (_settingsModel != null) {
-      if (name == _soundName) {
-        _settingsModel!.sound = value;
-      } else if (name == 'Breathing pattern') {
+      if (name == 'Breathing pattern') {
         if (value == '4-7-8') {
           _settingsModel!.breathingPattern =
               BreathingPatternType.fourSevenEight;
