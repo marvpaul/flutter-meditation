@@ -1,9 +1,10 @@
+#version 460 core
 #include <flutter/runtime_effect.glsl>
-out vec4 fragColor;
+precision mediump float;
 uniform vec2 uSize;
 uniform float iTime;
-uniform float val;
 uniform sampler2D uTexture;
+out vec4 fragColor;
 
 vec2 mirror(vec2 uv) {
     uv = fract(uv);  // Ensure UV coordinates are in the [0, 1] range
@@ -62,40 +63,10 @@ vec2 Kaleidoscope(vec2 worldCoordinates, float angle, float segments, float _Pro
     
     return worldCoordinates;
 }
-/* 
-vec2 Kaleidoscope(vec2 worldCoordinates, float angle, float segments, float _Aspect) {
-    float segmentOffset = clamp(3.1415 / segments, 0.0, 3.1415);
-
-    int j = 0;
-    for (int i = 0; i < max_its; i++) {
-        if(i >= int(segments)){
-          break; 
-        }
-        worldCoordinates.x = abs(worldCoordinates.x);
-        worldCoordinates.xy = rotate2D(worldCoordinates.xy, angle);
-        worldCoordinates.x = abs(worldCoordinates.x);
-        worldCoordinates.xy = rotate2D(worldCoordinates.xy, -angle);
-
-        angle += segmentOffset;
-        j = i; 
-    }
-    angle += (segments - float(j)) * segmentOffset;
-
-    worldCoordinates.x = abs(worldCoordinates.x);
-    worldCoordinates.xy = rotate2D(worldCoordinates.xy, angle);
-    worldCoordinates.x = abs(worldCoordinates.x);
-    worldCoordinates.xy = rotate2D(worldCoordinates.xy, -angle);
-
-    return worldCoordinates;
-}
-
- */
 
 void main() {
-  //fragColor = vec4(1.,0.,0.,1.);
   vec2 uv = FlutterFragCoord().xy / uSize;
   fragColor = vec4((sin(iTime)+1.)*0.5,0.,0.,1.); 
-  //fragColor = texture(uTexture, kaleidoscope(uv, 60, 9.+0.1*sin(iTime)));
   float change = (sin(iTime)+1)*0.5*3.; 
   
   float _Aspect = uSize.x / uSize.y; 
@@ -105,10 +76,4 @@ void main() {
   uv += 0.5;
   uv = mirror(uv);
   fragColor = texture(uTexture, uv);
-  /* fragColor = texture(uTexture, kaleidoscope(uv, 1+val, 12.+change)); */
-  /* if (uv.x > 0.5) {
-    fragColor = vec4(1., 0., 0., 1.);
-  } else {
-    fragColor = vec4(0., 0., 1., 1.);
-  } */
 }

@@ -1,3 +1,4 @@
+import 'package:flutter_meditation/home/data/model/session_parameter_model.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 part 'meditation_model.freezed.dart';
 part 'meditation_model.g.dart';
@@ -10,7 +11,8 @@ class MeditationModel with _$MeditationModel {
     required bool shouldShowHeartRate,
     required String sound,
     required double timestamp,
-    required Map<int, double> heartRates
+    required List<SessionParameterModel> sessionParameters,
+    required bool completedSession
   }) = _MeditationModel;
 
 

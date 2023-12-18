@@ -15,32 +15,34 @@ class SessionPageView extends BaseView<SessionPageViewModel> {
       viewModel.initWithContext(context);
     }
     return Scaffold(
-      body: viewModel.settingsModel?.kaleidoscope??false ? Kaleidoscope(
-        viewModel: viewModel,
-        child: Column(
-          children: [
-            AppBar(
-              centerTitle: false,
-              titleTextStyle: Theme.of(context).textTheme.headlineLarge,
-              backgroundColor: Colors.transparent,
-              elevation: 0,
+      body: viewModel.getLatestSessionParamaters().visualization != null
+          ? Kaleidoscope(
+              viewModel: viewModel,
+              child: Column(
+                children: [
+                  AppBar(
+                    centerTitle: false,
+                    titleTextStyle: Theme.of(context).textTheme.headlineLarge,
+                    backgroundColor: Colors.transparent,
+                    elevation: 0,
+                  ),
+                  SessionWidget(viewModel: viewModel)
+                ],
+              ),
+            )
+          : GradientBackground(
+              child: Column(
+                children: [
+                  AppBar(
+                    centerTitle: false,
+                    titleTextStyle: Theme.of(context).textTheme.headlineLarge,
+                    backgroundColor: Colors.transparent,
+                    elevation: 0,
+                  ),
+                  SessionWidget(viewModel: viewModel)
+                ],
+              ),
             ),
-            SessionWidget(viewModel: viewModel)
-          ],
-        ),
-      ):GradientBackground(
-        child: Column(
-          children: [
-            AppBar(
-              centerTitle: false,
-              titleTextStyle: Theme.of(context).textTheme.headlineLarge,
-              backgroundColor: Colors.transparent,
-              elevation: 0,
-            ),
-            SessionWidget(viewModel: viewModel)
-          ],
-        ),
-      ),
     );
   }
 }

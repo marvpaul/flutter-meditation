@@ -7,6 +7,7 @@ import '../../view_model/home_page_view_model.dart';
 import '../widgets/past_meditations_card_view.dart';
 
 class HomePageView extends BaseView<HomePageViewModel> {
+
   @override
   Widget build(
       BuildContext context, HomePageViewModel viewModel, Widget? child) {

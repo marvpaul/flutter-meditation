@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_meditation/session/data/dto/all_breathing_patterns_dto.dart';
 import 'package:flutter_meditation/session/data/model/all_breathing_patterns_model.dart';
@@ -16,7 +15,7 @@ class BreathingPatternRepositoryLocal implements BreathingPatternRepository {
   @override
   Future<BreathingPatternModel> getBreathingPatternByName(BreathingPatternType type) async {
     AllBreathingPatterns patterns = await getOrCreateBreathingPatterns();
-    return patterns.pattern!.firstWhere((element) => element.type == type);
+    return patterns.pattern.firstWhere((element) => element.type == type);
   }
 
   @override

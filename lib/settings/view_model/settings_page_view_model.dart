@@ -12,20 +12,21 @@ import '../data/repository/settings_repository.dart';
 
 @injectable
 class SettingsPageViewModel extends BaseViewModel {
-  final SettingsRepository _settingsRepository =
+  final SettingsRepositoryLocal _settingsRepository =
       getIt<SettingsRepositoryLocal>();
   final BluetoothConnectionRepository _bluetoothRepository =
       getIt<MiBandBluetoothService>();
 
   SettingsModel? get settings => _settingsModel;
 
-  bool get deviceIsConfigured => _isConfigured ;
+  bool get deviceIsConfigured => _isConfigured;
   late bool _isConfigured;
   BluetoothDeviceModel? _configuredDevice;
 
   BluetoothDeviceModel? get configuredDevice => _configuredDevice;
 
-  MiBandConnectionState get connectionState => _connectionState ?? MiBandConnectionState.unavailable;
+  MiBandConnectionState get connectionState =>
+      _connectionState ?? MiBandConnectionState.unavailable;
   MiBandConnectionState? _connectionState;
 
   SettingsModel? _settingsModel;
@@ -35,6 +36,8 @@ class SettingsPageViewModel extends BaseViewModel {
     'Option 3',
     'Option 4',
   ];
+  List<String> kaleidoscopeImageOptions = []; 
+  List<int> meditationDurationOptions = [];
   List<String> breathingPatternOptions = <String>[
     BreathingPatternType.fourSevenEight.value,
     BreathingPatternType.box.value,
@@ -48,6 +51,8 @@ class SettingsPageViewModel extends BaseViewModel {
   final String _heartRateName = "Heart Rate";
   String get soundName => _soundName;
   final String _soundName = "Sound";
+  String get kaleidoscopeImageName => _kaleidoscopeImageName;
+  final String _kaleidoscopeImageName = "Kaleidoscope image";
   final String bluetoothName = "Bluetooth";
   final String bluetoothSettingsHeading = "Bluetooth connection";
   final String unpairText = "Unpair";
@@ -57,9 +62,11 @@ class SettingsPageViewModel extends BaseViewModel {
     _settingsModel = await _settingsRepository.getSettings();
     notifyListeners();
     _isConfigured = _bluetoothRepository.isConfigured();
-    if(_isConfigured){
+    if (_isConfigured) {
       _configuredDevice = _bluetoothRepository.getConfiguredDevice();
     }
+    kaleidoscopeImageOptions = _settingsRepository.kaleidoscopeOptions??[];
+    meditationDurationOptions = _settingsRepository.meditationDurationOptions??[];
     notifyListeners();
   }
 
@@ -84,7 +91,7 @@ class SettingsPageViewModel extends BaseViewModel {
     }
   }
 
-  void changeList(String name, String value) {
+  void changeList(String name, dynamic value) {
     if (_settingsModel != null) {
       if (name == _soundName) {
         _settingsModel!.sound = value;
@@ -99,6 +106,11 @@ class SettingsPageViewModel extends BaseViewModel {
         } else if (value == 'Box') {
           _settingsModel!.breathingPattern = BreathingPatternType.box;
         }
+      } else if (name == kaleidoscopeImageName) {
+        _settingsModel!.kaleidoscopeImage = value;
+        print("Set image to" + name);
+      } else if (name == 'Meditation duration') {
+        _settingsModel!.meditationDuration = value;
       }
       _saveSettingsAndNotify();
     }
@@ -112,7 +124,7 @@ class SettingsPageViewModel extends BaseViewModel {
     }
   }
 
-  void unpairDevice(){
+  void unpairDevice() {
     _bluetoothRepository.unpairDevice();
     _isConfigured = false;
     notifyListeners();

@@ -32,16 +32,18 @@ void main() async {
     getIt.registerSingleton<MiBandBluetoothService>(mockBluetoothService);
 
     viewModel = SettingsPageViewModel();
-    settingsHapticFeedbackEnabled = SettingsModel(isHapticFeedbackEnabled: true);
+    settingsHapticFeedbackEnabled =
+        SettingsModel(isHapticFeedbackEnabled: true);
   });
 
   group('SettingsPageViewModel', () {
     test('initialize view model', () async {
       expect(viewModel.settings, null);
-      when(() => mockSettingsRepository.getSettings()).thenAnswer((_) => Future(() => settingsHapticFeedbackEnabled));
+      when(() => mockSettingsRepository.getSettings())
+          .thenAnswer((_) => Future(() => settingsHapticFeedbackEnabled));
       when(() => mockBluetoothService.isConfigured()).thenAnswer((_) => true);
       await viewModel.init();
-      expect(viewModel.settings , settingsHapticFeedbackEnabled);
+      expect(viewModel.settings, settingsHapticFeedbackEnabled);
     });
   });
 }

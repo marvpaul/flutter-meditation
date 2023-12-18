@@ -9,7 +9,10 @@ class SettingsModel with _$SettingsModel {
   factory SettingsModel({
     @Default(false) bool isHapticFeedbackEnabled,
     @Default(false) bool shouldShowHeartRate,
-    @Default(false) bool kaleidoscope,
+    @Default(true) bool kaleidoscope,
+    @Default("Arctic") String kaleidoscopeImage,
+    @Default(30) int binauralBeatFrequency,
+    @Default(2) int meditationDuration,
     @Default('Option 1') String sound,
     BluetoothDeviceModel? pairedDevice,
     @Default(BreathingPatternType.fourSevenEight) BreathingPatternType breathingPattern,
