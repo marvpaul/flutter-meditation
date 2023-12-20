@@ -6,10 +6,9 @@ import 'package:flutter/services.dart';
 import 'package:flutter_meditation/session/view_model/session_page_view_model.dart';
 
 class Kaleidoscope extends StatefulWidget {
-  final Widget child;
   final SessionPageViewModel viewModel;
 
-  const Kaleidoscope({Key? key, required this.child, required this.viewModel})
+  const Kaleidoscope({Key? key, required this.viewModel})
       : super(key: key);
 
   @override
@@ -79,13 +78,7 @@ class _KaleidoscopeState extends State<Kaleidoscope>
     if (shader == null || image == null) {
       return const Center(child: CircularProgressIndicator());
     } else {
-      return Stack(
-        fit: StackFit.expand,
-        children: [
-          CustomPaint(painter: MyFancyPainter(shader!, delta, image!)),
-          Positioned.fill(child: widget.child),
-        ],
-      );
+      return CustomPaint(painter: MyFancyPainter(shader!, delta, image!));
     }
   }
 }
