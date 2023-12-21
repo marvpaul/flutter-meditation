@@ -3,6 +3,7 @@ import 'package:flutter_meditation/widgets/gradient_background.dart';
 import 'package:flutter_meditation/widgets/kaleidoscope.dart';
 import 'package:flutter_meditation/widgets/session_widget.dart';
 import '../../../base/base_view.dart';
+import '../../../widgets/breathing_instructions_widget.dart';
 import '../../view_model/session_page_view_model.dart';
 
 class SessionPageView extends BaseView<SessionPageViewModel> {
@@ -15,34 +16,18 @@ class SessionPageView extends BaseView<SessionPageViewModel> {
       viewModel.initWithContext(context);
     }
     return Scaffold(
-      body: viewModel.getLatestSessionParamaters().visualization != null
-          ? Kaleidoscope(
-              viewModel: viewModel,
-              child: Column(
-                children: [
-                  AppBar(
-                    centerTitle: false,
-                    titleTextStyle: Theme.of(context).textTheme.headlineLarge,
-                    backgroundColor: Colors.transparent,
-                    elevation: 0,
-                  ),
-                  SessionWidget(viewModel: viewModel)
-                ],
-              ),
-            )
-          : GradientBackground(
-              child: Column(
-                children: [
-                  AppBar(
-                    centerTitle: false,
-                    titleTextStyle: Theme.of(context).textTheme.headlineLarge,
-                    backgroundColor: Colors.transparent,
-                    elevation: 0,
-                  ),
-                  SessionWidget(viewModel: viewModel)
-                ],
-              ),
-            ),
+      body: Stack(
+        fit: StackFit.expand,
+        children: [
+          viewModel.settingsModel?.kaleidoscope ?? false
+            ? Kaleidoscope(viewModel: viewModel)
+            : const GradientBackground(),
+          SafeArea(
+            minimum: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 0),
+              child: SessionWidget(viewModel: viewModel)
+          ),
+          BreathingInstructionsWidget(stateProgress: viewModel.stateProgress, state: viewModel.state, onTap: (){ viewModel.showUI = !viewModel.showUI; },)
+      ]),
     );
   }
 }

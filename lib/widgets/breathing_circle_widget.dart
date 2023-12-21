@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 
 class BreathingCircleWidget extends StatelessWidget {
@@ -18,6 +20,15 @@ class BreathingCircleWidget extends StatelessWidget {
         ),
         width: 140 + 100 * progress, // Use the animated value for width
         height: 140 + 100 * progress, // Use the animated value for height
+        child: ClipOval(
+          child: BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: 5.0, sigmaY: 5.0),
+            child: Container(
+              alignment: Alignment.center,
+              color: Colors.grey.withOpacity(0.3),
+            ),
+          ),
+        ),
       ),
       Container(
         decoration: const BoxDecoration(
@@ -26,20 +37,39 @@ class BreathingCircleWidget extends StatelessWidget {
         ),
         width: 240 , // Use the animated value for width
         height: 240, // Use the animated value for height
+        child: ClipOval(
+          child: BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: 1.0, sigmaY: 1.0),
+            child: Container(
+              alignment: Alignment.center,
+              color: Colors.grey.withOpacity(0.1),
+            ),
+          ),
+        ),
       ),
       Container(
-        decoration: const BoxDecoration(
+        width: 140,
+        height: 140,
+        decoration: BoxDecoration(
           shape: BoxShape.circle,
           color: Color.fromRGBO(217, 217, 217, 0.8),
         ),
-        width: 140,
-        height: 140,
+        child: ClipOval(
+          child: BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: 5.0, sigmaY: 5.0),
+            child: Container(
+              alignment: Alignment.center,
+              color: Colors.grey.withOpacity(0.5),
+            ),
+          ),
+        ),
       ),
       Text(
         state,
         style: TextStyle(
           fontSize: 18.0,
           color: Theme.of(context).colorScheme.surface,
+          fontWeight: FontWeight.w600,
         ),
       ),
     ]);
