@@ -24,30 +24,33 @@ class SessionWidget extends StatelessWidget {
       padding: EdgeInsets.all(padding),
       child: Column(
         children: [
-          Row(
-            children: [
-              Expanded(
-                child: InformationBox(
-                  kind: "HEART RATE",
-                  value: viewModel.heartRate.toString(),
-                  unit: "BPM",
-                  background: HeartRateGraph(
-                    viewModel: viewModel,
-                    key: viewModel.heartRateGraphKey,
+          Visibility(
+            visible: viewModel.showUI,
+            child: Row(
+              children: [
+                Expanded(
+                  child: InformationBox(
+                    kind: "HEART RATE",
+                    value: viewModel.heartRate.toString(),
+                    unit: "BPM",
+                    background: HeartRateGraph(
+                      viewModel: viewModel,
+                      key: viewModel.heartRateGraphKey,
+                    ),
+                    boxHeight: heightForBox(width),
                   ),
-                  boxHeight: heightForBox(width),
                 ),
-              ),
-              SizedBox(width: interItemSpacing),
-              Expanded(
-                child: InformationBox(
-                  kind: "ELAPSED TIME",
-                  value: secondsToHRF(viewModel.elapsedSeconds).toString(),
-                  unit: "MIN",
-                  boxHeight: heightForBox(width),
+                SizedBox(width: interItemSpacing),
+                Expanded(
+                  child: InformationBox(
+                    kind: "ELAPSED TIME",
+                    value: secondsToHRF(viewModel.elapsedSeconds).toString(),
+                    unit: "MIN",
+                    boxHeight: heightForBox(width),
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
           Spacer(),
           _ActionButtons(),
