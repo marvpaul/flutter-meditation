@@ -24,4 +24,13 @@ class BinauralBeatsRepositoryLocal implements BinauralBeatsRepository {
       return false;
     }
   }
+  @override
+  Future<bool> stopBinauralBeats() async {
+    if (Platform.isAndroid || Platform.isIOS) {
+      var isStopped = await _binauralBeatsService.stopBinauralBeats();
+      return isStopped;
+    } else {
+      return false;
+    }
+  }
 }

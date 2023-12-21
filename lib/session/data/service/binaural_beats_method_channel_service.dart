@@ -33,4 +33,20 @@ class BinauralBeatsMethodChannelService {
       return false;
     }
   }
+  Future<bool> stopBinauralBeats() async {
+    log("stop binaural beats method channel call to native iOS / Android");
+
+    try {
+      // TODO: give other parameters to native code
+      bool? isPlaying = await platform.invokeMethod<bool>('stopBinauralBeat');
+      bool stopped = isPlaying ?? false;
+
+      log("Method on android executed, result: $stopped");
+
+      return stopped;
+    } on PlatformException catch (e) {
+      log("Error stopping binaural beat: '${e.message}'.");
+      return false;
+    }
+  }
 }

@@ -166,6 +166,7 @@ class SessionPageViewModel extends BaseViewModel {
         finished = true;
         if (meditationModel != null) {
           meditationModel!.completedSession = true;
+          stopBinauralBeats(); 
           _allMeditationsRepository.addMeditation(meditationModel!);
           Navigator.pushAndRemoveUntil(
             context,
@@ -188,6 +189,7 @@ class SessionPageViewModel extends BaseViewModel {
       if (meditationModel != null) {
         meditationModel!.duration = elapsedSeconds.toInt(); 
         print(meditationModel);
+        stopBinauralBeats(); 
         _allMeditationsRepository.addMeditation(meditationModel!);
       } else {
         print("Warning: meditationModel is null.");
@@ -210,7 +212,7 @@ class SessionPageViewModel extends BaseViewModel {
 
   int getRandomBinauralBeats() {
     Random random = Random();
-    return random.nextInt(31);
+    return 300+random.nextInt(200);
   }
 
   void changeSessionParams() {
@@ -220,6 +222,8 @@ class SessionPageViewModel extends BaseViewModel {
         breathingMultiplier: getRandomBreathingMultiplier(),
         breathingPattern: BreathingPatternType.fourSevenEight,
         heartRates: []));
+        double freq = (getLatestSessionParamaters().binauralFrequency)!.toDouble(); 
+        playBinauralBeats((freq), freq+100); 
   }
 
   void nextState() {
@@ -256,6 +260,10 @@ class SessionPageViewModel extends BaseViewModel {
       double frequencyLeft, double frequencyRight) async {
     //TODO give other arguments to service
     return await _binauralBeatsRepository.playBinauralBeats(frequencyLeft, frequencyRight, 0, 0, 10);
+  }
+  Future<bool> stopBinauralBeats() async {
+    //TODO give other arguments to service
+    return await _binauralBeatsRepository.stopBinauralBeats();
   }
 
   void getHeartRateData() async {
