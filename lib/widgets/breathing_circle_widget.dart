@@ -20,6 +20,15 @@ class BreathingCircleWidget extends StatelessWidget {
         ),
         width: 140 + 100 * progress, // Use the animated value for width
         height: 140 + 100 * progress, // Use the animated value for height
+        child: ClipOval(
+          child: BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: 5.0, sigmaY: 5.0),
+            child: Container(
+              alignment: Alignment.center,
+              color: Colors.grey.withOpacity(0.3),
+            ),
+          ),
+        ),
       ),
       Container(
         decoration: const BoxDecoration(
@@ -28,6 +37,15 @@ class BreathingCircleWidget extends StatelessWidget {
         ),
         width: 240 , // Use the animated value for width
         height: 240, // Use the animated value for height
+        child: ClipOval(
+          child: BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: 1.0, sigmaY: 1.0),
+            child: Container(
+              alignment: Alignment.center,
+              color: Colors.grey.withOpacity(0.1),
+            ),
+          ),
+        ),
       ),
       Container(
         width: 140,
@@ -38,10 +56,10 @@ class BreathingCircleWidget extends StatelessWidget {
         ),
         child: ClipOval(
           child: BackdropFilter(
-            filter: ImageFilter.blur(sigmaX: 10.0, sigmaY: 10.0),
+            filter: ImageFilter.blur(sigmaX: 5.0, sigmaY: 5.0),
             child: Container(
               alignment: Alignment.center,
-              color: Colors.grey.withOpacity(0.1),
+              color: Colors.grey.withOpacity(0.5),
             ),
           ),
         ),
