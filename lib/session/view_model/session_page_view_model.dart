@@ -180,6 +180,7 @@ class SessionPageViewModel extends BaseViewModel {
 
   @override
   void dispose() {
+    stopBinauralBeats();
     if (heartRateTimer.isActive) {
       heartRateTimer.cancel();
     }
