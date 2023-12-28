@@ -56,6 +56,8 @@ class SettingsPageViewModel extends BaseViewModel {
   final String bluetoothSettingsHeading = "Bluetooth connection";
   final String unpairText = "Unpair";
 
+  final String userAccountSettingsHeading = "Account Info";
+
   @override
   Future<void> init() async {
     _settingsModel = await _settingsRepository.getSettings();
@@ -67,6 +69,7 @@ class SettingsPageViewModel extends BaseViewModel {
     kaleidoscopeImageOptions = _settingsRepository.kaleidoscopeOptions??[];
     meditationDurationOptions = _settingsRepository.meditationDurationOptions??[];
     notifyListeners();
+    print("uuid: ${settings?.uuid!}");
   }
 
   void toggleHapticFeedback(bool isEnabled) {

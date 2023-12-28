@@ -15,6 +15,7 @@ class SettingsModel with _$SettingsModel {
     @Default(30) int binauralBeatFrequency,
     @Default(2) int meditationDuration,
     BluetoothDeviceModel? pairedDevice,
+    String? uuid,
     @Default(BreathingPatternType.fourSevenEight) BreathingPatternType breathingPattern,
   }) = _SettingsModel;
 
