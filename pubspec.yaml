@@ -48,6 +48,7 @@ dependencies:
   injectable: ^2.3.2
   mocktail: ^1.0.1
   fl_chart: ^0.64.0
+  flutter_blue_plus: ^1.29.5
 
 dev_dependencies:
   flutter_test:

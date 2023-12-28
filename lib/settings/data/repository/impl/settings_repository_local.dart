@@ -14,6 +14,23 @@ class SettingsRepositoryLocal implements SettingsRepository{
   final SharedPreferences prefs;
   SettingsRepositoryLocal(this.prefs);
 
+   @override
+     List<String>? kaleidoscopeOptions = [
+      'Arctic',
+      'Aurora',
+      'Circle',
+      'City',
+      'Golden',
+      'Japan',
+      'Metropolis',
+      'Nature',
+      'Plants',
+      'Skyline'
+    ];
+
+    @override
+      List<int>? meditationDurationOptions = <int>[1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+
   @override
   Future<SettingsModel> getSettings() async {
     final String? settingsJson = prefs.getString(SettingsRepository.settingsKey);

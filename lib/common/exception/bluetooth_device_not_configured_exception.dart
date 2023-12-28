@@ -1,0 +1,3 @@
+class BluetoothDeviceNotConfiguredException implements Exception {
+
+}

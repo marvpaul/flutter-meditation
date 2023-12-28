@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 
 class GradientBackground extends StatefulWidget {
-  final Widget child;
-
-  const GradientBackground({Key? key, required this.child}) : super(key: key);
+  const GradientBackground({Key? key}) : super(key: key);
 
   @override
   _GradientBackgroundState createState() => _GradientBackgroundState();
@@ -52,7 +50,6 @@ class _GradientBackgroundState extends State<GradientBackground>
                 end: Alignment.bottomCenter,
               ),
             ),
-            child: widget.child,
           );
         },
       ),

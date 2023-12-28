@@ -33,11 +33,11 @@ class PastSessionsPageView extends BaseView<PastSessionsPageViewModel> {
             ),
             Expanded(
               child: ListView.builder(
-                itemCount: viewModel.meditations?.length,
+                itemCount: viewModel.meditations?.length ?? 0,
                 itemBuilder: (context, index) {
-                  MeditationModel? meditation = viewModel.meditations?[index];
+                  MeditationModel meditation = viewModel.meditations![index];
                   return PastSessionsListEntry(
-                    meditation: meditation!,
+                    meditation: meditation,
                     onPlayPressed: () {
                       viewModel.navigateToSummary(context, meditation); 
                     },
