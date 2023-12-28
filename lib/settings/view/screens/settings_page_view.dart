@@ -9,7 +9,7 @@ class SettingsPageView extends BaseView<SettingsPageViewModel> {
   @override
   Widget build(
       BuildContext context, SettingsPageViewModel viewModel, Widget? child) {
-    if(viewModel.settings == null){
+    if (viewModel.settings == null) {
       return const Scaffold();
     }
     debugPrint("current state: ${viewModel.connectionState.name}");
@@ -85,12 +85,12 @@ class SettingsPageView extends BaseView<SettingsPageViewModel> {
                   },
                 ),
               ),
-
               ListTile(
                 enableFeedback: false,
                 title: const Text('Breathing pattern'),
                 trailing: DropdownButton<String>(
-                  value: viewModel.settings?.breathingPattern.value ?? BreathingPatternType.fourSevenEight.value,
+                  value: viewModel.settings?.breathingPattern.value ??
+                      BreathingPatternType.fourSevenEight.value,
                   onChanged: (String? newValue) {
                     viewModel.changeList(
                         'Breathing pattern', newValue ?? '4-7-8');
@@ -110,8 +110,7 @@ class SettingsPageView extends BaseView<SettingsPageViewModel> {
                 trailing: DropdownButton<int>(
                   value: viewModel.settings?.meditationDuration,
                   onChanged: (int? newValue) {
-                    viewModel.changeList(
-                        'Meditation duration', newValue);
+                    viewModel.changeList('Meditation duration', newValue);
                   },
                   items: viewModel.meditationDurationOptions
                       .map<DropdownMenuItem<int>>((int value) {
@@ -149,10 +148,11 @@ class SettingsPageView extends BaseView<SettingsPageViewModel> {
               ),
             ],
           ),
-          if(viewModel.deviceIsConfigured) ...[
+          if (viewModel.deviceIsConfigured) ...[
             Padding(
               padding: const EdgeInsets.all(16.0),
-              child: Text(viewModel.bluetoothSettingsHeading,
+              child: Text(
+                viewModel.bluetoothSettingsHeading,
                 style: TextStyle(
                   fontSize: 14.0,
                   color: Theme.of(context).colorScheme.surfaceTint,
@@ -163,11 +163,32 @@ class SettingsPageView extends BaseView<SettingsPageViewModel> {
               enableFeedback: false,
               title: Text(viewModel.configuredDevice!.advName),
               subtitle: Text(viewModel.configuredDevice!.macAddress),
-              trailing: TextButton(onPressed: viewModel.unpairDevice,
+              trailing: TextButton(
+                onPressed: viewModel.unpairDevice,
                 child: Text(viewModel.unpairText),
               ),
             ),
-          ]
+          ],
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Text(
+              viewModel.userAccountSettingsHeading,
+              style: TextStyle(
+                fontSize: 14.0,
+                color: Theme.of(context).colorScheme.surfaceTint,
+              ),
+            ),
+          ),
+          ListTile(
+            enableFeedback: false,
+            title: Text("UUID"),
+            trailing: Text(
+              viewModel.settings!.uuid!,
+              style: const TextStyle(
+                fontSize: 14.0,
+              ),
+            ),
+          ),
         ],
       ),
     );
