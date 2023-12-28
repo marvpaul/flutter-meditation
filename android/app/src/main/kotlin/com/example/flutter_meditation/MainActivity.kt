@@ -28,12 +28,13 @@ class MainActivity: FlutterActivity() {
             try {
                 val frequencyLeft = call.argument<Double>("frequencyLeft")
                 val frequencyRight = call.argument<Double>("frequencyRight")
-
+                val duration = call.argument<Double>("duration")
+                Log.d(LOG_TAG, "frequencyLeft: $frequencyLeft, frequencyRight: $frequencyRight, duration: $duration")
                 // here we check which method is called from flutter
                 when (call.method) {
                     "playBinauralBeat" -> {
                         Log.d(LOG_TAG, "playBinauralBeat called")
-                        playBinauralBeat(frequencyLeft, frequencyRight, result);
+                        playBinauralBeat(frequencyLeft, frequencyRight, duration, result);
                     }
                     "stopBinauralBeat" -> {
                         Log.d(LOG_TAG, "stopBinauralBeat called")
@@ -49,10 +50,10 @@ class MainActivity: FlutterActivity() {
         }
     }
 
-    private fun playBinauralBeat(frequencyLeft: Double?, frequencyRight: Double?, result: MethodChannel.Result){
-        if (frequencyLeft != null && frequencyRight != null) {
+    private fun playBinauralBeat(frequencyLeft: Double?, frequencyRight: Double?, duration: Double?, result: MethodChannel.Result){
+        if (frequencyLeft != null && frequencyRight != null && duration != null) {
             toneGenerator = ToneGenerator()
-            toneGenerator.generateTone(frequencyLeft, frequencyRight, context)
+            toneGenerator.generateTone(frequencyLeft, frequencyRight, duration, context)
             result.success(true)
         } else {
             result.error("INVALID_ARGUMENTS", "Invalid arguments for playBinauralBeat", null)
@@ -71,7 +72,6 @@ class ToneGenerator(){
     private lateinit var audioTrack: AudioTrack
     private var bufferSize = 0
     private val sampleRate = 44100 // Standard-Abtastfrequenz
-    private val duration = 3.0 // Beispiel-Dauer des Tons in Sekunden
     private var isPlaying = false
 
     fun stopPlayingTone(){
@@ -79,7 +79,7 @@ class ToneGenerator(){
         isPlaying = false
     }
 
-    fun generateTone(frequencyLeft: Double, frequencyRight: Double, context: Context) {
+    fun generateTone(frequencyLeft: Double, frequencyRight: Double, duration: Double, context: Context) {
         bufferSize = (sampleRate * duration).toInt()
         val builder = AudioTrack.Builder().setAudioAttributes(AudioAttributes.Builder().setUsage(AudioAttributes.USAGE_MEDIA)
                 .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC).build())
