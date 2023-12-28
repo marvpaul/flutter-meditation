@@ -4,20 +4,12 @@ import 'dart:developer';
 
 import 'package:injectable/injectable.dart';
 
-/*
-* This class is responsible for generating binaural beats and playing them.
-* It is a wrapper for the native android and ios sound libraries.
-* Used by the HomePageViewModel.
-*/
-
 @singleton
-class BinauralBeatsAndroidService {
+class BinauralBeatsMethodChannelService {
   static const platform =
       MethodChannel('htw.berlin.de/public_health/binaural_beats');
 
-  // note that this method is the implementation for Android
-  // we need low level access to native audio stream librarys to play the binaural beats
-  Future<bool> playBinauralBeatAndroid(
+  Future<bool> playBinauralBeat(
       double frequencyLeft,
       double frequencyRight,
       double volumeLeft,
@@ -38,6 +30,22 @@ class BinauralBeatsAndroidService {
       return actualIsPlaying;
     } on PlatformException catch (e) {
       log("Error playing binaural beat: '${e.message}'.");
+      return false;
+    }
+  }
+  Future<bool> stopBinauralBeats() async {
+    log("stop binaural beats method channel call to native iOS / Android");
+
+    try {
+      // TODO: give other parameters to native code
+      bool? isPlaying = await platform.invokeMethod<bool>('stopBinauralBeat');
+      bool stopped = isPlaying ?? false;
+
+      log("Method on android executed, result: $stopped");
+
+      return stopped;
+    } on PlatformException catch (e) {
+      log("Error stopping binaural beat: '${e.message}'.");
       return false;
     }
   }
