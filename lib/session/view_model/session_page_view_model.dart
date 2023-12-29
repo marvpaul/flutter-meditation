@@ -258,11 +258,10 @@ class SessionPageViewModel extends BaseViewModel {
 
   Future<bool> playBinauralBeats(
       double frequencyLeft, double frequencyRight) async {
-    //TODO give other arguments to service
+    // avoid calculation of duration and pass any number higher than the period
     return await _binauralBeatsRepository.playBinauralBeats(frequencyLeft, frequencyRight, 90);
   }
   Future<bool> stopBinauralBeats() async {
-    //TODO give other arguments to service
     return await _binauralBeatsRepository.stopBinauralBeats();
   }
 
