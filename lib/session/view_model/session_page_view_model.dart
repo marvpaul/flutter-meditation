@@ -154,7 +154,7 @@ class SessionPageViewModel extends BaseViewModel {
       if (timeLeft < 0) {
         nextState();
         numberOfStateChanges++;
-        if (numberOfStateChanges >= 6) {
+        if (numberOfStateChanges >= 6 && running) {
           numberOfStateChanges = 0;
           print("Changing params");
           changeSessionParams();
@@ -258,11 +258,10 @@ class SessionPageViewModel extends BaseViewModel {
 
   Future<bool> playBinauralBeats(
       double frequencyLeft, double frequencyRight) async {
-    //TODO give other arguments to service
-    return await _binauralBeatsRepository.playBinauralBeats(frequencyLeft, frequencyRight, 0, 0, 10);
+    // avoid calculation of duration and pass any number higher than the period
+    return await _binauralBeatsRepository.playBinauralBeats(frequencyLeft, frequencyRight, 90);
   }
   Future<bool> stopBinauralBeats() async {
-    //TODO give other arguments to service
     return await _binauralBeatsRepository.stopBinauralBeats();
   }
 

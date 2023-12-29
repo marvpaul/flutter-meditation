@@ -14,11 +14,17 @@ class BinauralBeatsRepositoryLocal implements BinauralBeatsRepository {
       getIt<BinauralBeatsMethodChannelService>();
 
   @override
-  Future<bool> playBinauralBeats(double frequencyLeft, double frequencyRight,
-      double volumeLeft, double volumeRight, double duration) async {
+  Future<bool> playBinauralBeats(
+      double frequencyLeft,
+      double frequencyRight,
+      double duration
+      ) async {
     if (Platform.isAndroid || Platform.isIOS) {
       var isPlaying = await _binauralBeatsService.playBinauralBeat(
-          frequencyLeft, frequencyRight, volumeLeft, volumeRight, duration);
+          frequencyLeft,
+          frequencyRight,
+          duration
+      );
       return isPlaying;
     } else {
       return false;

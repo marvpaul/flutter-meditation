@@ -1,101 +1,144 @@
 package com.example.flutter_meditation
 
+import android.content.Context
+import android.media.AudioAttributes
 import android.media.AudioFormat
-import android.media.AudioManager
 import android.media.AudioTrack
+import android.os.Build
 import androidx.annotation.NonNull
 import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.plugin.common.MethodChannel
-
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import android.util.Log
+import androidx.annotation.RequiresApi
+import kotlin.math.sin
+import kotlin.math.PI
 
 class MainActivity: FlutterActivity() {
     private val CHANNEL = "htw.berlin.de/public_health/binaural_beats"
+    private lateinit var toneGenerator: ToneGenerator
+    private val LOG_TAG = "FLUTTER_APP"
 
     override fun configureFlutterEngine(@NonNull flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
-
-        // create the message channel object to play binaural beatss
-        MethodChannel(flutterEngine.dartExecutor.binaryMessenger, CHANNEL).setMethodCallHandler {
-            call, result ->
-
+        MethodChannel(flutterEngine.dartExecutor.binaryMessenger, CHANNEL).setMethodCallHandler { call, result ->
             try {
-                val frequencyLeft = call.argument<Double>("frequencyLeft")
-                val frequencyRight = call.argument<Double>("frequencyRight")
-
-                // here we check which method is called
-                if (call.method == "playBinauralBeat" && frequencyLeft != null && frequencyRight != null) {
-
-                    val toneGenerator = ToneGenerator()
-                    toneGenerator.generateTone(frequencyLeft, frequencyRight)
-                    result.success(true)
-
-                } else {
-                    result.notImplemented()
+                when (call.method) {
+                    "playBinauralBeat" -> {
+                        val frequencyLeft = call.argument<Double>("frequencyLeft") ?: 0.0
+                        val frequencyRight = call.argument<Double>("frequencyRight") ?: 0.0
+                        val duration = call.argument<Double>("duration") ?: 0.0
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                            if (::toneGenerator.isInitialized) {
+                                toneGenerator.stopPlayingTone()
+                            }
+                            playBinauralBeat(frequencyLeft, frequencyRight, duration, result)
+                        }
+                    }
+                    "stopBinauralBeat" -> stopBinauralBeat(result)
+                    else -> result.notImplemented()
                 }
             } catch (e: Exception) {
-                result.error("UNAVAILABLE", "Error generating sound (AudioTrack).", null)
+                result.error("UNAVAILABLE", "Error generating/stopping sound.", null)
             }
         }
-
     }
 
+    @RequiresApi(Build.VERSION_CODES.M)
+    private fun playBinauralBeat(frequencyLeft: Double, frequencyRight: Double, duration: Double, result: MethodChannel.Result) {
+        toneGenerator = ToneGenerator()
+        toneGenerator.generateTone(frequencyLeft, frequencyRight, duration, applicationContext)
+        result.success(true)
+    }
+
+    private fun stopBinauralBeat(result: MethodChannel.Result) {
+        toneGenerator.stopPlayingTone()
+        result.success(true)
+    }
 }
 
+class ToneGenerator {
+    private val sampleRate = 44100
+    private var audioTrack: AudioTrack? = null
+    private var isPlaying = false
+    private lateinit var audioThread: Thread
 
-class ToneGenerator(){
+    @RequiresApi(Build.VERSION_CODES.M)
+    fun generateTone(frequencyLeft: Double, frequencyRight: Double, duration: Double, context: Context) {
+        val bufferSize = AudioTrack.getMinBufferSize(sampleRate, AudioFormat.CHANNEL_OUT_STEREO, AudioFormat.ENCODING_PCM_16BIT) * 3
+        audioTrack = AudioTrack.Builder()
+            .setAudioAttributes(AudioAttributes.Builder()
+                .setUsage(AudioAttributes.USAGE_MEDIA)
+                .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
+                .build())
+            .setAudioFormat(AudioFormat.Builder()
+                .setSampleRate(sampleRate)
+                .setEncoding(AudioFormat.ENCODING_PCM_16BIT)
+                .setChannelMask(AudioFormat.CHANNEL_OUT_STEREO)
+                .build())
+            .setBufferSizeInBytes(bufferSize)
+            .build()
 
-    private lateinit var audioTrack: AudioTrack
-    private var bufferSize = 0
-    private val sampleRate = 44100 // Beispiel-Abtastfrequenz
-    private val amplitude = 0.5 // Beispiel-Amplitude (0.0 bis 1.0)
-    private val duration = 5.0 // Beispiel-Dauer des Tons in Sekunden
+        audioTrack?.play()
+        isPlaying = true
 
-    fun generateTone(frequencyLeft: Double, frequencyRight: Double) {
-        // Berechne die Puffergröße
-        bufferSize = AudioTrack.getMinBufferSize(sampleRate, AudioFormat.CHANNEL_OUT_MONO, AudioFormat.ENCODING_PCM_16BIT)
+        var phaseLeft = 0.0
+        var phaseRight = 0.0
+        val twoPi = 2.0 * Math.PI
 
-        // Initialisiere den AudioTrack
-        audioTrack = AudioTrack(
-                AudioManager.STREAM_MUSIC,
-                sampleRate,
-                AudioFormat.CHANNEL_OUT_MONO,
-                AudioFormat.ENCODING_PCM_16BIT,
-                bufferSize,
-                AudioTrack.MODE_STREAM)
+        audioThread = Thread {
+            val endTime = System.currentTimeMillis() + (duration * 1000).toLong()
+            while (isPlaying && System.currentTimeMillis() < endTime) {
+                val chunkSize = bufferSize / 6
+                val pcmData = ShortArray(chunkSize * 2) // Stereo: two channels
 
-        // Starte den AudioTrack
-        audioTrack.play()
+                for (i in 0 until chunkSize) {
+                    val sampleLeft = sin(phaseLeft).toFloat()
+                    val sampleRight = sin(phaseRight).toFloat()
 
-        // Erzeuge und spiele den Ton ab
-        generateAndPlayTone(frequencyLeft, frequencyRight)
-    }
+                    pcmData[i * 2] = (sampleLeft * Short.MAX_VALUE).toInt().toShort()
+                    pcmData[i * 2 + 1] = (sampleRight * Short.MAX_VALUE).toInt().toShort()
 
-    private fun generateAndPlayTone(frequencyLeft: Double, frequencyRight: Double) {
-        // Berechne die Anzahl der Abtastpunkte für die gegebene Dauer
-        val numSamples = (sampleRate * duration).toInt()
+                    phaseLeft += twoPi * frequencyLeft / sampleRate
+                    phaseRight += twoPi * frequencyRight / sampleRate
 
-        // Erzeuge PCM-Daten für den Ton
-        val pcmData = generateStereoSinWave(numSamples, frequencyLeft, frequencyRight)
+                    // Keep the phase within the 0 to twoPi range
+                    phaseLeft %= twoPi
+                    phaseRight %= twoPi
+                }
 
-        // Spiele die PCM-Daten ab
-        audioTrack.write(pcmData, 0, numSamples)
-    }
-
-    private fun generateStereoSinWave(numSamples: Int, frequencyLeft: Double, frequencyRight: Double): ShortArray {
-        val pcmData = ShortArray(numSamples * 2)
-
-        for (i in 0 until numSamples * 2 step 2) {
-            val sampleLeft = amplitude * Math.sin(2.0 * Math.PI * frequencyLeft * i / (sampleRate * 2.0))
-            val sampleRight = amplitude * Math.sin(2.0 * Math.PI * frequencyRight * i / (sampleRate * 2.0))
-
-            // In pcmData ist wechselt das Ohr bei jeder Arrayposition,
-            // also Muster: samples[0] linkes Ohr, samples[1] rechtes Ohr, samples[2] linkes Ohr ...
-            pcmData[i] = (sampleLeft * Short.MAX_VALUE).toInt().toShort() // Linkes Ohr
-            pcmData[i + 1] = (sampleRight * Short.MAX_VALUE).toInt().toShort() // Rechtes Ohr
+                audioTrack?.write(pcmData, 0, pcmData.size)
+            }
+            stopPlayingTone()
         }
+        audioThread.start()
+    }
 
-        return pcmData
+    fun stopPlayingTone() {
+        synchronized(this) {
+            if (!isPlaying) return
+
+            // Flag to stop the audio thread
+            isPlaying = false
+
+            // Wait for the audio thread to finish its current operation
+            if (::audioThread.isInitialized && audioThread.isAlive) {
+                try {
+                    audioThread.join(1000) // Wait for 1 second for the thread to join
+                } catch (e: InterruptedException) {
+                    Thread.currentThread().interrupt() // Restore interrupt status
+                }
+            }
+
+            // Stop and release AudioTrack
+            audioTrack?.apply {
+                stop()
+                release()
+            }
+            audioTrack = null
+        }
     }
 
 }

@@ -12,21 +12,17 @@ class BinauralBeatsMethodChannelService {
   Future<bool> playBinauralBeat(
       double frequencyLeft,
       double frequencyRight,
-      double volumeLeft,
-      double volumeRight,
-      double duration) async {
-    log("playBinauralBeatAndroid called with frequencyLeft: $frequencyLeft, frequencyRight: $frequencyRight");
+      double duration
+      ) async {
+    log("playBinauralBeatAndroid called with frequencyLeft: $frequencyLeft, frequencyRight: $frequencyRight, duration: $duration");
 
     try {
-      // TODO: give other parameters to native code
       bool? isPlaying = await platform.invokeMethod<bool>('playBinauralBeat', {
         'frequencyLeft': frequencyLeft,
         'frequencyRight': frequencyRight,
+        'duration': duration,
       });
       bool actualIsPlaying = isPlaying ?? false;
-
-      log("Method on android executed, result: $actualIsPlaying");
-
       return actualIsPlaying;
     } on PlatformException catch (e) {
       log("Error playing binaural beat: '${e.message}'.");
