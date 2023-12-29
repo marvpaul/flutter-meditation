@@ -69,7 +69,7 @@ public class SwiftFlutterMethodChannelHandler: NSObject, FlutterPlugin {
         let pcmBuffer = generateStereoSinWave(numSamples: numSamples, frequencyLeft: frequencyLeft, frequencyRight: frequencyRight, audioFormat: audioFormat!)
 
         // Schedule buffer on AVAudioPlayerNode
-        playerNode?.scheduleBuffer(pcmBuffer, at: nil, options: .loops, completionHandler: nil)
+        playerNode?.scheduleBuffer(pcmBuffer, at: nil, options: .interrupts, completionHandler: nil)
 
         try? audioEngine?.start()
         try? AVAudioSession.sharedInstance().setCategory(.playback)

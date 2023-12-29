@@ -31,6 +31,9 @@ class MainActivity: FlutterActivity() {
                         val frequencyRight = call.argument<Double>("frequencyRight") ?: 0.0
                         val duration = call.argument<Double>("duration") ?: 0.0
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                            if (::toneGenerator.isInitialized) {
+                                toneGenerator.stopPlayingTone()
+                            }
                             playBinauralBeat(frequencyLeft, frequencyRight, duration, result)
                         }
                     }
