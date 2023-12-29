@@ -57,7 +57,7 @@ class SettingsPageViewModel extends BaseViewModel {
   final String bluetoothSettingsHeading = "Bluetooth connection";
   final String unpairText = "Unpair";
 
-  final String userAccountSettingsHeading = "Account Info";
+  final String aiOptimizationHeading = "AI Info";
 
   @override
   Future<void> init() async {

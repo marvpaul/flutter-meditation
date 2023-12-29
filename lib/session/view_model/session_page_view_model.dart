@@ -11,8 +11,11 @@ import 'package:flutter_meditation/home/data/repository/all_meditations_reposito
 import 'package:flutter_meditation/home/data/repository/meditation_repository.dart';
 import 'package:flutter_meditation/home/view/screens/home_page_view.dart';
 import 'package:flutter_meditation/session/data/model/breathing_pattern_model.dart';
+import 'package:flutter_meditation/session/data/model/prediction_request_model.dart';
+import 'package:flutter_meditation/session/data/model/prediction_response_model.dart';
 import 'package:flutter_meditation/session/data/repository/breathing_pattern_repository.dart';
 import 'package:flutter_meditation/session/data/repository/impl/breathing_pattern_repository_local.dart';
+import 'package:flutter_meditation/session/data/service/meditation_ai_optimization_service.dart';
 import 'package:flutter_meditation/settings/data/model/settings_model.dart';
 import 'package:flutter_meditation/settings/data/repository/impl/settings_repository_local.dart';
 import 'package:flutter_meditation/widgets/heart_rate_graph.dart';
@@ -39,6 +42,9 @@ class SessionPageViewModel extends BaseViewModel {
       getIt<SettingsRepositoryLocal>();
   final BluetoothConnectionRepository _bluetoothRepository =
       getIt<MiBandBluetoothService>();
+
+  final MeditationAIOptimizationService _meditationAIOptimizationService =
+  getIt<MeditationAIOptimizationService>();
 
   bool showUI = true;
   double kaleidoscopeMultiplier = 0;
@@ -179,6 +185,33 @@ class SessionPageViewModel extends BaseViewModel {
       }
       notifyListeners();
     });
+
+  }
+
+  // TODO call in init
+  void optimizeMeditation() {
+    if(_meditationAIOptimizationService.mlModelIsAvailable()){
+      Timer.periodic(const Duration(seconds: 30), (Timer timer) async {
+        // check whether model can be re(trained)
+        if(_meditationAIOptimizationService.dataForTrainingAvailable()){
+          await _meditationAIOptimizationService.trainModel();
+        }
+
+        // TODO after enough data in current session were collected create PredictionRequestModel like below
+
+        // replace dummy data
+        PredictionRequestModel currentParameters = PredictionRequestModel([60, 65, 70, 75, 80, 60, 65, 70, 75, 80, 60, 65, 70, 75, 80, 60, 65, 70, 75, 80, 60, 65, 70, 75, 80, 60, 65, 70, 75, 80],
+          [30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32],
+            [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3],
+            [1.2, 1.2, 1.2, 1.2, 1.2, 1.2, 1.2, 1.2, 1.2, 1.2, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8],
+          settingsModel!.uuid!
+        );
+        PredictionResponseModel? recommendedParameters = await _meditationAIOptimizationService.predict(currentParameters);
+        if(recommendedParameters != null){
+          // TODO update current meditation parameters
+        }
+      });
+    }
   }
 
   void cancelSession() {

@@ -179,7 +179,7 @@ class SettingsPageView extends BaseView<SettingsPageViewModel> {
           Padding(
             padding: const EdgeInsets.all(16.0),
             child: Text(
-              viewModel.userAccountSettingsHeading,
+              viewModel.aiOptimizationHeading,
               style: TextStyle(
                 fontSize: 14.0,
                 color: Theme.of(context).colorScheme.surfaceTint,
@@ -191,6 +191,16 @@ class SettingsPageView extends BaseView<SettingsPageViewModel> {
             title: Text("UUID"),
             trailing: Text(
               viewModel.settings!.uuid!,
+              style: const TextStyle(
+                fontSize: 14.0,
+              ),
+            ),
+          ),
+          ListTile(
+            enableFeedback: false,
+            title: Text("trained data points"),
+            trailing: Text(
+              viewModel.settings!.trainedDataPoints.toString(),
               style: const TextStyle(
                 fontSize: 14.0,
               ),
