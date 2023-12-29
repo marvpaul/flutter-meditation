@@ -154,7 +154,7 @@ class SessionPageViewModel extends BaseViewModel {
       if (timeLeft < 0) {
         nextState();
         numberOfStateChanges++;
-        if (numberOfStateChanges >= 6) {
+        if (numberOfStateChanges >= 6 && running) {
           numberOfStateChanges = 0;
           print("Changing params");
           changeSessionParams();

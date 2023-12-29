@@ -51,7 +51,7 @@ class _KaleidoscopeState extends State<Kaleidoscope>
     });
 
     timer = Timer.periodic(const Duration(milliseconds: 33), (timer) {
-      if (!mounted) return; // check if the widget is still mounted
+      if (!mounted || !widget.viewModel.running) return; // check if the widget is still mounted
       setState(() {
         if (loadedImage != widget.viewModel.getLatestSessionParamaters().visualization) {
           loadImage();
