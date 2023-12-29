@@ -3,7 +3,8 @@
 precision mediump float;
 uniform vec2 uSize;
 uniform float iTime;
-uniform sampler2D uTexture;
+uniform float fade;
+uniform sampler2D uTexture, uPrevTexture;
 out vec4 fragColor;
 
 vec2 mirror(vec2 uv) {
@@ -75,5 +76,6 @@ void main() {
   uv = Kaleidoscope(uv, 0., 12., iTime);
   uv += 0.5;
   uv = mirror(uv);
-  fragColor = texture(uTexture, uv);
+  float progress = clamp(fade, 0.,1.); 
+  fragColor = progress*texture(uTexture, uv)+(1.-progress)*texture(uPrevTexture, uv);
 }
