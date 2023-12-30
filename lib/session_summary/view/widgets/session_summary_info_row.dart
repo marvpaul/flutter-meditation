@@ -14,7 +14,12 @@ class SessionSummaryInfoRow extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           leftWidget,
-          rightWidget
+          SizedBox(
+            // calculate the width of the parent
+            width: MediaQuery.of(context).size.width / 3,
+            // width: 120.0,
+            child: rightWidget,
+          ),
         ],
       ),
     );
