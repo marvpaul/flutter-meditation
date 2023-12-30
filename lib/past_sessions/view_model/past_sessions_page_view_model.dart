@@ -5,7 +5,7 @@ import 'package:flutter_meditation/home/data/repository/all_meditations_reposito
 import 'package:flutter_meditation/home/data/repository/impl/all_meditations_repository_local.dart';
 import 'package:flutter_meditation/home/data/repository/impl/meditation_repository_local.dart';
 import 'package:flutter_meditation/home/data/repository/meditation_repository.dart';
-import 'package:flutter_meditation/session_summary/view/screens/past_sessions_page_view.dart';
+import 'package:flutter_meditation/session_summary/view/screens/session_summary_page_view.dart';
 import 'package:injectable/injectable.dart';
 import '../../di/Setup.dart';
 
@@ -16,7 +16,7 @@ class PastSessionsPageViewModel extends BaseViewModel {
   final AllMeditationsRepository _meditationsRepository = getIt<AllMeditationsRepositoryLocal>();
   final MeditationRepository _meditationRepository = getIt<MeditationRepositoryLocal>();
 
-  final String pageTitle = 'Session summary'; 
+  final String pageTitle = 'Past Sessions';
 
   @override
   void init() async {
