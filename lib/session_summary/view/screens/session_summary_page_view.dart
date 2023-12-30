@@ -3,7 +3,7 @@ import 'package:flutter_meditation/common/helpers.dart';
 import 'package:flutter_meditation/home/data/model/meditation_model.dart';
 import 'package:flutter_meditation/session_summary/view/widgets/meditation_details_widget.dart';
 import '../../../base/base_view.dart';
-import '../../view_model/past_sessions_page_view_model.dart';
+import '../../view_model/session_summary_page_view_model.dart';
 import '../widgets/session_summary_session_details_widget.dart';
 
 class SessionSummaryPageView extends BaseView<SessionSummaryPageViewModel> {
