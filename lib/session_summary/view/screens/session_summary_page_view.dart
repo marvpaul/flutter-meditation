@@ -4,6 +4,7 @@ import 'package:flutter_meditation/home/data/model/meditation_model.dart';
 import 'package:flutter_meditation/session_summary/view/widgets/meditation_details_widget.dart';
 import '../../../base/base_view.dart';
 import '../../view_model/past_sessions_page_view_model.dart';
+import '../widgets/session_summary_session_details_widget.dart';
 
 class SessionSummaryPageView extends BaseView<SessionSummaryPageViewModel> {
   final MeditationModel meditation;
@@ -23,17 +24,12 @@ class SessionSummaryPageView extends BaseView<SessionSummaryPageViewModel> {
         title: const Text("Session Summary"),
       ),
       body: Padding(
-        padding: EdgeInsets.all(15.0),
+        padding: const EdgeInsets.all(15.0),
         child: Column(
 
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
-              'Details',
-              style: TextStyle(
-                fontSize: 20.0,
-              ),
-            ),
+            sectionHeader("Details"),
             MeditationDetailsWidget(
               totalDuration: '${secondsToHRF(meditation.duration.toDouble())} min',
               timeUntilRelaxation: 'nAn min',
@@ -41,8 +37,30 @@ class SessionSummaryPageView extends BaseView<SessionSummaryPageViewModel> {
               minHeartRate: '${viewModel.getMinHeartRate(meditation)} BPM',
               avgHeartRate: '${viewModel.getAverageHeartRate(meditation)} BPM',
             ),
+            spacer(),
+            sectionHeader("Session Details"),
+            SessionSummarySessionDetailsWidget(
+              mandala: "Nature",
+              beatFrequency: "500 Hz",
+              breathingPattern: "4-7-8",
+              breathingPatternMultiplier: "1",
+              isHapticFeedbackEnabled: true,
+            ),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget spacer() {
+    return const SizedBox(height: 20,);
+  }
+
+  Widget sectionHeader(String text) {
+    return Text(
+      text,
+      style: const TextStyle(
+        fontSize: 20.0,
       ),
     );
   }
