@@ -17,34 +17,39 @@ class SessionSummaryPageView extends BaseView<SessionSummaryPageViewModel> {
     return Scaffold(
       appBar: AppBar(
         centerTitle: false,
+        forceMaterialTransparency: false,
         titleTextStyle: Theme.of(context).textTheme.headlineLarge,
-        backgroundColor: Colors.black,
-        title: Text("Past Sessions"),
+        backgroundColor: Theme.of(context).colorScheme.background,
+        title: const Text("Session Summary"),
       ),
-      body: Container(
-        decoration: const BoxDecoration(color: Colors.black),
+      body: Padding(
+        padding: EdgeInsets.all(15.0),
         child: Column(
+
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Padding(
-              padding: EdgeInsets.all(16.0),
-              child: Text(
-                'Details',
-                style: TextStyle(
-                  fontSize: 18.0,
-                ),
+            const Text(
+              'Details',
+              style: TextStyle(
+                fontSize: 20.0,
               ),
             ),
-            MeditationDetails(
-              totalDuration: secondsToHRF(meditation.duration.toDouble()).toString() + ' min',
+            MeditationDetailsWidget(
+              totalDuration: '${secondsToHRF(meditation.duration.toDouble())} min',
               timeUntilRelaxation: 'nAn min',
-              maxHeartRate: viewModel.getMaxHeartRate(meditation).toString() + ' BPM',
-              minHeartRate: viewModel.getMinHeartRate(meditation).toString() + ' BPM',
-              avgHeartRate: viewModel.getAverageHeartRate(meditation).toString() + ' BPM',
+              maxHeartRate: '${viewModel.getMaxHeartRate(meditation)} BPM',
+              minHeartRate: '${viewModel.getMinHeartRate(meditation)} BPM',
+              avgHeartRate: '${viewModel.getAverageHeartRate(meditation)} BPM',
             ),
           ],
         ),
       ),
     );
+  }
+}
+
+extension DividerExtension on Divider {
+  static Widget thin({double indent = 10, double endIndent = 10}) {
+    return const Divider(color: Colors.grey, thickness: 0.3, indent: 10, endIndent: 10, height: 0.3);
   }
 }
