@@ -5,10 +5,13 @@ import 'session_summary_info_row.dart';
 import 'session_summary_title_and_value_widget.dart';
 
 class SessionSummarySessionDetailsWidget extends StatelessWidget {
-  String? mandala;
-  double? beatFrequency;
-  String breathingPattern;
-  String breathingPatternMultiplier;
+  final String? mandala;
+  final double? beatFrequency;
+  final String breathingPattern;
+  final String breathingPatternMultiplier;
+  final String maxHeartRate;
+  final String minHeartRate;
+  final String avgHeartRate;
 
   SessionSummarySessionDetailsWidget({
     super.key,
@@ -16,6 +19,9 @@ class SessionSummarySessionDetailsWidget extends StatelessWidget {
     required this.beatFrequency,
     required this.breathingPattern,
     required this.breathingPatternMultiplier,
+    required this.maxHeartRate,
+    required this.minHeartRate,
+    required this.avgHeartRate,
   });
 
   @override
@@ -47,6 +53,25 @@ class SessionSummarySessionDetailsWidget extends StatelessWidget {
               title: 'Multiplier',
               value: breathingPatternMultiplier,
             ),
+          ),
+          DividerExtension.thin(),
+          SessionSummaryInfoRow(
+            leftWidget: SessionSummaryTitleAndValueWidget(
+              title: 'Min Heart Rate',
+              value: minHeartRate,
+            ),
+            rightWidget: SessionSummaryTitleAndValueWidget(
+              title: 'Max Heart Rate',
+              value: maxHeartRate,
+            ),
+          ),
+          DividerExtension.thin(),
+          SessionSummaryInfoRow(
+            leftWidget: SessionSummaryTitleAndValueWidget(
+              title: 'Avg Heart Rate',
+              value: avgHeartRate,
+            ),
+            rightWidget: Container(),
           ),
         ],
       ),

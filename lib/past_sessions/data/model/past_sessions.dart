@@ -28,7 +28,7 @@ class SessionPeriod {
   final double beatFrequency;
   final List<BreathingPattern> breathingPattern;
   final double breathingPatternMultiplier;
-  final List<int> heartRateMeasurements;
+  final List<double> heartRateMeasurements;
   final bool isHapticFeedbackEnabled;
   final String visualization;
 

@@ -23,7 +23,7 @@ extension on SessionPeriodDTO {
     beatFrequency: beatFrequency,
     breathingPattern: breathingPattern.map((dto) => dto.toDomain()).toList(),
     breathingPatternMultiplier: breathingPatternMultiplier,
-    heartRateMeasurements: heartRateMeasurements,
+    heartRateMeasurements: heartRateMeasurements.map((e) => e.toDouble()).toList(),
     isHapticFeedbackEnabled: isHapticFeedbackEnabled,
     visualization: visualization,
   );

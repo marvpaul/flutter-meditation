@@ -44,7 +44,7 @@ class PastSessionsPageViewModel extends BaseViewModel {
   }
 
   double getAverageHeartRateForSession(PastSession session){
-    List<int> allHeartRates = session.sessionPeriods
+    List<double> allHeartRates = session.sessionPeriods
         .expand((period) => period.heartRateMeasurements)
         .toList();
 
@@ -52,7 +52,7 @@ class PastSessionsPageViewModel extends BaseViewModel {
       return 0.0;
     }
 
-    int sum = allHeartRates.reduce((a, b) => a + b);
+    double sum = allHeartRates.reduce((a, b) => a + b);
     return sum / allHeartRates.length;
   }
 

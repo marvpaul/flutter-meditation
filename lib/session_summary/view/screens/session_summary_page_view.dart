@@ -16,6 +16,17 @@ class SessionSummaryPageView extends BaseView<SessionSummaryPageViewModel> {
   @override
   Widget build(BuildContext context, SessionSummaryPageViewModel viewModel,
       Widget? child) {
+    viewModel.update(session);
+
+    if (viewModel.sessionSummaryPresentationModel == null) {
+      // Return an alternative widget, such as a loading indicator or a message
+      return Scaffold(
+        appBar: AppBar(
+          title: const Text("Loading..."),
+        ),
+        body: const Center(child: CircularProgressIndicator()),
+      );
+    }
     return Scaffold(
       appBar: AppBar(
         centerTitle: false,
@@ -28,16 +39,15 @@ class SessionSummaryPageView extends BaseView<SessionSummaryPageViewModel> {
         child: Padding(
           padding: const EdgeInsets.all(15.0),
           child: Column(
-
             crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
+            children: <Widget>[
               sectionHeader("Details"),
               MeditationDetailsWidget(
-                totalDuration: '${secondsToHRF(session.duration.toDouble())} min',
-                maxHeartRate: '${viewModel.getMaxHeartRate(session)} BPM',
-                minHeartRate: '${viewModel.getMinHeartRate(session)} BPM',
-                avgHeartRate: '${viewModel.getAverageHeartRate(session)} BPM',
-                isHapticFeedbackEnabled: session.sessionPeriods[0].isHapticFeedbackEnabled,
+                totalDuration: viewModel.sessionSummaryPresentationModel!.totalDuration,
+                maxHeartRate: viewModel.sessionSummaryPresentationModel!.maxHeartRate,
+                minHeartRate: viewModel.sessionSummaryPresentationModel!.minHeartRate,
+                avgHeartRate: viewModel.sessionSummaryPresentationModel!.avgHeartRate,
+                isHapticFeedbackEnabled: viewModel.sessionSummaryPresentationModel!.isHapticFeedbackEnabled
               ),
               spacer(),
               ...List<Widget>.generate(session.sessionPeriods.length, (i) {
@@ -46,10 +56,13 @@ class SessionSummaryPageView extends BaseView<SessionSummaryPageViewModel> {
                   children: [
                     sectionHeader("Period ${i + 1}"),
                     SessionSummarySessionDetailsWidget(
-                      mandala: session.sessionPeriods[i].visualization,
-                      beatFrequency: session.sessionPeriods[i].beatFrequency,
-                      breathingPattern: session.sessionPeriods[i].breathingPattern.toFormattedString(),
-                      breathingPatternMultiplier: session.sessionPeriods[i].breathingPatternMultiplier.toString(),
+                      mandala: viewModel.sessionPeriodsPresentationModels[i].visualization,
+                      beatFrequency: viewModel.sessionPeriodsPresentationModels[i].beatFrequency,
+                      breathingPattern: viewModel.sessionPeriodsPresentationModels[i].breathingPattern,
+                      breathingPatternMultiplier: viewModel.sessionPeriodsPresentationModels[i].breathingPatternMultiplier,
+                      maxHeartRate: viewModel.sessionPeriodsPresentationModels[i].maxHeartRate,
+                      minHeartRate: viewModel.sessionPeriodsPresentationModels[i].minHeartRate,
+                      avgHeartRate: viewModel.sessionPeriodsPresentationModels[i].avgHeartRate,
                     ),
                   ],
                 );
