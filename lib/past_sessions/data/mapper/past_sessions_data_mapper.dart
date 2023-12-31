@@ -9,7 +9,7 @@ extension PastSessionsResponseDTOMapper on PastSessionsResponseDTO {
 
 extension on PastSessionDTO {
   PastSession toDomain() => PastSession(
-    date: date,
+    date: DateTime.parse(date),
     deviceId: deviceId,
     duration: duration,
     isCanceled: isCanceled,

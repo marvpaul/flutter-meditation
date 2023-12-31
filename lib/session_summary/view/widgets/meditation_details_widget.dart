@@ -6,18 +6,18 @@ import 'session_summary_title_and_value_widget.dart';
 
 class MeditationDetailsWidget extends StatelessWidget {
   final String totalDuration;
-  final String timeUntilRelaxation;
   final String maxHeartRate;
   final String minHeartRate;
   final String avgHeartRate;
+  final bool isHapticFeedbackEnabled;
 
   const MeditationDetailsWidget({
     super.key,
     required this.totalDuration,
-    required this.timeUntilRelaxation,
     required this.maxHeartRate,
     required this.minHeartRate,
     required this.avgHeartRate,
+    required this.isHapticFeedbackEnabled,
   });
 
   @override
@@ -49,6 +49,14 @@ class MeditationDetailsWidget extends StatelessWidget {
               title: 'Max Heart Rate',
               value: maxHeartRate,
             ),
+          ),
+          DividerExtension.thin(),
+          SessionSummaryInfoRow(
+            leftWidget: SessionSummaryTitleAndValueWidget(
+              title: 'Haptic Feedback',
+              value: isHapticFeedbackEnabled ? 'YES' : 'NO',
+            ),
+            rightWidget: Container(),
           ),
         ],
       ),

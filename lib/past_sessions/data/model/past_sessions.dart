@@ -7,7 +7,7 @@ class PastSessions {
 }
 
 class PastSession {
-  final String date;
+  final DateTime date;
   final String deviceId;
   final int duration;
   final bool isCanceled;
@@ -53,3 +53,28 @@ class BreathingPattern {
     this.exhale,
   });
 }
+
+extension BreathingPatternListExtension on List<BreathingPattern> {
+  String toFormattedString() {
+    return fold<String>('', (acc, element) {
+      String value = '';
+      if (element.inhale != null) {
+        value = element.inhale.toString();
+      } else if (element.hold != null) {
+        value = element.hold.toString();
+      } else if (element.exhale != null) {
+        value = element.exhale.toString();
+      }
+
+      // Only append '-' if accumulator is not empty and value is not empty
+      if (acc.isNotEmpty && value.isNotEmpty) {
+        acc += '-';
+      }
+
+      return acc + value;
+    });
+  }
+}
+
+
+
