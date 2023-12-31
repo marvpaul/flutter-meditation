@@ -6,38 +6,36 @@ import 'package:injectable/injectable.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uuid/uuid.dart';
 
-
 import '../../dto/settings_dto.dart';
 import '../settings_repository.dart';
 
-
 @singleton
-class SettingsRepositoryLocal implements SettingsRepository{
+class SettingsRepositoryLocal implements SettingsRepository {
   final SharedPreferences prefs;
   SettingsRepositoryLocal(this.prefs);
 
-   @override
-     List<String>? kaleidoscopeOptions = [
-      'Arctic',
-      'Aurora',
-      'Circle',
-      'City',
-      'Golden',
-      'Japan',
-      'Metropolis',
-      'Nature',
-      'Plants',
-      'Skyline'
-    ];
+  @override
+  List<String>? kaleidoscopeOptions = [
+    'Arctic',
+    'Aurora',
+    'Circle',
+    'City',
+    'Golden',
+    'Japan',
+    'Metropolis',
+    'Nature',
+    'Plants',
+    'Skyline'
+  ];
 
-    @override
-      List<int>? meditationDurationOptions = <int>[1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+  @override
+  List<int>? meditationDurationOptions = <int>[1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
 
   @override
   Future<SettingsModel> getSettings() async {
-    final String? settingsJson = prefs.getString(SettingsRepository.settingsKey);
+    final String? settingsJson =
+        prefs.getString(SettingsRepository.settingsKey);
     if (settingsJson != null) {
-      debugPrint(settingsJson);
       return SettingsDTO.fromJson(JsonDecoder().convert(settingsJson)).settings;
     }
     SettingsModel settingsModel = SettingsModel();
@@ -49,16 +47,17 @@ class SettingsRepositoryLocal implements SettingsRepository{
 
   @override
   void saveSettings(SettingsModel settings) {
-    final String settingsJson = JsonEncoder().convert(SettingsDTO(settings: settings).toJson());
+    final String settingsJson =
+        JsonEncoder().convert(SettingsDTO(settings: settings).toJson());
     prefs.setString(SettingsRepository.settingsKey, settingsJson);
   }
-
+  
   @override
   void restoreSettings() {
     saveSettings(SettingsModel());
   }
 
-  String _generateUUID(){
+  String _generateUUID() {
     Uuid uuid = Uuid();
     return uuid.v4();
   }

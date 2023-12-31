@@ -14,9 +14,9 @@ class AllMeditationsRepositoryLocal implements AllMeditationsRepository{
 
   @override
   Future<List<MeditationModel>?> getAllMeditation() async {
+    /* prefs.clear(); */
     final String? meditationJson = prefs.getString(AllMeditationsRepository.sessionKey);
     if (meditationJson != null) {
-      debugPrint(meditationJson);
       return GetMeditationDTO.fromJson(JsonDecoder().convert(meditationJson)).meditations;
     }
     return null;
@@ -33,7 +33,6 @@ class AllMeditationsRepositoryLocal implements AllMeditationsRepository{
     final String? meditationJson = prefs.getString(AllMeditationsRepository.sessionKey);
     List<MeditationModel> meditations;
     if (meditationJson != null) {
-      debugPrint(meditationJson);
       meditations = GetMeditationDTO.fromJson(JsonDecoder().convert(meditationJson)).meditations;
     } else {
       meditations = [];

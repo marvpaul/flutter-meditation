@@ -5,14 +5,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter_meditation/base/base_view_model.dart';
 import 'package:flutter_meditation/home/data/model/meditation_model.dart';
 import 'package:flutter_meditation/home/data/model/session_parameter_model.dart';
+import 'package:flutter_meditation/home/data/model/training_data_model.dart';
 import 'package:flutter_meditation/home/data/repository/impl/all_meditations_repository_local.dart';
 import 'package:flutter_meditation/home/data/repository/impl/meditation_repository_local.dart';
 import 'package:flutter_meditation/home/data/repository/all_meditations_repository.dart';
+import 'package:flutter_meditation/home/data/repository/impl/training_data_repository_local.dart';
 import 'package:flutter_meditation/home/data/repository/meditation_repository.dart';
 import 'package:flutter_meditation/home/view/screens/home_page_view.dart';
 import 'package:flutter_meditation/session/data/model/breathing_pattern_model.dart';
 import 'package:flutter_meditation/session/data/model/prediction_request_model.dart';
 import 'package:flutter_meditation/session/data/model/prediction_response_model.dart';
+import 'package:flutter_meditation/session/data/model/predition_parameter_model.dart';
 import 'package:flutter_meditation/session/data/repository/breathing_pattern_repository.dart';
 import 'package:flutter_meditation/session/data/repository/impl/breathing_pattern_repository_local.dart';
 import 'package:flutter_meditation/session/data/service/meditation_ai_optimization_service.dart';
@@ -23,6 +26,7 @@ import 'package:injectable/injectable.dart';
 import '../../di/Setup.dart';
 import 'package:flutter_meditation/session/data/repository/impl/binaural_beats_repository_local.dart';
 import 'package:flutter_meditation/session/data/repository/binaural_beats_repository.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 import '../../settings/data/repository/bluetooth_connection_repository.dart';
 import '../../settings/data/service/mi_band_bluetooth_service.dart';
@@ -38,13 +42,15 @@ class SessionPageViewModel extends BaseViewModel {
       getIt<BreathingPatternRepositoryLocal>();
   final AllMeditationsRepository _allMeditationsRepository =
       getIt<AllMeditationsRepositoryLocal>();
+  final TrainingDataRepositoryLocal _trainingDataRepository =
+      getIt<TrainingDataRepositoryLocal>();
   final SettingsRepositoryLocal _settingsRepository =
       getIt<SettingsRepositoryLocal>();
   final BluetoothConnectionRepository _bluetoothRepository =
       getIt<MiBandBluetoothService>();
 
   final MeditationAIOptimizationService _meditationAIOptimizationService =
-  getIt<MeditationAIOptimizationService>();
+      getIt<MeditationAIOptimizationService>();
 
   bool showUI = true;
   double kaleidoscopeMultiplier = 0;
@@ -60,7 +66,7 @@ class SessionPageViewModel extends BaseViewModel {
   double totalTimePerState = 0;
   double progress = 0.0;
   double stateProgress = 0.0;
-  late Timer timer, heartRateTimer;
+  late Timer timer, heartRateTimer, timerPredict;
   Duration totalDuration = const Duration();
   double elapsedSeconds = 0;
   final GlobalKey<HeartRateGraphState> heartRateGraphKey =
@@ -129,13 +135,30 @@ class SessionPageViewModel extends BaseViewModel {
         getLatestSessionParamaters().breathingMultiplier;
     _initSession();
     running = true;
+    if (!_meditationAIOptimizationService.mlModelIsAvailable()) {
+      totalDuration = const Duration(seconds: 10);
+      Fluttertoast.showToast(
+          msg:
+              "Model in training. Please meditate 2x10 minutes. We already have" +
+                  (await (_trainingDataRepository.getNumberOfDatapoints()))
+                      .toString(),
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          timeInSecForIosWeb: 3,
+          backgroundColor: Colors.blue,
+          textColor: Colors.white,
+          fontSize: 16.0);
+          timerPredict = Timer(Duration(seconds: 0), () {});
+    } else {
+      totalDuration = Duration(seconds: meditationModel?.duration ?? 0);
+      optimizeMeditation();
+    }
 
-    totalDuration = Duration(seconds: meditationModel?.duration ?? 0);
     const updateInterval =
         Duration(milliseconds: 33); // Update the progress 30 times per second
     elapsedSeconds = 0;
 
-    timer = Timer.periodic(updateInterval, (timer) {
+    timer = Timer.periodic(updateInterval, (timer) async {
       progress = elapsedSeconds / totalDuration.inSeconds;
       if (state == BreathingStepType.HOLD) {
         if (stateCounter == 1) {
@@ -161,8 +184,10 @@ class SessionPageViewModel extends BaseViewModel {
         numberOfStateChanges++;
         if (numberOfStateChanges >= 6) {
           numberOfStateChanges = 0;
-          print("Changing params");
-          changeSessionParams();
+          if (!_meditationAIOptimizationService.mlModelIsAvailable()) {
+            print("Changing params");
+            changeSessionParams();
+          }
         }
       }
 
@@ -172,6 +197,12 @@ class SessionPageViewModel extends BaseViewModel {
         if (meditationModel != null) {
           meditationModel!.completedSession = true;
           _allMeditationsRepository.addMeditation(meditationModel!);
+
+          await _trainingDataRepository.addTrainingsData(
+              meditationModel!,
+              totalDuration.inSeconds,
+              _settingsRepository.kaleidoscopeOptions!);
+          await _meditationAIOptimizationService.trainModel();
           Navigator.pushAndRemoveUntil(
             context,
             MaterialPageRoute(
@@ -185,42 +216,68 @@ class SessionPageViewModel extends BaseViewModel {
       }
       notifyListeners();
     });
-
   }
+
+  // We want to wait the first 30 seconds and creating the first predict request after one minute
+  bool waitedFirst30Seconds = false;
 
   // TODO call in init
   void optimizeMeditation() {
-    if(_meditationAIOptimizationService.mlModelIsAvailable()){
-      Timer.periodic(const Duration(seconds: 30), (Timer timer) async {
-        // check whether model can be re(trained)
-        if(_meditationAIOptimizationService.dataForTrainingAvailable()){
+    if (_meditationAIOptimizationService.mlModelIsAvailable()) {
+      timerPredict =
+          Timer.periodic(const Duration(seconds: 30), (Timer timer) async {
+        waitedFirst30Seconds = true;
+        if (waitedFirst30Seconds) {
+          // try to retrain model
           await _meditationAIOptimizationService.trainModel();
-        }
 
-        // TODO after enough data in current session were collected create PredictionRequestModel like below
+          // TODO after enough data in current session were collected create PredictionRequestModel like below
 
-        // replace dummy data
-        PredictionRequestModel currentParameters = PredictionRequestModel([60, 65, 70, 75, 80, 60, 65, 70, 75, 80, 60, 65, 70, 75, 80, 60, 65, 70, 75, 80, 60, 65, 70, 75, 80, 60, 65, 70, 75, 80],
-          [30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32],
-            [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3],
-            [1.2, 1.2, 1.2, 1.2, 1.2, 1.2, 1.2, 1.2, 1.2, 1.2, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8],
-          settingsModel!.uuid!
-        );
-        PredictionResponseModel? recommendedParameters = await _meditationAIOptimizationService.predict(currentParameters);
-        if(recommendedParameters != null){
-          // TODO update current meditation parameters
+          PredictionParametersModel currentParameters =
+              _trainingDataRepository.getPredictionData(
+                  meditationModel!,
+                  elapsedSeconds.toInt() + 1,
+                  _settingsRepository.kaleidoscopeOptions!,
+                  15);
+
+          PredictionRequestModel model = PredictionRequestModel(
+              currentParameters.heartRates,
+              currentParameters.binauralBeats,
+              currentParameters.visualizations,
+              currentParameters.breathingMultipliers,
+              settingsModel!.uuid!);
+
+          PredictionResponseModel? recommendedParameters =
+              await _meditationAIOptimizationService.predict(model);
+          if (recommendedParameters != null) {
+            print("Update meditation parameters" +
+                recommendedParameters.toString());
+
+            String newVisualization = _settingsRepository
+                .kaleidoscopeOptions![recommendedParameters.visualization];
+            meditationModel!.sessionParameters.add(SessionParameterModel(
+                visualization: newVisualization,
+                binauralFrequency:
+                    recommendedParameters.binauralBeatsInHz.toInt(),
+                breathingMultiplier: recommendedParameters.breathFrequency,
+                breathingPattern: BreathingPatternType.fourSevenEight,
+                heartRates: []));
+          }
         }
+        waitedFirst30Seconds = true;
       });
     }
   }
 
-  void cancelSession() {
+  Future<void> cancelSession() async {
     if (running) {
       running = false;
       if (meditationModel != null) {
-        meditationModel!.duration = elapsedSeconds.toInt(); 
-        print(meditationModel);
+        meditationModel!.duration = elapsedSeconds.toInt();
         _allMeditationsRepository.addMeditation(meditationModel!);
+
+        await _trainingDataRepository.addTrainingsData(meditationModel!,
+            totalDuration.inSeconds, _settingsRepository.kaleidoscopeOptions!);
       } else {
         print("Warning: meditationModel is null.");
       }
@@ -229,8 +286,10 @@ class SessionPageViewModel extends BaseViewModel {
 
   String getRandomVisualization() {
     Random random = Random();
-    int randomIndex =
-        random.nextInt(_settingsRepository.kaleidoscopeOptions!= null?_settingsRepository.kaleidoscopeOptions!.length:0);
+    int randomIndex = random.nextInt(
+        _settingsRepository.kaleidoscopeOptions != null
+            ? _settingsRepository.kaleidoscopeOptions!.length
+            : 0);
     return _settingsRepository.kaleidoscopeOptions![randomIndex];
   }
 
@@ -309,6 +368,9 @@ class SessionPageViewModel extends BaseViewModel {
     }
     if (timer.isActive) {
       timer.cancel();
+    }
+    if (_meditationAIOptimizationService.mlModelIsAvailable() &&  timerPredict.isActive) {
+      timerPredict.cancel();
     }
     super.dispose();
   }

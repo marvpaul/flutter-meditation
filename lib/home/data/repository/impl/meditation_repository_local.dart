@@ -21,7 +21,6 @@ class MeditationRepositoryLocal implements MeditationRepository {
 
   @override
   Future<MeditationModel> createNewMeditation() async {
-    print("Create new meditation, fetch params from settings!");
     // TODO: Fetch duration
     SettingsRepository settingsRepository = getIt<SettingsRepositoryLocal>();
     BreathingPatternRepository breathingPatternRepository =

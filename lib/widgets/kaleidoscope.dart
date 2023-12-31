@@ -8,8 +8,7 @@ import 'package:flutter_meditation/session/view_model/session_page_view_model.da
 class Kaleidoscope extends StatefulWidget {
   final SessionPageViewModel viewModel;
 
-  const Kaleidoscope({Key? key, required this.viewModel})
-      : super(key: key);
+  const Kaleidoscope({Key? key, required this.viewModel}) : super(key: key);
 
   @override
   _KaleidoscopeState createState() => _KaleidoscopeState();
@@ -24,9 +23,10 @@ class _KaleidoscopeState extends State<Kaleidoscope>
   String loadedImage = '';
 
   void loadImage() async {
-    String imageToLoad = widget.viewModel.getLatestSessionParamaters().visualization??'Arctic'; 
-    if(imageToLoad == ''){
-      imageToLoad = 'Arctic'; 
+    String imageToLoad =
+        widget.viewModel.getLatestSessionParamaters().visualization ?? 'Arctic';
+    if (imageToLoad == '') {
+      imageToLoad = 'Arctic';
     }
     if (loadedImage != imageToLoad) {
       final imageData =
@@ -37,11 +37,9 @@ class _KaleidoscopeState extends State<Kaleidoscope>
   }
 
   void loadMyShader() async {
-    print("Loading shader...");
     FragmentProgram program =
         await FragmentProgram.fromAsset('assets/shaders/myshader.frag');
-        
-    print("Shader loaded.");
+
     shader = program.fragmentShader();
     loadImage();
 
@@ -53,7 +51,8 @@ class _KaleidoscopeState extends State<Kaleidoscope>
     timer = Timer.periodic(const Duration(milliseconds: 33), (timer) {
       if (!mounted) return; // check if the widget is still mounted
       setState(() {
-        if (loadedImage != widget.viewModel.getLatestSessionParamaters().visualization) {
+        if (loadedImage !=
+            widget.viewModel.getLatestSessionParamaters().visualization) {
           loadImage();
         }
         delta += widget.viewModel.kaleidoscopeMultiplier * (1 / 33 * 5);
@@ -102,7 +101,7 @@ class MyFancyPainter extends CustomPainter {
       shader.setImageSampler(0, image);
 
       paintObj!.shader = shader;
-      //paintObj?.color = Colors.red;  
+      //paintObj?.color = Colors.red;
     }
 
     //canvas.drawRect(Offset.zero & size, paintObj!);

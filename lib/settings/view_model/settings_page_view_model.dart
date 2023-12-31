@@ -111,7 +111,6 @@ class SettingsPageViewModel extends BaseViewModel {
         }
       } else if (name == kaleidoscopeImageName) {
         _settingsModel!.kaleidoscopeImage = value;
-        print("Set image to" + name);
       } else if (name == 'Meditation duration') {
         _settingsModel!.meditationDuration = value;
       }

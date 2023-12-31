@@ -51,6 +51,7 @@ dependencies:
   flutter_blue_plus: ^1.29.5
   uuid: ^4.2.2
   http: ^1.1.0
+  fluttertoast: ^8.2.4
 
 dev_dependencies:
   flutter_test:

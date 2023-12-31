@@ -12,8 +12,10 @@ import 'package:http/http.dart' as http;
 class MeditationAIOptimizationRepositoryRest
     implements MeditationAIOptimizationRepository {
   @override
-  Future<http.Response> predict(PredictionRequestModel predictionData) {
+  Future<http.Response> predict(PredictionRequestModel predictionData) { 
     String payload = jsonEncode(predictionData.toJson());
+    print("make request for predict!"); 
+    print(payload); 
     return http.post(
       Uri.parse('$defaultServerHost$predictUri'),
       headers: <String, String>{
