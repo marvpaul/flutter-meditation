@@ -4,7 +4,7 @@ import '../screens/session_summary_page_view.dart';
 import 'session_summary_info_row.dart';
 import 'session_summary_title_and_value_widget.dart';
 
-class SessionSummarySessionDetailsWidget extends StatelessWidget {
+class SessionSummaryPeriodDetailsWidget extends StatelessWidget {
   final String? mandala;
   final double? beatFrequency;
   final String breathingPattern;
@@ -13,7 +13,7 @@ class SessionSummarySessionDetailsWidget extends StatelessWidget {
   final String minHeartRate;
   final String avgHeartRate;
 
-  SessionSummarySessionDetailsWidget({
+  const SessionSummaryPeriodDetailsWidget({
     super.key,
     required this.mandala,
     required this.beatFrequency,

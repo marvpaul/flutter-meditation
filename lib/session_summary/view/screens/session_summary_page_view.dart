@@ -5,7 +5,7 @@ import 'package:flutter_meditation/session_summary/view/widgets/meditation_detai
 import '../../../base/base_view.dart';
 import '../../../past_sessions/data/model/past_sessions.dart';
 import '../../view_model/session_summary_page_view_model.dart';
-import '../widgets/session_summary_session_details_widget.dart';
+import '../widgets/session_summary_period_details_widget.dart';
 
 class SessionSummaryPageView extends BaseView<SessionSummaryPageViewModel> {
   final PastSession session;
@@ -55,7 +55,7 @@ class SessionSummaryPageView extends BaseView<SessionSummaryPageViewModel> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     sectionHeader("Period ${i + 1}"),
-                    SessionSummarySessionDetailsWidget(
+                    SessionSummaryPeriodDetailsWidget(
                       mandala: viewModel.sessionPeriodsPresentationModels[i].visualization,
                       beatFrequency: viewModel.sessionPeriodsPresentationModels[i].beatFrequency,
                       breathingPattern: viewModel.sessionPeriodsPresentationModels[i].breathingPattern,
