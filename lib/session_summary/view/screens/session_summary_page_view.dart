@@ -3,13 +3,14 @@ import 'package:flutter_meditation/common/helpers.dart';
 import 'package:flutter_meditation/home/data/model/meditation_model.dart';
 import 'package:flutter_meditation/session_summary/view/widgets/meditation_details_widget.dart';
 import '../../../base/base_view.dart';
+import '../../../past_sessions/data/model/past_sessions.dart';
 import '../../view_model/session_summary_page_view_model.dart';
 import '../widgets/session_summary_session_details_widget.dart';
 
 class SessionSummaryPageView extends BaseView<SessionSummaryPageViewModel> {
-  final MeditationModel meditation;
+  final PastSession session;
 
-  SessionSummaryPageView({required this.meditation, Key? key})
+  SessionSummaryPageView({required this.session, Key? key})
       : super(key: key);
 
   @override
@@ -23,30 +24,38 @@ class SessionSummaryPageView extends BaseView<SessionSummaryPageViewModel> {
         backgroundColor: Theme.of(context).colorScheme.background,
         title: const Text("Session Summary"),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(15.0),
-        child: Column(
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(15.0),
+          child: Column(
 
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            sectionHeader("Details"),
-            MeditationDetailsWidget(
-              totalDuration: '${secondsToHRF(meditation.duration.toDouble())} min',
-              timeUntilRelaxation: 'nAn min',
-              maxHeartRate: '${viewModel.getMaxHeartRate(meditation)} BPM',
-              minHeartRate: '${viewModel.getMinHeartRate(meditation)} BPM',
-              avgHeartRate: '${viewModel.getAverageHeartRate(meditation)} BPM',
-            ),
-            spacer(),
-            sectionHeader("Session Details"),
-            SessionSummarySessionDetailsWidget(
-              mandala: "Nature",
-              beatFrequency: "500 Hz",
-              breathingPattern: "4-7-8",
-              breathingPatternMultiplier: "1",
-              isHapticFeedbackEnabled: true,
-            ),
-          ],
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              sectionHeader("Details"),
+              MeditationDetailsWidget(
+                totalDuration: '${secondsToHRF(session.duration.toDouble())} min',
+                maxHeartRate: '${viewModel.getMaxHeartRate(session)} BPM',
+                minHeartRate: '${viewModel.getMinHeartRate(session)} BPM',
+                avgHeartRate: '${viewModel.getAverageHeartRate(session)} BPM',
+                isHapticFeedbackEnabled: session.sessionPeriods[0].isHapticFeedbackEnabled,
+              ),
+              spacer(),
+              ...List<Widget>.generate(session.sessionPeriods.length, (i) {
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    sectionHeader("Period ${i + 1}"),
+                    SessionSummarySessionDetailsWidget(
+                      mandala: session.sessionPeriods[i].visualization,
+                      beatFrequency: session.sessionPeriods[i].beatFrequency,
+                      breathingPattern: session.sessionPeriods[i].breathingPattern.toFormattedString(),
+                      breathingPatternMultiplier: session.sessionPeriods[i].breathingPatternMultiplier.toString(),
+                    ),
+                  ],
+                );
+              }),
+            ],
+          ),
         ),
       ),
     );

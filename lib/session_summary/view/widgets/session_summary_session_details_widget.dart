@@ -6,10 +6,9 @@ import 'session_summary_title_and_value_widget.dart';
 
 class SessionSummarySessionDetailsWidget extends StatelessWidget {
   String? mandala;
-  String? beatFrequency;
+  double? beatFrequency;
   String breathingPattern;
   String breathingPatternMultiplier;
-  bool isHapticFeedbackEnabled;
 
   SessionSummarySessionDetailsWidget({
     super.key,
@@ -17,7 +16,6 @@ class SessionSummarySessionDetailsWidget extends StatelessWidget {
     required this.beatFrequency,
     required this.breathingPattern,
     required this.breathingPatternMultiplier,
-    required this.isHapticFeedbackEnabled,
   });
 
   @override
@@ -36,7 +34,7 @@ class SessionSummarySessionDetailsWidget extends StatelessWidget {
             ),
             rightWidget: SessionSummaryTitleAndValueWidget(
               title: 'Beat Frequency',
-              value: beatFrequency ?? 'None',
+              value: beatFrequency != null ? '${beatFrequency!.toInt()} Hz' : 'None',
             ),
           ),
           DividerExtension.thin(),
@@ -49,14 +47,6 @@ class SessionSummarySessionDetailsWidget extends StatelessWidget {
               title: 'Multiplier',
               value: breathingPatternMultiplier,
             ),
-          ),
-          DividerExtension.thin(),
-          SessionSummaryInfoRow(
-              leftWidget: SessionSummaryTitleAndValueWidget(
-                title: 'Haptic Feedback',
-                value: isHapticFeedbackEnabled ? 'YES' : 'NO',
-              ),
-              rightWidget: Container()
           ),
         ],
       ),

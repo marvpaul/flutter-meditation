@@ -18,6 +18,14 @@ String timestampToHRF(double timestamp) {
   return '$dayOfWeek, $formattedDate - $formattedTime';
 }
 
+  String dateToFormattedString(DateTime date) {
+    String dayOfWeek = _getDayOfWeek(date.weekday);
+    String formattedDate = _formatDate(date);
+    String formattedTime = _formatTime(date);
+
+    return '$dayOfWeek, $formattedDate - $formattedTime';
+  }
+
 String _getDayOfWeek(int day) {
   switch (day) {
     case DateTime.monday:

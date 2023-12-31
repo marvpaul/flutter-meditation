@@ -37,10 +37,23 @@ class PastSessionsPageViewModel extends BaseViewModel {
     return _meditationRepository.getAverageHeartRate(meditation);
   }
 
-  void navigateToSummary(var context, MeditationModel meditation) {
+  void navigateToSummary(var context, PastSession meditation) {
     Navigator.of(context).push(
-      MaterialPageRoute(builder: (context) => SessionSummaryPageView(meditation: meditation)),
+      MaterialPageRoute(builder: (context) => SessionSummaryPageView(session: meditation)),
     );
+  }
+
+  double getAverageHeartRateForSession(PastSession session){
+    List<int> allHeartRates = session.sessionPeriods
+        .expand((period) => period.heartRateMeasurements)
+        .toList();
+
+    if (allHeartRates.isEmpty) {
+      return 0.0;
+    }
+
+    int sum = allHeartRates.reduce((a, b) => a + b);
+    return sum / allHeartRates.length;
   }
 
 }
