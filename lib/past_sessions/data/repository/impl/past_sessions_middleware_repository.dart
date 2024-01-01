@@ -1,7 +1,9 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:http/http.dart' as http;
 import 'package:injectable/injectable.dart';
+import 'package:rxdart/rxdart.dart';
 
 import '../../dto/past_sessions_response_dto.dart';
 import '../../model/past_sessions.dart';
@@ -14,6 +16,10 @@ class PastSessionsMiddlewareRepository implements PastSessionsRepository {
   final String _baseUrl = 'http://localhost:6000';
 
   @override
+  Stream<List<PastSession>> get pastSessionsStream => _pastSessionsSubject.stream;
+  final BehaviorSubject<List<PastSession>> _pastSessionsSubject = BehaviorSubject<List<PastSession>>();
+
+  @override
   Future<List<PastSession>> fetchMeditationSessions(String deviceId) async {
     final url = Uri.parse('$_baseUrl/meditations?deviceId=$deviceId');
 
@@ -23,6 +29,7 @@ class PastSessionsMiddlewareRepository implements PastSessionsRepository {
       if (response.statusCode == 200) {
         PastSessionsResponseDTO decodedResponse = PastSessionsResponseDTO.fromJson(json.decode(response.body));
         PastSessions mappedResponse = decodedResponse.toDomain();
+        _pastSessionsSubject.add(mappedResponse.meditationSessions);
         return mappedResponse.meditationSessions;
       } else {
         // Handle the case where the server responds with an error
@@ -32,5 +39,9 @@ class PastSessionsMiddlewareRepository implements PastSessionsRepository {
       // Handle any exceptions
       throw Exception('Error fetching meditation sessions: $e');
     }
+  }
+
+  void dispose() {
+    _pastSessionsSubject.close();
   }
 }
