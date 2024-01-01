@@ -1,4 +1,3 @@
-import '../dto/past_sessions_response_dto.dart';
 
 class PastSessions {
   final List<PastSession> meditationSessions;
@@ -28,7 +27,7 @@ class SessionPeriod {
   final double beatFrequency;
   final List<BreathingPattern> breathingPattern;
   final double breathingPatternMultiplier;
-  final List<double> heartRateMeasurements;
+  final List<HeartRateMeasurement> heartRateMeasurements;
   final bool isHapticFeedbackEnabled;
   final String visualization;
 
@@ -39,6 +38,16 @@ class SessionPeriod {
     required this.heartRateMeasurements,
     required this.isHapticFeedbackEnabled,
     required this.visualization,
+  });
+}
+
+class HeartRateMeasurement {
+  final DateTime date;
+  final double heartRate;
+
+  HeartRateMeasurement({
+    required this.date,
+    required this.heartRate,
   });
 }
 

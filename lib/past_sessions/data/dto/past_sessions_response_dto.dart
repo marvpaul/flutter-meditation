@@ -36,7 +36,7 @@ class SessionPeriodDTO with _$SessionPeriodDTO {
     required double beatFrequency,
     required List<BreathingPatternDTO> breathingPattern,
     required double breathingPatternMultiplier,
-    required List<int> heartRateMeasurements,
+    required List<HeartRateMeasurementDTO> heartRateMeasurements,
     required bool isHapticFeedbackEnabled,
     required String visualization,
   }) = _SessionPeriodDTO;
@@ -56,4 +56,16 @@ class BreathingPatternDTO with _$BreathingPatternDTO {
 
   factory BreathingPatternDTO.fromJson(Map<String, dynamic> json) =>
       _$BreathingPatternDTOFromJson(json);
+}
+
+@freezed
+class HeartRateMeasurementDTO with _$HeartRateMeasurementDTO {
+  factory HeartRateMeasurementDTO({
+    required String date,
+    required double heartRate,
+  }) = _HeartRateMeasurementDTO;
+
+  factory HeartRateMeasurementDTO.fromJson(Map<String, dynamic> json) =>
+      _$HeartRateMeasurementDTOFromJson(json);
+
 }
