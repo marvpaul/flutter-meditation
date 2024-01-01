@@ -43,7 +43,7 @@ class PastSessionsMiddlewareRepository implements PastSessionsRepository {
       final response = await http.get(url);
       PastSessionsResponseDTO decodedResponse = PastSessionsResponseDTO.fromJson(json.decode(response.body));
       PastSessions? mappedResponse = decodedResponse.toDomain();
-      if (response.statusCode == 200 && decodedResponse.message != null) {
+      if (response.statusCode == 200 && decodedResponse.meditationSessions != null) {
         _pastSessionsSubject.add(mappedResponse!.meditationSessions);
       } else {
         print('Error ${response.statusCode} - ${decodedResponse.message}');
