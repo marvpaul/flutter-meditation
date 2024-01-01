@@ -28,7 +28,7 @@ extension on SessionPeriodDTO {
     beatFrequency: beatFrequency,
     breathingPattern: breathingPattern.map((dto) => dto.toDomain()).toList(),
     breathingPatternMultiplier: breathingPatternMultiplier,
-    heartRateMeasurements: heartRateMeasurements.map((e) => e.toDouble()).toList(),
+    heartRateMeasurements: heartRateMeasurements.map((dto) => dto.toDomain()).toList(),
     isHapticFeedbackEnabled: isHapticFeedbackEnabled,
     visualization: visualization,
   );
@@ -39,5 +39,12 @@ extension on BreathingPatternDTO {
     inhale: inhale,
     hold: hold,
     exhale: exhale,
+  );
+}
+
+extension on HeartRateMeasurementDTO {
+  HeartRateMeasurement toDomain() => HeartRateMeasurement(
+    date: DateTime.parse(date),
+    heartRate: heartRate,
   );
 }

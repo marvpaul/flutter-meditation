@@ -32,9 +32,9 @@ class SessionSummaryPageViewModel extends BaseViewModel {
         beatFrequency: period.beatFrequency,
         breathingPattern: period.breathingPattern.toFormattedString(),
         breathingPatternMultiplier: period.breathingPatternMultiplier.toString(),
-        maxHeartRate: '${_getMaxHeartRate(period.heartRateMeasurements)} BPM',
-        minHeartRate: '${_getMinHeartRate(period.heartRateMeasurements)} BPM',
-        avgHeartRate: '${_getAverageHeartRate(period.heartRateMeasurements)} BPM',
+        maxHeartRate: '${_getMaxHeartRate(period.heartRateMeasurements.map((e) => e.heartRate).toList())} BPM',
+        minHeartRate: '${_getMinHeartRate(period.heartRateMeasurements.map((e) => e.heartRate).toList())} BPM',
+        avgHeartRate: '${_getAverageHeartRate(period.heartRateMeasurements.map((e) => e.heartRate).toList())} BPM',
       );
     }).toList();
     // notifyListeners();
@@ -43,6 +43,7 @@ class SessionSummaryPageViewModel extends BaseViewModel {
   double _getAverageHeartRateForSession(PastSession session) {
     List<double> allHeartRates = session.sessionPeriods
         .expand((period) => period.heartRateMeasurements)
+        .map((measurement) => measurement.heartRate)
         .toList();
 
     return _getAverageHeartRate(allHeartRates);
@@ -61,6 +62,7 @@ class SessionSummaryPageViewModel extends BaseViewModel {
   double _getMinHeartRateForSession(PastSession session) {
     List<double> allHeartRates = session.sessionPeriods
         .expand((period) => period.heartRateMeasurements)
+        .map((measurement) => measurement.heartRate)
         .toList();
 
    return _getMinHeartRate(allHeartRates);
@@ -78,6 +80,7 @@ class SessionSummaryPageViewModel extends BaseViewModel {
   double _getMaxHeartRateForSession(PastSession session) {
     List<double> allHeartRates = session.sessionPeriods
         .expand((period) => period.heartRateMeasurements)
+        .map((measurement) => measurement.heartRate)
         .toList();
 
     return _getMaxHeartRate(allHeartRates);

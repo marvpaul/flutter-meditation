@@ -67,6 +67,7 @@ class PastSessionsPageViewModel extends BaseViewModel {
   double getAverageHeartRateForSession(PastSession session){
     List<double> allHeartRates = session.sessionPeriods
         .expand((period) => period.heartRateMeasurements)
+        .map((measurement) => measurement.heartRate)
         .toList();
 
     if (allHeartRates.isEmpty) {
