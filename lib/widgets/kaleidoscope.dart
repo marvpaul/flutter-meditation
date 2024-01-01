@@ -19,8 +19,9 @@ class _KaleidoscopeState extends State<Kaleidoscope>
     with SingleTickerProviderStateMixin {
   late Timer timer;
   double delta = 0;
+  double fade = 1;
   FragmentShader? shader;
-  ui.Image? image;
+  ui.Image? image, prevImage;
   String loadedImage = '';
 
   void loadImage() async {
@@ -32,7 +33,16 @@ class _KaleidoscopeState extends State<Kaleidoscope>
       final imageData =
           await rootBundle.load('assets/Mandalas/$imageToLoad.jpg');
       loadedImage = imageToLoad;
-      image = await decodeImageFromList(imageData.buffer.asUint8List());
+      if(prevImage != null){
+        prevImage?.dispose();
+        fade = 0; 
+        prevImage = image?.clone(); 
+        image = await decodeImageFromList(imageData.buffer.asUint8List());
+      } else {
+        image = await decodeImageFromList(imageData.buffer.asUint8List());
+        prevImage = image?.clone(); 
+
+      }
     }
   }
 
@@ -57,6 +67,7 @@ class _KaleidoscopeState extends State<Kaleidoscope>
           loadImage();
         }
         delta += widget.viewModel.kaleidoscopeMultiplier * (1 / 33 * 5);
+        fade += 1 / 33;
       });
     });
   }
@@ -78,18 +89,18 @@ class _KaleidoscopeState extends State<Kaleidoscope>
     if (shader == null || image == null) {
       return const Center(child: CircularProgressIndicator());
     } else {
-      return CustomPaint(painter: MyFancyPainter(shader!, delta, image!));
+      return CustomPaint(painter: MyFancyPainter(shader!, delta, fade, image!, prevImage!));
     }
   }
 }
 
 class MyFancyPainter extends CustomPainter {
   final FragmentShader shader;
-  final double time;
-  final ui.Image image;
+  final double time, fade;
+  final ui.Image image, prevImage;
   Paint? paintObj;
 
-  MyFancyPainter(FragmentShader fragmentShader, this.time, this.image)
+  MyFancyPainter(FragmentShader fragmentShader, this.time, this.fade, this.image, this.prevImage)
       : shader = fragmentShader;
 
   @override
@@ -99,7 +110,9 @@ class MyFancyPainter extends CustomPainter {
       shader.setFloat(0, size.width);
       shader.setFloat(1, size.height);
       shader.setFloat(2, time);
+      shader.setFloat(3, fade);
       shader.setImageSampler(0, image);
+      shader.setImageSampler(1, prevImage);
 
       paintObj!.shader = shader;
       //paintObj?.color = Colors.red;  
