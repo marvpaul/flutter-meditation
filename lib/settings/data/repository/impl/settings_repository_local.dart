@@ -40,8 +40,7 @@ class SettingsRepositoryLocal implements SettingsRepository{
       debugPrint(settingsJson);
       return SettingsDTO.fromJson(JsonDecoder().convert(settingsJson)).settings;
     }
-    SettingsModel settingsModel = SettingsModel();
-    settingsModel.uuid ??= _generateUUID();
+    SettingsModel settingsModel = SettingsModel(uuid: _generateUUID());
     saveSettings(settingsModel);
     // return default if no config was found
     return settingsModel;
@@ -55,7 +54,7 @@ class SettingsRepositoryLocal implements SettingsRepository{
 
   @override
   void restoreSettings() {
-    saveSettings(SettingsModel());
+    saveSettings(SettingsModel(uuid: _generateUUID()));
   }
 
   String _generateUUID(){

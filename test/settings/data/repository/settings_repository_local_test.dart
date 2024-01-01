@@ -21,9 +21,9 @@ void main() {
     setUp(() {
       mockSharedPreferences = MockSharedPreferences();
       settingsRepository = SettingsRepositoryLocal(mockSharedPreferences);
-      settingsHapticFeedbackEnabled = SettingsModel(isHapticFeedbackEnabled: true);
+      settingsHapticFeedbackEnabled = SettingsModel(isHapticFeedbackEnabled: true, uuid: '123');
       settingsJSONHapticFeedbackEnabled = JsonEncoder().convert(SettingsDTO(settings: settingsHapticFeedbackEnabled).toJson());
-      defaultSettingsJSON = JsonEncoder().convert(SettingsDTO(settings: SettingsModel()).toJson());
+      defaultSettingsJSON = JsonEncoder().convert(SettingsDTO(settings: SettingsModel(uuid: '123')).toJson());
     });
 
     test('getSettings - should return default settings when no settings are stored', () async {
@@ -32,7 +32,7 @@ void main() {
       when(() => mockSharedPreferences.setString(any(), any())).thenAnswer((_) => Future(() => true));
 
       final result = await settingsRepository.getSettings();
-      expect(result.isHapticFeedbackEnabled, SettingsModel().isHapticFeedbackEnabled);
+      expect(result.isHapticFeedbackEnabled, SettingsModel(uuid: '123').isHapticFeedbackEnabled);
       // verify default settings are saved
       verify(() => mockSharedPreferences.setString('settings', defaultSettingsJSON)).called(1);
     });

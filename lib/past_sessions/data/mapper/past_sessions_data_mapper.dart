@@ -2,9 +2,14 @@ import '../dto/past_sessions_response_dto.dart';
 import '../model/past_sessions.dart';
 
 extension PastSessionsResponseDTOMapper on PastSessionsResponseDTO {
-  PastSessions toDomain() => PastSessions(
-    meditationSessions: meditationSessions.map((dto) => dto.toDomain()).toList(),
-  );
+  PastSessions? toDomain() {
+    if (meditationSessions == null) {
+      return null;
+    }
+    return PastSessions(
+      meditationSessions: meditationSessions!.map((dto) => dto.toDomain()).toList(),
+    );
+  }
 }
 
 extension on PastSessionDTO {

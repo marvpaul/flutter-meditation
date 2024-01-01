@@ -33,7 +33,7 @@ void main() async {
 
     viewModel = SettingsPageViewModel();
     settingsHapticFeedbackEnabled =
-        SettingsModel(isHapticFeedbackEnabled: true);
+        SettingsModel(isHapticFeedbackEnabled: true, uuid: '123');
   });
 
   group('SettingsPageViewModel', () {

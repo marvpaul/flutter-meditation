@@ -6,7 +6,8 @@ part 'past_sessions_response_dto.g.dart';
 @freezed
 class PastSessionsResponseDTO with _$PastSessionsResponseDTO {
   factory PastSessionsResponseDTO({
-    required List<PastSessionDTO> meditationSessions,
+    List<PastSessionDTO>? meditationSessions,
+    String? message,
   }) = _PastSessionsResponseDTO;
 
   factory PastSessionsResponseDTO.fromJson(Map<String, dynamic> json) =>
