@@ -60,7 +60,7 @@ class HomePageViewModel extends BaseViewModel {
     _systemDevices = await _bluetoothRepository.getSystemDevices();
     _allMeditationsModel = await _meditationRepository.getAllMeditation();
     _subscribeToPastSessionsStream();
-    await _pastSessionsRepository.fetchMeditationSessions('5dd9b3b9e7179a0004f1c6e5');
+    await _pastSessionsRepository.fetchMeditationSessions();
     if (_isConfigured) {
       _listenForWatchStatus();
     }

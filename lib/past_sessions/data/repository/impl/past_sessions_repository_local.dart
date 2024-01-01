@@ -10,7 +10,7 @@ class PastSessionsRepositoryLocal implements PastSessionsRepository{
   PastSessionsRepositoryLocal(this.prefs);
 
   @override
-  Future<List<PastSession>> fetchMeditationSessions(String deviceId) {
+  Future<List<PastSession>> fetchMeditationSessions() {
     // TODO: implement fetchMeditationSessions
     throw UnimplementedError();
   }
