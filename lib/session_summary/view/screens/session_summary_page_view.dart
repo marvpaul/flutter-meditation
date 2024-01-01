@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_meditation/common/helpers.dart';
-import 'package:flutter_meditation/home/data/model/meditation_model.dart';
 import 'package:flutter_meditation/session_summary/view/widgets/meditation_details_widget.dart';
 import '../../../base/base_view.dart';
 import '../../../past_sessions/data/model/past_sessions.dart';

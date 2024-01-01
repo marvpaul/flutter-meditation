@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_meditation/base/base_view_model.dart';
 import 'package:flutter_meditation/home/data/model/meditation_model.dart';
@@ -19,6 +21,7 @@ class PastSessionsPageViewModel extends BaseViewModel {
   List<PastSession> _pastSessions = [];
   List<PastSession> get pastSessions => _pastSessions;
 
+  late StreamSubscription<List<PastSession>> _pastSessionsSubscription;
 
   final AllMeditationsRepository _meditationsRepository = getIt<AllMeditationsRepositoryLocal>();
   final MeditationRepository _meditationRepository = getIt<MeditationRepositoryLocal>();
@@ -29,8 +32,26 @@ class PastSessionsPageViewModel extends BaseViewModel {
   @override
   void init() async {
     _allMeditationsModel = await _meditationsRepository.getAllMeditation();
-    _pastSessions = await _pastSessionsRepository.fetchMeditationSessions('5dd9b3b9e7179a0004f1c6e5');
+    _subscribeToPastSessionsStream();
     notifyListeners();
+  }
+
+  void _subscribeToPastSessionsStream() {
+    _pastSessionsSubscription = _pastSessionsRepository.pastSessionsStream.listen(
+          (List<PastSession> sessions) {
+        _pastSessions = sessions;
+        notifyListeners();  // Update UI
+      },
+      onError: (error) {
+        // Handle any errors here
+      },
+    );
+  }
+
+  @override
+  void dispose() {
+    _pastSessionsSubscription.cancel();  // Cancel the subscription
+    super.dispose();
   }
 
   double getAverageHeartRate(MeditationModel meditation){

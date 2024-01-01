@@ -15,4 +15,8 @@ class PastSessionsRepositoryLocal implements PastSessionsRepository{
     throw UnimplementedError();
   }
 
+  @override
+  // TODO: implement pastSessionsStream
+  Stream<List<PastSession>> get pastSessionsStream => throw UnimplementedError();
+
 }

@@ -87,7 +87,7 @@ class HomePageView extends BaseView<HomePageViewModel> {
           ]),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       floatingActionButton: PastMeditationsCardView(
-        meditationSessionEntries: viewModel.meditations?.length??0,
+        meditationSessionEntries: viewModel.pastSessionsCount,
         onPressed: () {
           viewModel.navigateToSessionSummary(context);
         },

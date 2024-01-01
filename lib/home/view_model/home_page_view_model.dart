@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_meditation/home/data/repository/all_meditations_repository.dart';
 import 'package:injectable/injectable.dart';
@@ -8,6 +10,9 @@ import '../../../past_sessions/view/screens/past_sessions_page_view.dart';
 import '../../../settings/view/screens/settings_page_view.dart';
 import '../../../session/view/screens/session_page_view.dart';
 import '../../di/Setup.dart';
+import '../../past_sessions/data/model/past_sessions.dart';
+import '../../past_sessions/data/repository/impl/past_sessions_middleware_repository.dart';
+import '../../past_sessions/data/repository/past_sessions_repository.dart';
 import '../../settings/data/model/bluetooth_device_model.dart';
 import '../../settings/data/repository/bluetooth_connection_repository.dart';
 import '../../settings/data/service/mi_band_bluetooth_service.dart';
@@ -17,11 +22,16 @@ import '../data/repository/impl/all_meditations_repository_local.dart';
 class HomePageViewModel extends BaseViewModel {
   List<MeditationModel>? get meditations => _allMeditationsModel;
   List<MeditationModel>? _allMeditationsModel;
+  int get pastSessionsCount => _pastSessionsCount;
+  int _pastSessionsCount = 0;
 
   final AllMeditationsRepository _meditationRepository =
       getIt<AllMeditationsRepositoryLocal>();
   final BluetoothConnectionRepository _bluetoothRepository =
       getIt<MiBandBluetoothService>();
+
+  late StreamSubscription<int> _pastSessionsSubscription;
+  final PastSessionsRepository _pastSessionsRepository = getIt<PastSessionsMiddlewareRepository>();
 
   bool get deviceIsConfigured => _isConfigured;
 
@@ -40,19 +50,40 @@ class HomePageViewModel extends BaseViewModel {
   String get appbarText => _appbarText;
   Color? _watchIconColor;
 
+  HomePageViewModel() {
+    _appbarText = _getGreetingForCurrentTime();
+  }
+
   @override
   void init() async {
     _isConfigured = _bluetoothRepository.isConfigured();
     _systemDevices = await _bluetoothRepository.getSystemDevices();
     _allMeditationsModel = await _meditationRepository.getAllMeditation();
+    _subscribeToPastSessionsStream();
+    await _pastSessionsRepository.fetchMeditationSessions('5dd9b3b9e7179a0004f1c6e5');
     if (_isConfigured) {
       _listenForWatchStatus();
     }
     notifyListeners();
   }
 
-  HomePageViewModel() {
-    _appbarText = _getGreetingForCurrentTime();
+  @override
+  void dispose() {
+    _pastSessionsSubscription.cancel();
+    super.dispose();
+  }
+
+  void _subscribeToPastSessionsStream() {
+    _pastSessionsSubscription = _pastSessionsRepository.pastSessionsStream
+        .map((event) => event.length)
+        .listen((int count) {
+      _pastSessionsCount = count;
+      notifyListeners();
+    },
+      onError: (error) {
+        // Handle any errors here
+      },
+    );
   }
 
   void navigateToSession(var context) {
