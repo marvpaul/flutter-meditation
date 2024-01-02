@@ -20,6 +20,8 @@ class SessionSummaryPageViewModel extends BaseViewModel {
   update(MeditationModel session) {
     this.session = session;
     sessionSummaryPresentationModel = SessionSummaryPresentationModel(
+      date: DateTime.fromMillisecondsSinceEpoch(session.timestamp.toInt() * 1000).formattedDate,
+      time: DateTime.fromMillisecondsSinceEpoch(session.timestamp.toInt() * 1000).formattedTime,
       totalDuration: '${secondsToHRF(session.duration.toDouble())} min',
       maxHeartRate: '${_getMaxHeartRateForSession(session)} BPM',
       minHeartRate: '${_getMinHeartRateForSession(session)} BPM',
@@ -96,4 +98,14 @@ class SessionSummaryPageViewModel extends BaseViewModel {
     return double.parse(max.toStringAsFixed(1));
   }
 
+}
+
+extension DateTimeExtension on DateTime {
+  String get formattedDate {
+    return '${day.toString().padLeft(2, '0')}.${month.toString().padLeft(2, '0')}.${year}';
+  }
+
+  String get formattedTime {
+    return toString().split(' ')[1].substring(0, 5);
+}
 }
