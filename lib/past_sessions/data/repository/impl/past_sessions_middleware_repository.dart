@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter_meditation/home/data/model/meditation_model.dart';
+import 'package:flutter_meditation/session/data/mapper/meditation_session_data_mapper.dart';
 import 'package:flutter_meditation/settings/data/model/settings_model.dart';
 import 'package:flutter_meditation/settings/data/repository/impl/settings_repository_local.dart';
 import 'package:flutter_meditation/settings/data/repository/settings_repository.dart';
@@ -10,7 +11,6 @@ import 'package:injectable/injectable.dart';
 import 'package:rxdart/rxdart.dart';
 
 import '../../dto/past_sessions_response_dto.dart';
-import '../../mapper/past_sessions_data_mapper.dart';
 import '../past_sessions_repository.dart';
 
 @singleton

@@ -2,9 +2,9 @@ import '../../../home/data/model/heartrate_measurement_model.dart';
 import '../../../home/data/model/meditation_model.dart';
 import '../../../home/data/model/session_parameter_model.dart';
 import '../../../session/data/model/breathing_pattern_model.dart';
-import '../dto/past_sessions_response_dto.dart';
+import '../dto/meditation_session_middleware_dto.dart';
 
-extension PastSessionDTOMeditationModelMapper on PastSessionDTO {
+extension MeditationSessionMiddlewareDTOMeditationModelMapper on MeditationSessionMiddlewareDTO {
   MeditationModel toDomain() {
     return MeditationModel(
       duration: duration,
