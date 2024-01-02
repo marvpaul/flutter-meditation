@@ -54,7 +54,7 @@ extension HeartRateMeasurementDTOHeartRateMeasurementModelMapper on HeartRateMea
 extension MeditationModelMeditationSessionMiddlewareDTOMapper on MeditationModel {
   MeditationSessionMiddlewareDTO toDTO(String deviceId) {
     return MeditationSessionMiddlewareDTO(
-      date: DateTime.fromMillisecondsSinceEpoch(timestamp.toInt() * 1000).toIso8601String(),
+      date: "${DateTime.fromMillisecondsSinceEpoch(timestamp.toInt() * 1000).toIso8601String()}Z",
       deviceId: deviceId,
       duration: duration,
       isCanceled: false,
@@ -97,7 +97,7 @@ extension BreathinPatternTypeDTOMapper on BreathingPatternType {
 extension HeartrateMeasurementModelHeartRateMeasurementDTOMapper on HeartrateMeasurementModel {
   HeartRateMeasurementDTO toDTO() {
     return HeartRateMeasurementDTO(
-      date: DateTime.fromMillisecondsSinceEpoch(timestamp * 1000).toIso8601String(),
+      date: "${DateTime.fromMillisecondsSinceEpoch(timestamp.toInt() * 1000).toIso8601String()}Z",
       heartRate: heartRate,
     );
   }
