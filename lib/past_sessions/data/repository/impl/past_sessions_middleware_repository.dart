@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:flutter_meditation/common/variables.dart';
 import 'package:flutter_meditation/home/data/model/meditation_model.dart';
 import 'package:flutter_meditation/session/data/mapper/meditation_session_data_mapper.dart';
 import 'package:flutter_meditation/settings/data/model/settings_model.dart';
@@ -16,8 +17,6 @@ import '../past_sessions_repository.dart';
 @singleton
 @injectable
 class PastSessionsMiddlewareRepository implements PastSessionsRepository {
-
-  final String _baseUrl = 'http://localhost:6000';
 
   final SettingsRepository _settingsRepository;
 
@@ -37,7 +36,7 @@ class PastSessionsMiddlewareRepository implements PastSessionsRepository {
   @override
   void fetchMeditationSessions() async {
     final String deviceId = await getDeviceId();
-    final url = Uri.parse('$_baseUrl/meditations?deviceId=$deviceId');
+    final url = Uri.parse('$defaultServerHost$meditationsUri?deviceId=$deviceId');
 
     try {
       final response = await http.get(url);
