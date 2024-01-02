@@ -83,7 +83,7 @@ class SessionParameterOptimizationMiddlewareRepository implements SessionParamet
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
         },
-        body: body.toJson(),
+        body: json.encode(body.toJson()),
       );
       SessionParameterOptimizationResponseDTO decodedResponse = SessionParameterOptimizationResponseDTO
           .fromJson(json.decode(response.body));
@@ -116,7 +116,7 @@ class SessionParameterOptimizationMiddlewareRepository implements SessionParamet
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
         },
-        body: body.toJson(),
+        body: json.encode(body.toJson()),
       );
       TrainSessionParameterOptimizationResponseDTO decodedResponse = TrainSessionParameterOptimizationResponseDTO.fromJson(json.decode(response.body));
       if (response.statusCode == 200 && decodedResponse.message != null) {
