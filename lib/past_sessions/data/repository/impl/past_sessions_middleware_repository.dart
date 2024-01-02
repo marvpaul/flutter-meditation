@@ -55,8 +55,7 @@ class PastSessionsMiddlewareRepository implements PastSessionsRepository {
   }
 
   Future<String> getDeviceId() async {
-    SettingsModel settings = await _settingsRepository.getSettings();
-    return settings.uuid;
+    return await _settingsRepository.getDeviceId();
   }
 
   void dispose() {
