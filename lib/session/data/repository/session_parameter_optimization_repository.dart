@@ -1,10 +1,12 @@
+import 'package:flutter_meditation/home/data/model/meditation_model.dart';
+
 abstract class SessionParameterOptimizationRepository {
   // Future<SessionParameterOptimization> getSessionParameterOptimization(
   //     PastSession session
   //     );
-  // Future<void> trainSessionParameterOptimization(
-  //     PastSession sessionParameterOptimization
-  //     );
+  Future<void> trainSessionParameterOptimization(
+      MeditationModel sessionParameterOptimization
+      );
   Stream<bool> get isAiModeAvailable;
   Stream<bool> get isAiModeEnabled;
   void changeAiMode(bool isEnabled);

@@ -21,12 +21,12 @@ class MeditationSessionMiddlewareDTO with _$MeditationSessionMiddlewareDTO {
 @freezed
 class SessionPeriodDTO with _$SessionPeriodDTO {
   factory SessionPeriodDTO({
-    required double beatFrequency,
+    required double? beatFrequency,
     required List<BreathingPatternDTO> breathingPattern,
     required double breathingPatternMultiplier,
     required List<HeartRateMeasurementDTO> heartRateMeasurements,
     required bool isHapticFeedbackEnabled,
-    required String visualization,
+    required String? visualization,
   }) = _SessionPeriodDTO;
 
   factory SessionPeriodDTO.fromJson(Map<String, dynamic> json) =>

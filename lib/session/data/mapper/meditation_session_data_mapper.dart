@@ -4,6 +4,8 @@ import '../../../home/data/model/session_parameter_model.dart';
 import '../../../session/data/model/breathing_pattern_model.dart';
 import '../dto/meditation_session_middleware_dto.dart';
 
+// DTO to Domain
+
 extension MeditationSessionMiddlewareDTOMeditationModelMapper on MeditationSessionMiddlewareDTO {
   MeditationModel toDomain() {
     return MeditationModel(
@@ -21,7 +23,7 @@ extension SessionPeriodDTOSessionParameterModelMapper on SessionPeriodDTO {
   SessionParameterModel toDomain() {
     return SessionParameterModel(
       visualization: visualization,
-      binauralFrequency: beatFrequency.toInt(),
+      binauralFrequency: beatFrequency?.toInt(),
       breathingMultiplier: breathingPatternMultiplier,
       breathingPattern: breathingPattern.toDomain(),
       heartRates: heartRateMeasurements.map((e) => e.toDomain()).toList(),
@@ -43,6 +45,60 @@ extension HeartRateMeasurementDTOHeartRateMeasurementModelMapper on HeartRateMea
     return HeartrateMeasurementModel(
       heartRate: heartRate,
       timestamp: DateTime.parse(date).millisecondsSinceEpoch,
+    );
+  }
+}
+
+// Domain to DTO
+
+extension MeditationModelMeditationSessionMiddlewareDTOMapper on MeditationModel {
+  MeditationSessionMiddlewareDTO toDTO(String deviceId) {
+    return MeditationSessionMiddlewareDTO(
+      date: DateTime.fromMillisecondsSinceEpoch(timestamp.toInt() * 1000).toIso8601String(),
+      deviceId: deviceId,
+      duration: duration,
+      isCanceled: false,
+      isCompleted: completedSession,
+      sessionPeriods: sessionParameters.map((e) => e.toDTO(isHapticFeedbackEnabled)).toList(),
+    );
+  }
+}
+
+extension SessionParameterModelSessionPeriodDTOMapper on SessionParameterModel {
+  SessionPeriodDTO toDTO(bool isHapticFeedbackEnabled) {
+    return SessionPeriodDTO(
+      beatFrequency: binauralFrequency?.toDouble(),
+      breathingPattern: breathingPattern.toDTO(),
+      breathingPatternMultiplier: breathingMultiplier,
+      heartRateMeasurements: heartRates.map((e) => e.toDTO()).toList(),
+      isHapticFeedbackEnabled: isHapticFeedbackEnabled,
+      visualization: visualization,
+    );
+  }
+}
+
+extension BreathinPatternTypeDTOMapper on BreathingPatternType {
+  List<BreathingPatternDTO> toDTO() {
+    switch (this) {
+      case BreathingPatternType.fourSevenEight:
+        return [
+          BreathingPatternDTO(inhale: 4),
+          BreathingPatternDTO(hold: 7),
+          BreathingPatternDTO(exhale: 8),
+          BreathingPatternDTO(hold: null),
+        ];
+      default:
+        return [
+        ];
+    }
+  }
+}
+
+extension HeartrateMeasurementModelHeartRateMeasurementDTOMapper on HeartrateMeasurementModel {
+  HeartRateMeasurementDTO toDTO() {
+    return HeartRateMeasurementDTO(
+      date: DateTime.fromMillisecondsSinceEpoch(timestamp * 1000).toIso8601String(),
+      heartRate: heartRate,
     );
   }
 }
