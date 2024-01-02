@@ -100,7 +100,7 @@ class SessionParameterOptimizationMiddlewareRepository implements SessionParamet
       }
     } catch (e) {
       // Handle any exceptions
-      throw Exception('Error fetching meditation sessions: $e');
+      throw Exception('Error predicting best parameter configuration: $e');
     }
   }
 
@@ -124,7 +124,7 @@ class SessionParameterOptimizationMiddlewareRepository implements SessionParamet
       }
     } catch (e) {
       // Handle any exceptions
-      throw Exception('Error fetching meditation sessions: $e');
+      throw Exception('Error training model: $e');
     }
   }
 
