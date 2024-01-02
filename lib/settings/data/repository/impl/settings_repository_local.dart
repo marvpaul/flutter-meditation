@@ -12,7 +12,7 @@ import '../settings_repository.dart';
 
 
 @singleton
-class SettingsRepositoryLocal implements SettingsRepository{
+class SettingsRepositoryLocal implements SettingsRepository {
   final SharedPreferences prefs;
   SettingsRepositoryLocal(this.prefs);
 
@@ -60,5 +60,11 @@ class SettingsRepositoryLocal implements SettingsRepository{
   String _generateUUID(){
     Uuid uuid = Uuid();
     return uuid.v4();
+  }
+
+  @override
+  Future<String> getDeviceId() async {
+    SettingsModel settings = await getSettings();
+    return settings.uuid;
   }
 }
