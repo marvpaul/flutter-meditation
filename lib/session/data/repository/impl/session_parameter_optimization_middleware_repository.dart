@@ -72,7 +72,7 @@ class SessionParameterOptimizationMiddlewareRepository implements SessionParamet
   }
 
   @override
-  Future<SessionParameterOptimization> getSessionParameterOptimization(MeditationModel session) async {
+  Future<SessionParameterOptimization?> getSessionParameterOptimization(MeditationModel session) async {
     final String deviceId = await getDeviceId();
     final url = Uri.parse('$defaultServerHost$predictUri');
 
@@ -85,10 +85,15 @@ class SessionParameterOptimizationMiddlewareRepository implements SessionParamet
         },
         body: body.toJson(),
       );
-      SessionParameterOptimizationResponseDTO decodedResponse = SessionParameterOptimizationResponseDTO.fromJson(json.decode(response.body));
+      SessionParameterOptimizationResponseDTO decodedResponse = SessionParameterOptimizationResponseDTO
+          .fromJson(json.decode(response.body));
       if (response.statusCode == 200 && decodedResponse.bestCombination != null) {
-        SessionParameterOptimization sessionParameterOptimization = decodedResponse.bestCombination!.toDomain();
+        SessionParameterOptimization sessionParameterOptimization = decodedResponse
+            .bestCombination!.toDomain();
         return sessionParameterOptimization;
+      } else if (response.statusCode == 200 && decodedResponse.message != null) {
+        print('Message: ${decodedResponse.message}');
+        return null;
       } else {
         print('Error ${response.statusCode} - ${decodedResponse.message}');
         throw Exception('Error getting optimization: ${decodedResponse.message}');
