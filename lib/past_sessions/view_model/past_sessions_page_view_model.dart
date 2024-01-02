@@ -11,17 +11,16 @@ import 'package:flutter_meditation/past_sessions/data/repository/impl/past_sessi
 import 'package:flutter_meditation/session_summary/view/screens/session_summary_page_view.dart';
 import 'package:injectable/injectable.dart';
 import '../../di/Setup.dart';
-import '../data/model/past_sessions.dart';
 import '../data/repository/past_sessions_repository.dart';
 
 @injectable
 class PastSessionsPageViewModel extends BaseViewModel {
   List<MeditationModel>? get meditations => _allMeditationsModel;
   List<MeditationModel>? _allMeditationsModel;
-  List<PastSession> _pastSessions = [];
-  List<PastSession> get pastSessions => _pastSessions;
+  List<MeditationModel> _pastSessions = [];
+  List<MeditationModel> get pastSessions => _pastSessions;
 
-  late StreamSubscription<List<PastSession>> _pastSessionsSubscription;
+  late StreamSubscription<List<MeditationModel>> _pastSessionsSubscription;
 
   final AllMeditationsRepository _meditationsRepository = getIt<AllMeditationsRepositoryLocal>();
   final MeditationRepository _meditationRepository = getIt<MeditationRepositoryLocal>();
@@ -38,7 +37,7 @@ class PastSessionsPageViewModel extends BaseViewModel {
 
   void _subscribeToPastSessionsStream() {
     _pastSessionsSubscription = _pastSessionsRepository.pastSessionsStream.listen(
-          (List<PastSession> sessions) {
+          (List<MeditationModel> sessions) {
         _pastSessions = sessions;
         notifyListeners();  // Update UI
       },
@@ -58,15 +57,15 @@ class PastSessionsPageViewModel extends BaseViewModel {
     return _meditationRepository.getAverageHeartRate(meditation);
   }
 
-  void navigateToSummary(var context, PastSession meditation) {
+  void navigateToSummary(var context, MeditationModel meditation) {
     Navigator.of(context).push(
       MaterialPageRoute(builder: (context) => SessionSummaryPageView(session: meditation)),
     );
   }
 
-  double getAverageHeartRateForSession(PastSession session){
-    List<double> allHeartRates = session.sessionPeriods
-        .expand((period) => period.heartRateMeasurements)
+  double getAverageHeartRateForSession(MeditationModel session){
+    List<double> allHeartRates = session.sessionParameters
+        .expand((period) => period.heartRates)
         .map((measurement) => measurement.heartRate)
         .toList();
 

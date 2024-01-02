@@ -1,6 +1,6 @@
-import '../model/past_sessions.dart';
+import 'package:flutter_meditation/home/data/model/meditation_model.dart';
 
 abstract class PastSessionsRepository {
-  Stream<List<PastSession>> get pastSessionsStream;
+  Stream<List<MeditationModel>> get pastSessionsStream;
   void fetchMeditationSessions();
 }
