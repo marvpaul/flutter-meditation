@@ -11,8 +11,11 @@ import 'package:flutter_meditation/home/data/repository/all_meditations_reposito
 import 'package:flutter_meditation/home/data/repository/meditation_repository.dart';
 import 'package:flutter_meditation/home/view/screens/home_page_view.dart';
 import 'package:flutter_meditation/session/data/model/breathing_pattern_model.dart';
+import 'package:flutter_meditation/session/data/model/session_parameter_optimization.dart';
 import 'package:flutter_meditation/session/data/repository/breathing_pattern_repository.dart';
 import 'package:flutter_meditation/session/data/repository/impl/breathing_pattern_repository_local.dart';
+import 'package:flutter_meditation/session/data/repository/session_parameter_optimization_repository.dart';
+import 'package:flutter_meditation/session/data/service/meditation_session_validation_service.dart';
 import 'package:flutter_meditation/settings/data/model/settings_model.dart';
 import 'package:flutter_meditation/settings/data/repository/impl/settings_repository_local.dart';
 import 'package:flutter_meditation/widgets/heart_rate_graph.dart';
@@ -23,6 +26,7 @@ import 'package:flutter_meditation/session/data/repository/binaural_beats_reposi
 
 import '../../settings/data/repository/bluetooth_connection_repository.dart';
 import '../../settings/data/service/mi_band_bluetooth_service.dart';
+import '../data/repository/impl/session_parameter_optimization_middleware_repository.dart';
 
 @injectable
 class SessionPageViewModel extends BaseViewModel {
@@ -39,6 +43,10 @@ class SessionPageViewModel extends BaseViewModel {
       getIt<SettingsRepositoryLocal>();
   final BluetoothConnectionRepository _bluetoothRepository =
       getIt<MiBandBluetoothService>();
+  final SessionParameterOptimizationRepository _sessionParameterOptimizationRepository =
+      getIt<SessionParameterOptimizationMiddlewareRepository>();
+  final MeditationSessionValidationService _meditationSessionValidationService =
+      getIt<MeditationSessionValidationService>();
 
   bool showUI = true;
   double kaleidoscopeMultiplier = 0;
@@ -130,7 +138,7 @@ class SessionPageViewModel extends BaseViewModel {
         Duration(milliseconds: 33); // Update the progress 30 times per second
     elapsedSeconds = 0;
 
-    timer = Timer.periodic(updateInterval, (timer) {
+    timer = Timer.periodic(updateInterval, (timer) async {
       progress = elapsedSeconds / totalDuration.inSeconds;
       if (state == BreathingStepType.HOLD) {
         if (stateCounter == 1) {
@@ -157,7 +165,11 @@ class SessionPageViewModel extends BaseViewModel {
         if (numberOfStateChanges >= 6 && running) {
           numberOfStateChanges = 0;
           print("Changing params");
-          changeSessionParams();
+          final MeditationModel validatedMeditationSession = _meditationSessionValidationService.validateMeditationSession(meditationModel!);
+          final SessionParameterOptimization? sessionParameterOptimization = await
+          _sessionParameterOptimizationRepository
+              .getSessionParameterOptimization(validatedMeditationSession);
+          changeSessionParams(sessionParameterOptimization);
         }
       }
 
@@ -166,8 +178,10 @@ class SessionPageViewModel extends BaseViewModel {
         finished = true;
         if (meditationModel != null) {
           meditationModel!.completedSession = true;
-          stopBinauralBeats(); 
-          _allMeditationsRepository.addMeditation(meditationModel!);
+          stopBinauralBeats();
+          final MeditationModel validatedMeditationSession = _meditationSessionValidationService.validateMeditationSession(meditationModel!);
+          _sessionParameterOptimizationRepository.trainSessionParameterOptimization(validatedMeditationSession);
+          _allMeditationsRepository.addMeditation(validatedMeditationSession);
           Navigator.pushAndRemoveUntil(
             context,
             MaterialPageRoute(
@@ -215,11 +229,12 @@ class SessionPageViewModel extends BaseViewModel {
     return 300+random.nextInt(200);
   }
 
-  void changeSessionParams() {
+  void changeSessionParams(SessionParameterOptimization? sessionParameterOptimization) {
+    bool needsToBeRandomized = sessionParameterOptimization == null;
     meditationModel!.sessionParameters.add(SessionParameterModel(
-        visualization: getRandomVisualization(),
-        binauralFrequency: getRandomBinauralBeats(),
-        breathingMultiplier: getRandomBreathingMultiplier(),
+        visualization: needsToBeRandomized ? getRandomVisualization() : sessionParameterOptimization!.visualization,
+        binauralFrequency: needsToBeRandomized ? getRandomBinauralBeats() : sessionParameterOptimization!.beatFrequency,
+        breathingMultiplier: needsToBeRandomized ? getRandomBreathingMultiplier() : sessionParameterOptimization!.breathingPatternMultiplier,
         breathingPattern: BreathingPatternType.fourSevenEight,
         heartRates: []));
         double freq = (getLatestSessionParamaters().binauralFrequency)!.toDouble(); 

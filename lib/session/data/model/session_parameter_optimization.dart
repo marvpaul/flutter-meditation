@@ -1,5 +1,5 @@
 class SessionParameterOptimization {
-  final double beatFrequency;
+  final int beatFrequency;
   final String visualization;
   final double breathingPatternMultiplier;
 
