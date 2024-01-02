@@ -9,7 +9,7 @@ class MeditationModel with _$MeditationModel {
     required int duration,
     required bool isHapticFeedbackEnabled,
     required bool shouldShowHeartRate,
-    required double timestamp,
+    required double timestamp, // TODO: should be an int
     required List<SessionParameterModel> sessionParameters,
     required bool completedSession
   }) = _MeditationModel;

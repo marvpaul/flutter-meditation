@@ -246,7 +246,10 @@ class SessionPageViewModel extends BaseViewModel {
         // Simulate heart rate values
         heartRate = 60 + DateTime.now().microsecondsSinceEpoch % 60;
         _meditationRepository.addHeartRate(
-            meditationModel!, (elapsedSeconds * 1000).toInt(), heartRate);
+            meditationModel!,
+            meditationModel!.timestamp.toInt() + elapsedSeconds.toInt(),
+            heartRate
+        );
         heartRateGraphKey.currentState?.refreshHeartRate();
       });
     }
@@ -270,7 +273,10 @@ class SessionPageViewModel extends BaseViewModel {
     heartRateStream.listen((measurement) {
       heartRate = measurement + .0;
       _meditationRepository.addHeartRate(
-          meditationModel!, (elapsedSeconds * 1000).toInt(), heartRate);
+          meditationModel!,
+          meditationModel!.timestamp.toInt() + elapsedSeconds.toInt(),
+          heartRate
+      );
       heartRateGraphKey.currentState?.refreshHeartRate();
     });
   }
