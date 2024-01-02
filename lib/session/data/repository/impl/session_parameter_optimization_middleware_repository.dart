@@ -1,4 +1,5 @@
 import 'package:injectable/injectable.dart';
+import 'package:rxdart/rxdart.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../../past_sessions/data/repository/impl/past_sessions_middleware_repository.dart';
@@ -9,10 +10,21 @@ import '../session_parameter_optimization_repository.dart';
 @injectable
 class SessionParameterOptimizationMiddlewareRepository implements SessionParameterOptimizationRepository {
 
+  final String _preferenceKey = 'isAiModeEnabled';
+  final bool _defaultValueForAiMode = true;
+
   final PastSessionsRepository _pastSessionsRepository;
   final SharedPreferences _sharedPreferences;
 
-  SessionParameterOptimizationMiddlewareRepository(this._pastSessionsRepository, this._sharedPreferences);
+  SessionParameterOptimizationMiddlewareRepository(this._pastSessionsRepository, this._sharedPreferences) {
+    bool? isAiModeEnabled = _sharedPreferences.getBool(_preferenceKey);
+    if (isAiModeEnabled != null) {
+      _isAiModeEnabledSubject.add(isAiModeEnabled);
+    } else {
+      _sharedPreferences.setBool(_preferenceKey, _defaultValueForAiMode);
+      _isAiModeEnabledSubject.add(_defaultValueForAiMode);
+    }
+  }
 
   @factoryMethod
   static Future<SessionParameterOptimizationMiddlewareRepository> create(
@@ -23,24 +35,25 @@ class SessionParameterOptimizationMiddlewareRepository implements SessionParamet
   }
 
   @override
-  // TODO: implement isAiModeAvailable
   Stream<bool> get isAiModeAvailable => _pastSessionsRepository.pastSessionsStream.map((e) => e.length > 2);
 
+  final BehaviorSubject<bool> _isAiModeEnabledSubject = BehaviorSubject<bool>();
   @override
   Stream<bool> get isAiModeEnabled {
-    return _pastSessionsRepository.pastSessionsStream.asyncMap((sessions) async {
-      final bool isAiModeAvailable = sessions.length > 2;
+    return CombineLatestStream.combine2(
+      _pastSessionsRepository.pastSessionsStream,
+      _isAiModeEnabledSubject,
+          (List<dynamic> sessions, bool isAiModeEnabled) {
+        final bool isAiModeAvailable = sessions.length > 2;
+        return isAiModeAvailable && isAiModeEnabled;
+      },
+    ).asBroadcastStream(); // To allow multiple listeners
+  }
 
-      // Retrieve the isAiModeEnabled preference
-      bool? isAiModeEnabled = _sharedPreferences.getBool('isAiModeEnabled');
-      if (isAiModeEnabled == null) {
-        // Set the preference if it's not set yet
-        await _sharedPreferences.setBool('isAiModeEnabled', isAiModeAvailable);
-        isAiModeEnabled = isAiModeAvailable;
-      }
-
-      return isAiModeAvailable && isAiModeEnabled;
-    }).asBroadcastStream(); // Using asBroadcastStream to allow multiple listeners
+  @override
+  void changeAiMode(bool isEnabled) async {
+    await _sharedPreferences.setBool(_preferenceKey, isEnabled);
+    _isAiModeEnabledSubject.add(isEnabled);
   }
 
 // @override

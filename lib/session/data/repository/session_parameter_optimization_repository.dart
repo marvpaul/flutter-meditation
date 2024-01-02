@@ -7,6 +7,7 @@ abstract class SessionParameterOptimizationRepository {
   //     );
   Stream<bool> get isAiModeAvailable;
   Stream<bool> get isAiModeEnabled;
+  void changeAiMode(bool isEnabled);
 }
 
 class SessionParameterOptimization {

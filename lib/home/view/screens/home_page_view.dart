@@ -101,7 +101,7 @@ class HomePageView extends BaseView<HomePageViewModel> {
                         value: viewModel.isAiModeEnabled,
                         onChanged: viewModel.isAiModeAvailable ? (bool value) {
                           // Handle the switch change
-                          // e.g., update your view model or perform some action
+                          viewModel.changeAiMode(value);
                         } : null, // If isAiModeAvailable is false, onChanged is null, which disables the switch
                       ),
                       const SizedBox(width: 10),

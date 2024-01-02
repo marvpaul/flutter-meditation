@@ -172,4 +172,8 @@ class HomePageViewModel extends BaseViewModel {
       return "Good Night";
     }
   }
+
+  void changeAiMode(bool isEnabled) {
+    _sessionParameterOptimizationRepository.changeAiMode(isEnabled);
+  }
 }
