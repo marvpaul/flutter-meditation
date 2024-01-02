@@ -6,7 +6,7 @@ extension SessionParameterOptimizationDTOMapper on SessionParameterOptimizationD
   SessionParameterOptimization toDomain() {
     return SessionParameterOptimization(
       visualization: visualization,
-      beatFrequency: beatFrequency,
+      beatFrequency: beatFrequency.toInt(),
       breathingPatternMultiplier: breathingPatternMultiplier,
     );
   }
