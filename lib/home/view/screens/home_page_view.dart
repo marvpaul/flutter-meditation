@@ -34,35 +34,6 @@ class HomePageView extends BaseView<HomePageViewModel> {
       );
     }
     return Scaffold(
-      extendBodyBehindAppBar: true,
-      appBar: AppBar(
-        toolbarHeight: 100,
-        centerTitle: false,
-        titleTextStyle: Theme.of(context).textTheme.headlineLarge,
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        title: Text(viewModel.appbarText),
-        actions: [
-          if (!viewModel.deviceIsConfigured)
-            const Icon(
-              Icons.watch_off,
-              color: Colors.red,
-              size: 30.0,
-            ),
-          if (viewModel.deviceIsConfigured)
-            Icon(
-              Icons.watch,
-              color: viewModel.watchIconColor,
-              size: 30.0,
-            ),
-          IconButton(
-            icon: const Icon(Icons.settings_rounded),
-            onPressed: () {
-              viewModel.navigateToSettings(context);
-            },
-          ),
-        ],
-      ),
       body: Stack(
           children: [
             const GradientBackground(),
@@ -77,13 +48,65 @@ class HomePageView extends BaseView<HomePageViewModel> {
                           progress: 1,
                           onTap: () => {viewModel.navigateToSession(context)},
                         ),
-
                       ],
                     ),
                   ),
                 ),
               ],
             ),
+            Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  AppBar(
+                    toolbarHeight: 100,
+                    centerTitle: false,
+                    titleTextStyle: Theme.of(context).textTheme.headlineLarge,
+                    backgroundColor: Colors.transparent,
+                    elevation: 0,
+                    title: Text(viewModel.appbarText),
+                    actions: [
+                      if (!viewModel.deviceIsConfigured)
+                        const Icon(
+                          Icons.watch_off,
+                          color: Colors.red,
+                          size: 30.0,
+                        ),
+                      if (viewModel.deviceIsConfigured)
+                        Icon(
+                          Icons.watch,
+                          color: viewModel.watchIconColor,
+                          size: 30.0,
+                        ),
+                      IconButton(
+                        icon: const Icon(Icons.settings_rounded),
+                        onPressed: () {
+                          viewModel.navigateToSettings(context);
+                        },
+                      ),
+                    ],
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      Text(
+                          "AI",
+                          style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.w500,
+                              color: viewModel.isAiModeAvailable ? Colors.white : Theme.of(context).disabledColor
+                          )
+                      ),
+                      const SizedBox(width: 5),
+                      Switch(
+                        value: viewModel.isAiModeEnabled,
+                        onChanged: viewModel.isAiModeAvailable ? (bool value) {
+                          // Handle the switch change
+                          // e.g., update your view model or perform some action
+                        } : null, // If isAiModeAvailable is false, onChanged is null, which disables the switch
+                      ),
+                      const SizedBox(width: 10),
+                    ],)
+                ]),
           ]),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       floatingActionButton: PastMeditationsCardView(
