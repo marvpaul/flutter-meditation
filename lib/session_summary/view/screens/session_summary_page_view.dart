@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_meditation/session_summary/view/widgets/meditation_details_widget.dart';
 import '../../../base/base_view.dart';
-import '../../../past_sessions/data/model/past_sessions.dart';
+import '../../../home/data/model/meditation_model.dart';
 import '../../view_model/session_summary_page_view_model.dart';
 import '../widgets/session_summary_period_details_widget.dart';
 
 class SessionSummaryPageView extends BaseView<SessionSummaryPageViewModel> {
-  final PastSession session;
+  final MeditationModel session;
 
   SessionSummaryPageView({required this.session, Key? key})
       : super(key: key);
@@ -48,7 +48,7 @@ class SessionSummaryPageView extends BaseView<SessionSummaryPageViewModel> {
                 isHapticFeedbackEnabled: viewModel.sessionSummaryPresentationModel!.isHapticFeedbackEnabled
               ),
               spacer(),
-              ...List<Widget>.generate(session.sessionPeriods.length, (i) {
+              ...List<Widget>.generate(session.sessionParameters.length, (i) {
                 return Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [

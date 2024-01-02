@@ -2,47 +2,48 @@ import 'package:flutter_meditation/base/base_view_model.dart';
 import 'package:flutter_meditation/home/data/model/meditation_model.dart';
 import 'package:flutter_meditation/home/data/repository/impl/meditation_repository_local.dart';
 import 'package:flutter_meditation/home/data/repository/meditation_repository.dart';
-import 'package:flutter_meditation/past_sessions/data/model/past_sessions.dart';
+import 'package:flutter_meditation/session/data/model/breathing_pattern_model.dart';
 import 'package:injectable/injectable.dart';
 import '../../common/helpers.dart';
 import '../../di/Setup.dart';
+import '../../past_sessions/data/presentation/session_summary_presentation_model.dart';
 
 @injectable
 class SessionSummaryPageViewModel extends BaseViewModel {
   final MeditationRepository _meditationRepository =
       getIt<MeditationRepositoryLocal>();
 
-  late PastSession session;
+  late MeditationModel session; // TODO: needed?
   SessionSummaryPresentationModel? sessionSummaryPresentationModel;
   List<SessionSummarySessionPeriodPresentationModel> sessionPeriodsPresentationModels = [];
 
-  update(PastSession session) {
+  update(MeditationModel session) {
     this.session = session;
     sessionSummaryPresentationModel = SessionSummaryPresentationModel(
       totalDuration: '${secondsToHRF(session.duration.toDouble())} min',
       maxHeartRate: '${_getMaxHeartRateForSession(session)} BPM',
       minHeartRate: '${_getMinHeartRateForSession(session)} BPM',
       avgHeartRate: '${_getAverageHeartRateForSession(session)} BPM',
-      isHapticFeedbackEnabled: session.sessionPeriods[0].isHapticFeedbackEnabled,
+      isHapticFeedbackEnabled: session.isHapticFeedbackEnabled,
     );
-    sessionPeriodsPresentationModels = session.sessionPeriods.map((period) {
+    sessionPeriodsPresentationModels = session.sessionParameters.map((period) {
       return SessionSummarySessionPeriodPresentationModel(
-        periodTitle: 'Period ${session.sessionPeriods.indexOf(period) + 1}',
+        periodTitle: 'Period ${session.sessionParameters.indexOf(period) + 1}',
         visualization: period.visualization,
-        beatFrequency: period.beatFrequency,
-        breathingPattern: period.breathingPattern.toFormattedString(),
-        breathingPatternMultiplier: period.breathingPatternMultiplier.toString(),
-        maxHeartRate: '${_getMaxHeartRate(period.heartRateMeasurements.map((e) => e.heartRate).toList())} BPM',
-        minHeartRate: '${_getMinHeartRate(period.heartRateMeasurements.map((e) => e.heartRate).toList())} BPM',
-        avgHeartRate: '${_getAverageHeartRate(period.heartRateMeasurements.map((e) => e.heartRate).toList())} BPM',
+        beatFrequency: period.binauralFrequency?.toDouble(),
+        breathingPattern: period.breathingPattern.value,
+        breathingPatternMultiplier: period.breathingMultiplier.toString(),
+        maxHeartRate: '${_getMaxHeartRate(period.heartRates.map((e) => e.heartRate).toList())} BPM',
+        minHeartRate: '${_getMinHeartRate(period.heartRates.map((e) => e.heartRate).toList())} BPM',
+        avgHeartRate: '${_getAverageHeartRate(period.heartRates.map((e) => e.heartRate).toList())} BPM',
       );
     }).toList();
     // notifyListeners();
   }
 
-  double _getAverageHeartRateForSession(PastSession session) {
-    List<double> allHeartRates = session.sessionPeriods
-        .expand((period) => period.heartRateMeasurements)
+  double _getAverageHeartRateForSession(MeditationModel session) {
+    List<double> allHeartRates = session.sessionParameters
+        .expand((period) => period.heartRates)
         .map((measurement) => measurement.heartRate)
         .toList();
 
@@ -59,9 +60,9 @@ class SessionSummaryPageViewModel extends BaseViewModel {
     return double.parse(average.toStringAsFixed(1));
   }
 
-  double _getMinHeartRateForSession(PastSession session) {
-    List<double> allHeartRates = session.sessionPeriods
-        .expand((period) => period.heartRateMeasurements)
+  double _getMinHeartRateForSession(MeditationModel session) {
+    List<double> allHeartRates = session.sessionParameters
+        .expand((period) => period.heartRates)
         .map((measurement) => measurement.heartRate)
         .toList();
 
@@ -77,9 +78,9 @@ class SessionSummaryPageViewModel extends BaseViewModel {
     return double.parse(min.toStringAsFixed(1));
   }
 
-  double _getMaxHeartRateForSession(PastSession session) {
-    List<double> allHeartRates = session.sessionPeriods
-        .expand((period) => period.heartRateMeasurements)
+  double _getMaxHeartRateForSession(MeditationModel session) {
+    List<double> allHeartRates = session.sessionParameters
+        .expand((period) => period.heartRates)
         .map((measurement) => measurement.heartRate)
         .toList();
 
@@ -95,43 +96,4 @@ class SessionSummaryPageViewModel extends BaseViewModel {
     return double.parse(max.toStringAsFixed(1));
   }
 
-}
-
-
-class SessionSummaryPresentationModel {
-  final String totalDuration;
-  final String maxHeartRate;
-  final String minHeartRate;
-  final String avgHeartRate;
-  final bool isHapticFeedbackEnabled;
-
-  SessionSummaryPresentationModel({
-    required this.totalDuration,
-    required this.maxHeartRate,
-    required this.minHeartRate,
-    required this.avgHeartRate,
-    required this.isHapticFeedbackEnabled,
-  });
-}
-
-class SessionSummarySessionPeriodPresentationModel {
-  final String periodTitle;
-  final String visualization;
-  final double beatFrequency;
-  final String breathingPattern;
-  final String breathingPatternMultiplier;
-  final String maxHeartRate;
-  final String minHeartRate;
-  final String avgHeartRate;
-
-  SessionSummarySessionPeriodPresentationModel({
-    required this.periodTitle,
-    required this.visualization,
-    required this.beatFrequency,
-    required this.breathingPattern,
-    required this.breathingPatternMultiplier,
-    required this.maxHeartRate,
-    required this.minHeartRate,
-    required this.avgHeartRate,
-  });
 }

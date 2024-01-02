@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:flutter_meditation/home/data/model/meditation_model.dart';
 import 'package:flutter_meditation/settings/data/model/settings_model.dart';
 import 'package:flutter_meditation/settings/data/repository/impl/settings_repository_local.dart';
 import 'package:flutter_meditation/settings/data/repository/settings_repository.dart';
@@ -9,7 +10,6 @@ import 'package:injectable/injectable.dart';
 import 'package:rxdart/rxdart.dart';
 
 import '../../dto/past_sessions_response_dto.dart';
-import '../../model/past_sessions.dart';
 import '../../mapper/past_sessions_data_mapper.dart';
 import '../past_sessions_repository.dart';
 
@@ -31,8 +31,8 @@ class PastSessionsMiddlewareRepository implements PastSessionsRepository {
   }
 
   @override
-  Stream<List<PastSession>> get pastSessionsStream => _pastSessionsSubject.stream;
-  final BehaviorSubject<List<PastSession>> _pastSessionsSubject = BehaviorSubject<List<PastSession>>();
+  Stream<List<MeditationModel>> get pastSessionsStream => _pastSessionsSubject.stream;
+  final BehaviorSubject<List<MeditationModel>> _pastSessionsSubject = BehaviorSubject<List<MeditationModel>>();
 
   @override
   void fetchMeditationSessions() async {
@@ -42,9 +42,9 @@ class PastSessionsMiddlewareRepository implements PastSessionsRepository {
     try {
       final response = await http.get(url);
       PastSessionsResponseDTO decodedResponse = PastSessionsResponseDTO.fromJson(json.decode(response.body));
-      PastSessions? mappedResponse = decodedResponse.toDomain();
       if (response.statusCode == 200 && decodedResponse.meditationSessions != null) {
-        _pastSessionsSubject.add(mappedResponse!.meditationSessions);
+        List<MeditationModel> mappedResponse = decodedResponse.meditationSessions!.map((e) => e.toDomain()).toList();
+        _pastSessionsSubject.add(mappedResponse);
       } else {
         print('Error ${response.statusCode} - ${decodedResponse.message}');
         // Handle the case where the server responds with an error
