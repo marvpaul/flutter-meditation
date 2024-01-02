@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_meditation/home/data/repository/all_meditations_repository.dart';
+import 'package:flutter_meditation/session/data/repository/session_parameter_optimization_repository.dart';
 import 'package:injectable/injectable.dart';
 
 import '../../../base/base_view_model.dart';
@@ -10,9 +11,9 @@ import '../../../past_sessions/view/screens/past_sessions_page_view.dart';
 import '../../../settings/view/screens/settings_page_view.dart';
 import '../../../session/view/screens/session_page_view.dart';
 import '../../di/Setup.dart';
-import '../../past_sessions/data/model/past_sessions.dart';
 import '../../past_sessions/data/repository/impl/past_sessions_middleware_repository.dart';
 import '../../past_sessions/data/repository/past_sessions_repository.dart';
+import '../../session/data/repository/impl/session_parameter_optimization_middleware_repository.dart';
 import '../../settings/data/model/bluetooth_device_model.dart';
 import '../../settings/data/repository/bluetooth_connection_repository.dart';
 import '../../settings/data/service/mi_band_bluetooth_service.dart';
@@ -30,8 +31,8 @@ class HomePageViewModel extends BaseViewModel {
   final BluetoothConnectionRepository _bluetoothRepository =
       getIt<MiBandBluetoothService>();
 
-  late StreamSubscription<int> _pastSessionsSubscription;
   final PastSessionsRepository _pastSessionsRepository = getIt<PastSessionsMiddlewareRepository>();
+  final SessionParameterOptimizationRepository _sessionParameterOptimizationRepository = getIt<SessionParameterOptimizationMiddlewareRepository>();
 
   bool get deviceIsConfigured => _isConfigured;
 
@@ -50,6 +51,10 @@ class HomePageViewModel extends BaseViewModel {
   String get appbarText => _appbarText;
   Color? _watchIconColor;
 
+  bool isAiModeAvailable = false;
+  bool isAiModeEnabled = false;
+  final Set<StreamSubscription> _subscriptions = {};
+
   HomePageViewModel() {
     _appbarText = _getGreetingForCurrentTime();
   }
@@ -64,17 +69,21 @@ class HomePageViewModel extends BaseViewModel {
     if (_isConfigured) {
       _listenForWatchStatus();
     }
+    _subscribeToAiModeAvailableAndState();
     notifyListeners();
   }
 
   @override
   void dispose() {
-    _pastSessionsSubscription.cancel();
+    for (final subscription in _subscriptions) {
+      subscription.cancel();
+    }
+    _subscriptions.clear();
     super.dispose();
   }
 
   void _subscribeToPastSessionsStream() {
-    _pastSessionsSubscription = _pastSessionsRepository.pastSessionsStream
+    StreamSubscription subscription = _pastSessionsRepository.pastSessionsStream
         .map((event) => event.length)
         .listen((int count) {
       _pastSessionsCount = count;
@@ -84,6 +93,20 @@ class HomePageViewModel extends BaseViewModel {
         // Handle any errors here
       },
     );
+    _subscriptions.add(subscription);
+  }
+
+  void _subscribeToAiModeAvailableAndState() {
+    StreamSubscription availabilitySubscription = _sessionParameterOptimizationRepository.isAiModeAvailable.listen((event) {
+      isAiModeAvailable = event;
+      notifyListeners();
+    });
+    _subscriptions.add(availabilitySubscription);
+    StreamSubscription stateSubscription = _sessionParameterOptimizationRepository.isAiModeEnabled.listen((event) {
+      isAiModeEnabled = event;
+      notifyListeners();
+    });
+    _subscriptions.add(stateSubscription);
   }
 
   void navigateToSession(var context) {
