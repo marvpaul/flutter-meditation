@@ -5,6 +5,8 @@ import 'session_summary_info_row.dart';
 import 'session_summary_title_and_value_widget.dart';
 
 class MeditationDetailsWidget extends StatelessWidget {
+  final String date;
+  final String time;
   final String totalDuration;
   final String maxHeartRate;
   final String minHeartRate;
@@ -13,6 +15,8 @@ class MeditationDetailsWidget extends StatelessWidget {
 
   const MeditationDetailsWidget({
     super.key,
+    required this.date,
+    required this.time,
     required this.totalDuration,
     required this.maxHeartRate,
     required this.minHeartRate,
@@ -29,6 +33,17 @@ class MeditationDetailsWidget extends StatelessWidget {
       margin: const EdgeInsets.only(left: 0.0, right: 0.0, top: 6.0, bottom: 16.0),
       child: Column(
         children: [
+          SessionSummaryInfoRow(
+            leftWidget: SessionSummaryTitleAndValueWidget(
+              title: 'Date',
+              value: date,
+            ),
+            rightWidget: SessionSummaryTitleAndValueWidget(
+              title: 'Time',
+              value: time,
+            ),
+          ),
+          DividerExtension.thin(),
           SessionSummaryInfoRow(
             leftWidget: SessionSummaryTitleAndValueWidget(
               title: 'Total Duration',

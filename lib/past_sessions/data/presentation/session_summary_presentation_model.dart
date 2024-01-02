@@ -1,4 +1,6 @@
 class SessionSummaryPresentationModel {
+  final String date;
+  final String time;
   final String totalDuration;
   final String maxHeartRate;
   final String minHeartRate;
@@ -6,6 +8,8 @@ class SessionSummaryPresentationModel {
   final bool isHapticFeedbackEnabled;
 
   SessionSummaryPresentationModel({
+    required this.date,
+    required this.time,
     required this.totalDuration,
     required this.maxHeartRate,
     required this.minHeartRate,

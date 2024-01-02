@@ -41,6 +41,8 @@ class SessionSummaryPageView extends BaseView<SessionSummaryPageViewModel> {
             children: <Widget>[
               sectionHeader("Details"),
               MeditationDetailsWidget(
+                date: viewModel.sessionSummaryPresentationModel!.date,
+                time: viewModel.sessionSummaryPresentationModel!.time,
                 totalDuration: viewModel.sessionSummaryPresentationModel!.totalDuration,
                 maxHeartRate: viewModel.sessionSummaryPresentationModel!.maxHeartRate,
                 minHeartRate: viewModel.sessionSummaryPresentationModel!.minHeartRate,
