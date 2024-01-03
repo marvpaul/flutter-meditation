@@ -1,8 +1,7 @@
 # In action 
+<img src="https://github.com/marvpaul/flutter-meditation/blob/master/screenshots/meditationView.png?raw=true" width="200" alt="Meditation view">
+<img src="https://github.com/marvpaul/flutter-meditation/blob/master/screenshots/startscreen.png?raw=true" width="200" alt="Meditation view">
 <img src="https://github.com/marvpaul/flutter-meditation/blob/master/screenshots/settings.png?raw=true" width="200" alt="Meditation view">
-![Meditation view](https://github.com/marvpaul/flutter-meditation/blob/master/screenshots/meditationView.png?raw=true)
-![Meditation view](https://github.com/marvpaul/flutter-meditation/blob/master/screenshots/startscreen.png?raw=true)
-![Meditation view](https://github.com/marvpaul/flutter-meditation/blob/master/screenshots/settings.png?raw=true)
 
 # flutter_meditation
 
