@@ -1,4 +1,4 @@
-# In action 
+# How it looks like 
 <img src="https://github.com/marvpaul/flutter-meditation/blob/master/screenshots/meditationView.png?raw=true" width="200" alt="Meditation view">
 <img src="https://github.com/marvpaul/flutter-meditation/blob/master/screenshots/startscreen.png?raw=true" width="200" alt="Meditation view">
 <img src="https://github.com/marvpaul/flutter-meditation/blob/master/screenshots/settings.png?raw=true" width="200" alt="Meditation view">
