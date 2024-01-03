@@ -45,12 +45,13 @@ void main() {
       verifyNever(() => mockSharedPreferences.setString(any(), any()));
     });
 
-    test('getSettings - should return saved settings', () async {
+    test('getSettings - should return saved settings with valid ui', () async {
       // Stub the `getString` method.
       when(() => mockSharedPreferences.getString('settings')).thenReturn(settingsJSONHapticFeedbackEnabled);
 
       final result = await settingsRepository.getSettings();
       expect(result.isHapticFeedbackEnabled, settingsHapticFeedbackEnabled.isHapticFeedbackEnabled);
+      expect(await settingsRepository.getDeviceId(), '123'); 
       // saveSettings shouldn't be called, because they are already stored
       verifyNever(() => mockSharedPreferences.setString(any(), any()));
     });

@@ -20,8 +20,7 @@ extension MeditationModelMock on MeditationModel {
         shouldShowHeartRate: shouldShowHeartRate,
         timestamp: timestamp,
         sessionParameters: sessionParameters,
-        completedSession: completedSession
-    );
+        completedSession: completedSession);
   }
 }
 
@@ -34,14 +33,14 @@ extension SessionParameterModelMock on SessionParameterModel {
     List<HeartrateMeasurementModel> heartRates = const [],
   }) {
     var random = Random();
-    visualization ??= kaleidoscopeOptions![random.nextInt(kaleidoscopeOptions!.length)];
+    visualization ??=
+        kaleidoscopeOptions![random.nextInt(kaleidoscopeOptions!.length)];
     return SessionParameterModel(
         visualization: visualization,
         binauralFrequency: binauralFrequency,
         breathingMultiplier: breathingMultiplier,
         breathingPattern: breathingPattern,
-        heartRates: heartRates
-    );
+        heartRates: heartRates);
   }
 }
 
@@ -51,9 +50,7 @@ extension HeartrateMeasurementModelMock on HeartrateMeasurementModel {
     double heartRate = 0,
   }) {
     return HeartrateMeasurementModel(
-        timestamp: timestamp,
-        heartRate: heartRate
-    );
+        timestamp: timestamp, heartRate: heartRate);
   }
 }
 
