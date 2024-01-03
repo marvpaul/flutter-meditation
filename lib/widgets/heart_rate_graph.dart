@@ -89,8 +89,8 @@ class HeartRateGraphState extends State<HeartRateGraph> {
       ),
       minX: 0,
       maxX: 6,
-      minY: 40 /* minimumValue() */,
-      maxY: 155 /* maximumValue() */,
+      minY: 40,
+      maxY: 155,
       lineBarsData: [
         LineChartBarData(
           spots: widget.viewModel.dataPoints,
