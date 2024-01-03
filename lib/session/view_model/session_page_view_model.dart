@@ -130,7 +130,7 @@ class SessionPageViewModel extends BaseViewModel {
   int numberOfStateChanges = 0;
 
   /// Updates the heart rate visualization data points.
-  /// We use the heart rates saved in our [meditationModel.sessionParameters]
+  /// We use the heart rates saved in our [SessionParameterModel]
   /// and add them to [dataPoints] which we use for drawing a chart visualizing the heart rate in real-time.
   void updateHeartRate() {
     List<double> lastHeartRates = [];
@@ -263,7 +263,7 @@ class SessionPageViewModel extends BaseViewModel {
   }
 
   /// Generates a random visualization for the session.
-  /// We use one option from [_settingsRepository.kaleidoscopeOptions].
+  /// We use one option from kaleidoscopeOptions.
   /// Each visualization has a corresponding image which is saved in the asset folder and loaded into
   /// a fragment shader to create a mandala effect.
   String getRandomVisualization() {
