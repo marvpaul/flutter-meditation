@@ -285,7 +285,7 @@ class SessionPageViewModel extends BaseViewModel {
   /// Generates a random binaural beats frequency for the session. We want to have them between 300 and 500 Hz
   int getRandomBinauralBeats() {
     Random random = Random();
-    return 100 + random.nextInt(50);
+    return 100 + random.nextInt(51);
   }
 
   /// Changes the session parameters based on optimization or randomization.
