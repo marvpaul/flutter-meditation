@@ -4,16 +4,22 @@ import 'dart:developer';
 
 import 'package:injectable/injectable.dart';
 
+/// Service for handling binaural beats functionality using method channels. We implemented a native solution for Android and iOS.
+///
+/// This service communicates with native code to play and stop binaural beats.
 @singleton
 class BinauralBeatsMethodChannelService {
   static const platform =
       MethodChannel('htw.berlin.de/public_health/binaural_beats');
 
+  /// Plays binaural beats with the specified frequencies.
+  ///
+  /// Returns `true` if the operation is successful, otherwise returns `false`.
   Future<bool> playBinauralBeat(
-      double frequencyLeft,
-      double frequencyRight,
-      double duration
-      ) async {
+    double frequencyLeft,
+    double frequencyRight,
+    double duration,
+  ) async {
     log("playBinauralBeatAndroid called with frequencyLeft: $frequencyLeft, frequencyRight: $frequencyRight, duration: $duration");
 
     try {
@@ -29,6 +35,10 @@ class BinauralBeatsMethodChannelService {
       return false;
     }
   }
+
+  /// Stops playing binaural beats.
+  ///
+  /// Returns `true` if the operation is successful, otherwise returns `false`.
   Future<bool> stopBinauralBeats() async {
     log("stop binaural beats method channel call to native iOS / Android");
 
