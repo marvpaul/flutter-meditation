@@ -1,3 +1,8 @@
+/// {@category View}
+/// The settings page. Here the user has options to configure the individual meditation 
+/// and also see's his UUID. 
+library settings_page_view;
+
 import 'package:flutter/material.dart';
 import 'package:flutter_meditation/session/data/model/breathing_pattern_model.dart';
 import '../../../base/base_view.dart';

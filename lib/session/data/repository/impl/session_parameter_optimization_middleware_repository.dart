@@ -1,3 +1,5 @@
+/// {@category Repository}
+library session_parameter_optimization_middleware_repository;
 import 'dart:convert';
 import 'package:flutter_meditation/common/variables.dart';
 import 'package:flutter_meditation/home/data/model/meditation_model.dart';

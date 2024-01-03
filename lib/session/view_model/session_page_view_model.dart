@@ -1,3 +1,5 @@
+/// {@category ViewModel}
+library session_page_view_model;
 import 'dart:async';
 import 'dart:math';
 import 'package:fl_chart/fl_chart.dart';

@@ -1,3 +1,7 @@
+/// {@category ViewModel}
+/// ViewModel for the home page. Here we want to show if the user is connected to a device and 
+/// offer options to navigate to the settings page or start a new meditation session.
+library home_page_view_model; 
 import 'dart:async';
 
 import 'package:flutter/material.dart';
@@ -81,7 +85,7 @@ class HomePageViewModel extends BaseViewModel {
     _subscriptions.clear();
     super.dispose();
   }
-
+  /// A stream which contains all previously finished sessions
   void _subscribeToPastSessionsStream() {
     StreamSubscription subscription = _pastSessionsRepository.pastSessionsStream
         .map((event) => event.length)
@@ -109,12 +113,14 @@ class HomePageViewModel extends BaseViewModel {
     _subscriptions.add(stateSubscription);
   }
 
+  /// Navigate to our session view page where the user can meditate
   void navigateToSession(var context) {
     Navigator.of(context).push(
       MaterialPageRoute(builder: (context) => SessionPageView()),
     );
   }
 
+  /// Navigate to session summary page where the user can see all previous meditations. 
   void navigateToSessionSummary(var context) {
     Navigator.of(context).push(
       MaterialPageRoute(builder: (context) => PastSessionsPageView()),
@@ -137,6 +143,7 @@ class HomePageViewModel extends BaseViewModel {
     notifyListeners();
   }
 
+  /// Select a bluetooth device / miBand to pair. The user will be asked during first app startup to select a device. 
   void selectBluetoothDevice(BluetoothDeviceModel bluetoothDevice) async {
     await _bluetoothRepository.setDevice(bluetoothDevice);
     _isConfigured = true;
@@ -144,6 +151,7 @@ class HomePageViewModel extends BaseViewModel {
     notifyListeners();
   }
 
+  /// Stream which returns if the bluetooth device / fitness tracker is actually connected to our device.
   void _listenForWatchStatus() async {
     Stream<MiBandConnectionState>? statusStream =
         await _bluetoothRepository.getConnectionState();
@@ -160,6 +168,7 @@ class HomePageViewModel extends BaseViewModel {
     }
   }
 
+  /// Get's a proper greeting string for our home screen 
   String _getGreetingForCurrentTime() {
     final hour = DateTime.now().hour;
     if (hour > 6 && hour < 12) {
@@ -173,6 +182,7 @@ class HomePageViewModel extends BaseViewModel {
     }
   }
 
+  /// Toggle the AI option to enable prediction of meditation parameters via ML model
   void changeAiMode(bool isEnabled) {
     _sessionParameterOptimizationRepository.changeAiMode(isEnabled);
   }

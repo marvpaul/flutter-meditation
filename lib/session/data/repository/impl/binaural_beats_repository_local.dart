@@ -1,9 +1,10 @@
+/// {@category Repository}
+/// Repository responsible for handling local operations related to binaural beats.
+library binaural_beats_repository_local;
 import 'dart:io';
-
 import 'package:flutter_meditation/session/data/repository/binaural_beats_repository.dart';
 import 'package:flutter_meditation/session/data/service/binaural_beats_method_channel_service.dart';
 import 'package:injectable/injectable.dart';
-
 import '../../../../di/Setup.dart';
 
 /// Repository responsible for handling local operations related to binaural beats.

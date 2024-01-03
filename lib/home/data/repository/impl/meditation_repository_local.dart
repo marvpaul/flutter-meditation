@@ -1,3 +1,7 @@
+/// {@category Repository}
+/// A local implementation of the [MeditationRepository] interface which helds data about our actual meditation session in the local storage.
+library meditation_repository_local;
+
 import 'dart:convert';
 import 'package:flutter_meditation/di/Setup.dart';
 import 'package:flutter_meditation/home/data/dto/meditation_dto.dart';
@@ -14,11 +18,15 @@ import 'package:injectable/injectable.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../meditation_repository.dart';
 
+/// A local implementation of the [MeditationRepository] interface which helds data about our actual meditation session in the local storage.
 @singleton
 class MeditationRepositoryLocal implements MeditationRepository {
   final SharedPreferences prefs;
   MeditationRepositoryLocal(this.prefs);
 
+  /// Creates a new meditation based on settings and returns the created [MeditationModel].
+  ///
+  /// The duration and other parameters are fetched from the settings and breathing pattern.
   @override
   Future<MeditationModel> createNewMeditation() async {
     print("Create new meditation, fetch params from settings!");
@@ -30,7 +38,7 @@ class MeditationRepositoryLocal implements MeditationRepository {
     BreathingPatternModel pattern = await breathingPatternRepository
         .getBreathingPatternByName(settings.breathingPattern);
     MeditationModel meditationModel = MeditationModel(
-        duration: settings.meditationDuration*60,
+        duration: settings.meditationDuration * 60,
         isHapticFeedbackEnabled: settings.isHapticFeedbackEnabled,
         shouldShowHeartRate: settings.shouldShowHeartRate,
         timestamp: DateTime.now().millisecondsSinceEpoch / 1000.0,
@@ -50,6 +58,7 @@ class MeditationRepositoryLocal implements MeditationRepository {
     return meditationModel;
   }
 
+  /// Saves the provided [meditationModel] to local storage.
   @override
   void saveMeditation(MeditationModel meditationModel) {
     final String meditatonModelJSON = JsonEncoder()

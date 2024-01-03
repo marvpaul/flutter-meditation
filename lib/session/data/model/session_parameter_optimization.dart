@@ -1,3 +1,5 @@
+/// {@category Model}
+library session_parameter_optimization;
 /// Class representing optimized session parameters for a meditation session.
 ///
 /// We get this as a response from the backend / our machine learning model.

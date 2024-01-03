@@ -1,10 +1,10 @@
+/// {@category Model}
+/// A model which contains a list of all available [BreathingPatternModel]
+library all_breathing_patterns_model; 
+
 import 'package:flutter_meditation/session/data/model/breathing_pattern_model.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
-
-// Importing 'freezed_annotation' to use the @freezed annotation.
 part 'all_breathing_patterns_model.freezed.dart';
-
-// Importing the generated part file.
 part 'all_breathing_patterns_model.g.dart';
 
 /// Freezed class representing a collection of breathing patterns.

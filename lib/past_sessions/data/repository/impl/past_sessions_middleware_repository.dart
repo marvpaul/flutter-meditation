@@ -1,3 +1,6 @@
+/// {@category Repository}
+library past_sessions_middleware_repository;
+
 import 'dart:async';
 import 'dart:convert';
 

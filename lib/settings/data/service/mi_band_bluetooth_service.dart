@@ -1,16 +1,18 @@
+/// {@category Service}
+/// Service to connect to a MiBand 3 / 4 using a bluetooth connection to retrieve real-time heart rate data.
+/// Note: You need to first add the MiBand using a separeted app called "Zapp"
+library mi_band_bluetooth_service;
 import 'dart:async';
-
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:flutter_meditation/common/exception/bluetooth_device_not_configured_exception.dart';
 import 'package:flutter_meditation/settings/data/model/settings_model.dart';
 import 'package:injectable/injectable.dart';
-
 import '../model/bluetooth_device_model.dart';
 import '../repository/bluetooth_connection_repository.dart';
 import '../repository/impl/settings_repository_local.dart';
 import '../repository/settings_repository.dart';
 
-/// Service to connect to a MiBand 3 / 4 using a bluetooth connection to retrieve real-time heart rate data. 
+/// Service to connect to a MiBand 3 / 4 using a bluetooth connection to retrieve real-time heart rate data.
 /// Note: You need to first add the MiBand using a separeted app called "Zapp"
 @singleton
 @injectable
@@ -21,7 +23,7 @@ class MiBandBluetoothService implements BluetoothConnectionRepository {
   final Guid heartRateControlCharacteristic =
       Guid("00002a39-0000-1000-8000-00805f9b34fb");
 
-  // Hex values which stand for specific commands / actions. 
+  // Hex values which stand for specific commands / actions.
   final List<int> stopManualMeasurementPayload = [0x15, 0x2, 0x0];
   final List<int> stopContinuousMeasurementPayload = [0x15, 0x1, 0x0];
   final List<int> startContinuousMeasurementPayload = [0x15, 0x1, 0x1];
@@ -45,7 +47,7 @@ class MiBandBluetoothService implements BluetoothConnectionRepository {
   }
 
   /// Gets a list of Bluetooth devices available in the system.
-  /// For every device we'll detect, we create a new [BluetoothDeviceModel]. 
+  /// For every device we'll detect, we create a new [BluetoothDeviceModel].
   @override
   Future<List<BluetoothDeviceModel>> getSystemDevices() async {
     List<BluetoothDeviceModel> systemDevices = [];
@@ -56,8 +58,8 @@ class MiBandBluetoothService implements BluetoothConnectionRepository {
     return systemDevices;
   }
 
-  /// Return true if bluetooth is enabled on the actual device. 
-  /// Note: The user may also need to give permission in order to use bluetooth within our app. 
+  /// Return true if bluetooth is enabled on the actual device.
+  /// Note: The user may also need to give permission in order to use bluetooth within our app.
   @override
   Future<bool> isBluetoothEnabled() async {
     return await FlutterBluePlus.adapterState.first == BluetoothAdapterState.on;
@@ -76,8 +78,8 @@ class MiBandBluetoothService implements BluetoothConnectionRepository {
     return _bluetoothDevice!.disconnect();
   }
 
-  /// Searches for Bluetooth characteristics related to heart rate tracking. 
-  /// We need to first filter from a list of running services to find our [heartRateService]. 
+  /// Searches for Bluetooth characteristics related to heart rate tracking.
+  /// We need to first filter from a list of running services to find our [heartRateService].
   /// If we found the service, we check for our previously defined [service.characteristics]
   Future<void> _searchForCharacteristics() async {
     _checkDeviceIsConfigured();
@@ -151,7 +153,7 @@ class MiBandBluetoothService implements BluetoothConnectionRepository {
 
   /// Checks if the device is configured.
   @override
-  BluetoothDeviceModel? getConfiguredDevice(){
+  BluetoothDeviceModel? getConfiguredDevice() {
     return _settingsModel.pairedDevice;
   }
 
@@ -166,8 +168,8 @@ class MiBandBluetoothService implements BluetoothConnectionRepository {
   }
 
   /// Gets the heart rate as a stream of integers.
-  /// Note: we usually receive a measurement every 3 seconds but this time may vary. 
-  /// Also it happens a lot that it takes some extra seconds to receive the first data point when we just start our measurement. 
+  /// Note: we usually receive a measurement every 3 seconds but this time may vary.
+  /// Also it happens a lot that it takes some extra seconds to receive the first data point when we just start our measurement.
   @override
   Future<Stream<int>> getHeartRate() async {
     await _searchForCharacteristics();
@@ -213,7 +215,7 @@ class MiBandBluetoothService implements BluetoothConnectionRepository {
   }
 
   /// Sets the configured Bluetooth device.
-  /// The user selects this when the app is started the first time. 
+  /// The user selects this when the app is started the first time.
   @override
   Future<void> setDevice(BluetoothDeviceModel bluetoothDevice) async {
     _settingsModel.pairedDevice = bluetoothDevice;
@@ -252,7 +254,7 @@ class MiBandBluetoothService implements BluetoothConnectionRepository {
 
   @override
   bool isAvailableAndConnected() {
-    if(isConfigured() && _bluetoothDevice != null){
+    if (isConfigured() && _bluetoothDevice != null) {
       return _bluetoothDevice!.isConnected;
     }
     return false;

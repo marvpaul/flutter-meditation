@@ -1,3 +1,5 @@
+/// {@category Widget}
+library session_summary_info_row;
 import 'package:flutter/material.dart';
 
 class SessionSummaryInfoRow extends StatelessWidget {

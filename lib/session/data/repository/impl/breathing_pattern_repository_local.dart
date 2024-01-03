@@ -1,3 +1,8 @@
+/// {@category Repository}
+/// Repository which creates and persists all [BreathingPatternModel] which we offer within our
+/// meditation session. There are: 4-7-8, Box, Coherent and 1:2 
+library breathing_pattern_repository_local;
+
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_meditation/session/data/dto/all_breathing_patterns_dto.dart';

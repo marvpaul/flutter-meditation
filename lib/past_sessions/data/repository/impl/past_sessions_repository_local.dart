@@ -1,3 +1,6 @@
+/// {@category Repository}
+library past_sessions_repository_local;
+
 import 'package:injectable/injectable.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../../home/data/model/meditation_model.dart';

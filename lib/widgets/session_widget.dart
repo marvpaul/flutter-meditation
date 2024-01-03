@@ -1,3 +1,5 @@
+/// {@category Widget}
+library session_widget;
 import 'package:flutter/material.dart';
 import 'package:flutter_meditation/common/helpers.dart';
 import 'package:flutter_meditation/session/view_model/session_page_view_model.dart';

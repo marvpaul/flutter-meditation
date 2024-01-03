@@ -1,3 +1,5 @@
+/// {@category Widget}
+library heart_rate_graph;
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_meditation/session/view_model/session_page_view_model.dart';
