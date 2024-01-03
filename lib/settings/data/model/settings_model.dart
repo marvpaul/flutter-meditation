@@ -1,4 +1,5 @@
 /// {@category Model}
+/// An immutable representation of user settings for the meditation app.
 library settings_model;
 import 'package:flutter_meditation/settings/data/model/bluetooth_device_model.dart';
 import 'package:flutter_meditation/session/data/model/breathing_pattern_model.dart';
