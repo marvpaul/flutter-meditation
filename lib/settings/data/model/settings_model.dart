@@ -7,8 +7,8 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 part 'settings_model.freezed.dart';
 part 'settings_model.g.dart';
 
-/// An immutable representation of user settings for the meditation app.
-@freezed
+/// An mutable representation of user settings for the meditation app.
+@unfreezed
 class SettingsModel with _$SettingsModel {
   /// Named constructor for creating an instance of SettingsModel.
   ///
