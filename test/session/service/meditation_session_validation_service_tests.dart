@@ -16,12 +16,12 @@ void main() {
     return MeditationSessionValidationService();
   }
 
-  List<HeartrateMeasurementModel> getRealisticHeartRates(DateTime startDate) {
+  List<HeartrateMeasurementModel> getRealisticHeartRates(DateTime startDate, int length) {
     var random = Random();
     int lastTimestamp = startDate.millisecondsSinceEpoch;
     // generate an array from 0 to 15
     final List<HeartrateMeasurementModel> heartRates = List<int>
-        .generate(15, (i) => i)
+        .generate(length, (i) => i)
         .map((e) {
       // Random increment between 2000 (2 seconds) and 3500 (3.5 seconds) milliseconds
       int increment = 2000 + random.nextInt(1500); // 1500 is the range for 2-3 seconds
@@ -35,7 +35,7 @@ void main() {
     return heartRates;
   }
 
-  MeditationModel getRealisticSession() {
+  MeditationModel getRealisticSession({int numberOfHeartRateEntries = 15}) {
     final DateTime currentDate = DateTime.now();
     var random = Random();
     // generate an array from 0 to 20
@@ -46,7 +46,7 @@ void main() {
           binauralFrequency: random.nextInt(600),
           breathingMultiplier: 0.5 + random.nextDouble(),
           breathingPattern: BreathingPatternType.fourSevenEight,
-          heartRates: getRealisticHeartRates(currentDate)
+          heartRates: getRealisticHeartRates(currentDate, numberOfHeartRateEntries)
       );
     })
         .toList();
@@ -61,9 +61,33 @@ void main() {
   }
 
   group('MeditationSessionValidationServiceTests', () {
-    test('givenRealisticSession_whenValidateSession_thenExpectedArrayLengths', () {
+    test('givenFifteenHeartRateMeasurements_whenValidateSession_thenSameArrayLength', () {
       // given
       final MeditationModel session = getRealisticSession();
+
+      // when
+      final MeditationModel validatedSession = sut().validateMeditationSession(session);
+
+      // then
+      expect(validatedSession.sessionParameters.length, 20);
+      expect(validatedSession.sessionParameters[0].heartRates.length, 15);
+    });
+
+    test('givenMoreThanFifteenHeartRateMeasurements_whenValidateSession_thenFifteenMeasurements', () {
+      // given
+      final MeditationModel session = getRealisticSession(numberOfHeartRateEntries: 21);
+
+      // when
+      final MeditationModel validatedSession = sut().validateMeditationSession(session);
+
+      // then
+      expect(validatedSession.sessionParameters.length, 20);
+      expect(validatedSession.sessionParameters[0].heartRates.length, 15);
+    });
+
+    test('givenLessThanFifteenHeartRateMeasurements_whenValidateSession_thenFifteenMeasurements', () {
+      // given
+      final MeditationModel session = getRealisticSession(numberOfHeartRateEntries: 12);
 
       // when
       final MeditationModel validatedSession = sut().validateMeditationSession(session);
