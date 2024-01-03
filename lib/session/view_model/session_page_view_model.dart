@@ -285,7 +285,7 @@ class SessionPageViewModel extends BaseViewModel {
   /// Generates a random binaural beats frequency for the session. We want to have them between 300 and 500 Hz
   int getRandomBinauralBeats() {
     Random random = Random();
-    return 300 + random.nextInt(200);
+    return 100 + random.nextInt(50);
   }
 
   /// Changes the session parameters based on optimization or randomization.
@@ -308,7 +308,7 @@ class SessionPageViewModel extends BaseViewModel {
         breathingPattern: BreathingPatternType.fourSevenEight,
         heartRates: []));
     double freq = (getLatestSessionParamaters().binauralFrequency)!.toDouble();
-    playBinauralBeats((freq), freq + 100);
+    playBinauralBeats(100, 100+freq);
   }
 
   /// Moves to the next state in the breathing pattern.
@@ -343,7 +343,7 @@ class SessionPageViewModel extends BaseViewModel {
     }
 
     if (settings.isBinauralBeatEnabled) {
-      playBinauralBeats(500, 600);
+      playBinauralBeats(100, 102);
     }
   }
 
