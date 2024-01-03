@@ -1,11 +1,17 @@
+/// {@category ViewModel}
+/// View model for managing the session summary page.
+///
+/// This class provides functionality for retrieving session
+/// summary details, including date, time, duration, heart rate statistics,
+/// and session parameters. It interacts with the [MeditationRepository] to
+/// retrieve session data and performs calculations to generate information like average heart rate and others.
+library session_summary_page_view_model;
 import 'package:flutter_meditation/base/base_view_model.dart';
 import 'package:flutter_meditation/home/data/model/meditation_model.dart';
-import 'package:flutter_meditation/home/data/repository/impl/meditation_repository_local.dart';
 import 'package:flutter_meditation/home/data/repository/meditation_repository.dart';
 import 'package:flutter_meditation/session/data/model/breathing_pattern_model.dart';
 import 'package:injectable/injectable.dart';
 import '../../common/helpers.dart';
-import '../../di/Setup.dart';
 import '../../past_sessions/data/presentation/session_summary_presentation_model.dart';
 
 /// View model for managing the session summary page.

@@ -1,3 +1,5 @@
+/// {@category Widget}
+library session_summary_period_details_widget;
 import 'package:flutter/material.dart';
 
 import '../screens/session_summary_page_view.dart';

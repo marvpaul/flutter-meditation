@@ -1,3 +1,6 @@
+/// {@category Repository}
+/// A local implementation of the [SettingsRepository] using shared preferences to help storing and loading user settings.
+library settings_repository_local;
 import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_meditation/settings/data/model/settings_model.dart';
@@ -7,14 +10,14 @@ import 'package:uuid/uuid.dart';
 import '../../dto/settings_dto.dart';
 import '../settings_repository.dart';
 
-/// A local implementation of the [SettingsRepository] using shared preferences.
+/// A local implementation of the [SettingsRepository] using shared preferences to help storing and loading user settings.
 @singleton
 class SettingsRepositoryLocal implements SettingsRepository {
   /// Instance of SharedPreferences to manage local storage.
   final SharedPreferences prefs;
 
   /// List of kaleidoscope visualization options. These options correspond to images in the asset folder
-  /// which will be loaded and processed at runtime using a fragment shader. 
+  /// which will be loaded and processed at runtime using a fragment shader.
   @override
   List<String>? kaleidoscopeOptions = [
     'Arctic',
@@ -40,7 +43,8 @@ class SettingsRepositoryLocal implements SettingsRepository {
   /// Returns a [SettingsModel] instance representing the user's settings.
   @override
   Future<SettingsModel> getSettings() async {
-    final String? settingsJson = prefs.getString(SettingsRepository.settingsKey);
+    final String? settingsJson =
+        prefs.getString(SettingsRepository.settingsKey);
     if (settingsJson != null) {
       debugPrint(settingsJson);
       return SettingsDTO.fromJson(JsonDecoder().convert(settingsJson)).settings;

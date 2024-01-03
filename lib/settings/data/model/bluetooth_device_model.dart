@@ -1,3 +1,6 @@
+/// {@category Model}
+///  An immutable representation of a Bluetooth device / fitness tracker which we use to retreive real-time heart rate data.
+library bluetooth_device_model;
 import 'package:freezed_annotation/freezed_annotation.dart';
 part 'bluetooth_device_model.freezed.dart';
 part 'bluetooth_device_model.g.dart';

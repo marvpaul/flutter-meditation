@@ -1,3 +1,8 @@
+/// {@category ViewModel}
+/// View model for settings page. If the user changes setting in the view, they'll be changed in the model as well 
+/// and finally saved to the local storage / shared preferences. 
+library settings_page_view_model;
+
 import 'package:flutter_meditation/base/base_view_model.dart';
 import 'package:flutter_meditation/settings/data/model/bluetooth_device_model.dart';
 import 'package:flutter_meditation/session/data/model/breathing_pattern_model.dart';

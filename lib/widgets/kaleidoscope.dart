@@ -1,3 +1,5 @@
+/// {@category Widget}
+library kaleidoscope;
 import 'dart:async';
 import 'dart:ui';
 import 'dart:ui' as ui;

@@ -1,3 +1,5 @@
+/// {@category Widget}
+library session_summary_title_and_value_widget;
 import 'package:flutter/material.dart';
 
 class SessionSummaryTitleAndValueWidget extends StatelessWidget {

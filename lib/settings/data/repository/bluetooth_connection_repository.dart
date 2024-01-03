@@ -1,6 +1,5 @@
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:flutter_meditation/settings/data/model/bluetooth_device_model.dart';
-import 'package:flutter_meditation/settings/data/model/settings_model.dart';
 
 abstract class BluetoothConnectionRepository{
 

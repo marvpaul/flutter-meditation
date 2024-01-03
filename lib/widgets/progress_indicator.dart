@@ -1,3 +1,5 @@
+/// {@category Widget}
+library progress_indicator_widget;
 
 import 'package:flutter/material.dart';
 

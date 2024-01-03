@@ -1,3 +1,5 @@
+/// {@category Widget}
+library past_meditations_card_view; 
 import 'package:flutter/material.dart';
 
 class PastMeditationsCardView extends StatelessWidget {

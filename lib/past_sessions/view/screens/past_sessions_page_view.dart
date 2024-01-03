@@ -1,5 +1,9 @@
+/// {@category View}
+/// A view where the user see's a list of every past meditation. It's possible to click on a certain one 
+/// to get even more details about the session. 
+library past_sessions_page_view; 
+
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_meditation/home/data/model/meditation_model.dart';
 import '../../../base/base_view.dart';
 import '../../../common/helpers.dart';

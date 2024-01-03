@@ -1,3 +1,5 @@
+/// {@category Model}
+library settings_model;
 import 'package:flutter_meditation/settings/data/model/bluetooth_device_model.dart';
 import 'package:flutter_meditation/session/data/model/breathing_pattern_model.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';

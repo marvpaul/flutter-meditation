@@ -1,5 +1,7 @@
-import 'dart:async';
+/// {@category ViewModel}
+library past_sessions_page_view_model; 
 
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_meditation/base/base_view_model.dart';
 import 'package:flutter_meditation/home/data/model/meditation_model.dart';

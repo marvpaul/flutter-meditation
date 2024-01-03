@@ -1,3 +1,9 @@
+/// {@category View}
+/// This is the home page / start screen of our app which the user sees when opening the app. From here it's possible to open
+/// the settings page and start a new meditation session as well as getting information about connection status
+/// of the bluetooth device and past sessions. 
+library home_page_view; 
+
 import 'package:flutter/material.dart';
 import 'package:flutter_meditation/home/view/screens/setup_bluetooth_device_view.dart';
 import 'package:flutter_meditation/widgets/circle_widget.dart';

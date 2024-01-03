@@ -1,3 +1,6 @@
+/// {@category Model}
+/// Freezed class representing a breathing pattern model.
+library breathing_pattern_model; 
 import 'package:freezed_annotation/freezed_annotation.dart';
 part 'breathing_pattern_model.freezed.dart';
 part 'breathing_pattern_model.g.dart';
@@ -84,9 +87,6 @@ class BreathingPatternStep {
 }
 
 /// Freezed class representing a breathing pattern model.
-///
-/// This class is annotated with @freezed, allowing the use of freezed code
-/// generation to create boilerplate code for immutable classes.
 ///
 /// The class represents a breathing pattern, including its type, steps,
 /// and multiplier. We generate 4 of those on first app start and persist them in the local storage.

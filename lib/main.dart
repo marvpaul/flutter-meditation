@@ -1,3 +1,4 @@
+
 import 'package:flutter/material.dart';
 import 'package:flutter_meditation/home/view/screens/home_page_view.dart';
 import 'package:flutter_meditation/past_sessions/view_model/past_sessions_page_view_model.dart';
@@ -8,7 +9,7 @@ import 'package:provider/provider.dart';
 
 import 'di/Setup.dart';
 import 'home/view_model/home_page_view_model.dart';
-
+/// @nodoc
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await configureInjection(Environment.prod);

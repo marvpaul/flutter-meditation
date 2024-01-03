@@ -1,3 +1,8 @@
+/// {@category Service}
+/// Service for handling binaural beats functionality using method channels. We implemented a native solution for Android and iOS.
+///
+/// This service communicates with native code to play and stop binaural beats.
+library binaural_beats_method_channel_service;
 import 'dart:async';
 import 'package:flutter/services.dart';
 import 'dart:developer';

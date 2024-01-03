@@ -1,3 +1,5 @@
+/// {@category Widget}
+library circle_widget;
 import 'package:flutter/material.dart';
 
 class CircleWidget extends StatelessWidget {

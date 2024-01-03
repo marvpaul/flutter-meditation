@@ -1,0 +1,24 @@
+dartdoc:
+  nodoc: [
+    'lib/settings/data/repository/settings_repository.dart',
+    'lib/session/data/repository/binaural_beats_repository.dart', 
+    'lib/session/data/repository/breathing_pattern_repository.dart',
+    'lib/session/data/repository/session_parameter_optimization_repository.dart',
+    'lib/home/data/repository/all_meditations_repository.dart', 
+    'lib/home/data/repository/meditation_repository.dart',
+    'lib/*/data/dto/*_dto.dart',
+    'lib/home/data/repository/all_meditations_repository.dart',
+    'lib/home/data/repository/meditation_repository.dart',
+    'lib/base/*',
+    'lib/common/exception/bluetooth_device_not_configured_exception.dart', 
+    'lib/common/variables.dart',
+    'lib/di/*',
+    'lib/past_sessions/data/repository/past_sessions_repository.dart', 
+    'lib/settings/data/repository/bluetooth_connection_repository.dart'
+    ]
+  ignore:
+    - ambiguous-doc-reference
+  errors:
+    - unresolved-doc-reference
+  warnings:
+    - tool-error

@@ -1,3 +1,5 @@
+/// {@category Service}
+library meditation_session_validation_service;
 import 'package:flutter_meditation/home/data/model/meditation_model.dart';
 import 'package:injectable/injectable.dart';
 
