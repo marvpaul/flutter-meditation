@@ -21,7 +21,7 @@ class AllBreathingPatterns with _$AllBreathingPatterns {
   ///
   /// The constructor takes a list of [BreathingPatternModel] instances.
   factory AllBreathingPatterns(
-    List<BreathingPatternModel> patterns,
+    List<BreathingPatternModel> pattern,
   ) = _AllBreathingPatterns;
 
   /// Factory method to create an instance of [AllBreathingPatterns] from JSON data.
