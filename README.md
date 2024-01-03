@@ -5,6 +5,7 @@
     <img src="https://github.com/marvpaul/flutter-meditation/blob/master/screenshots/settings.png?raw=true" width="200" alt="Settings">
 </div>
 
+[![codecov](https://codecov.io/gh/marvpaul/flutter-meditation/master/graph/badge.svg)](https://codecov.io/gh/marvpaul/flutter-meditation)
 
 # flutter_meditation
 
