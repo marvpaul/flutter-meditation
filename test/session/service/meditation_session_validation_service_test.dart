@@ -1,6 +1,4 @@
 import 'dart:math';
-
-import 'package:flutter_meditation/common/helpers.dart';
 import 'package:flutter_meditation/home/data/model/heartrate_measurement_model.dart';
 import 'package:flutter_meditation/home/data/model/meditation_model.dart';
 import 'package:flutter_meditation/home/data/model/session_parameter_model.dart';
@@ -11,7 +9,6 @@ import 'package:flutter_test/flutter_test.dart';
 import '../model/meditation_model_mock.dart';
 
 void main() {
-
   MeditationSessionValidationService sut() {
     return MeditationSessionValidationService();
   }
@@ -24,14 +21,13 @@ void main() {
         .generate(length, (i) => i)
         .map((e) {
       // Random increment between 2000 (2 seconds) and 3500 (3.5 seconds) milliseconds
-      int increment = 2000 + random.nextInt(1500); // 1500 is the range for 2-3 seconds
+      int increment =
+          2000 + random.nextInt(1500); // 1500 is the range for 2-3 seconds
       lastTimestamp += increment; // Increment the timestamp by the random value
       return HeartrateMeasurementModelMock.mock(
           timestamp: lastTimestamp,
-          heartRate: (95 - e - random.nextInt(20)).toDouble()
-      );
-    })
-        .toList();
+          heartRate: (95 - e - random.nextInt(20)).toDouble());
+    }).toList();
     return heartRates;
   }
 
@@ -39,9 +35,8 @@ void main() {
     final DateTime currentDate = DateTime.now();
     var random = Random();
     // generate an array from 0 to 20
-    final List<SessionParameterModel> sessionParameters = List<int>
-        .generate(20, (i) => i)
-        .map((e) {
+    final List<SessionParameterModel> sessionParameters =
+        List<int>.generate(20, (i) => i).map((e) {
       return SessionParameterModelMock.mock(
           binauralFrequency: random.nextInt(600),
           breathingMultiplier: 0.5 + random.nextDouble(),
@@ -66,7 +61,8 @@ void main() {
       final MeditationModel session = getRealisticSession();
 
       // when
-      final MeditationModel validatedSession = sut().validateMeditationSession(session);
+      final MeditationModel validatedSession =
+          sut().validateMeditationSession(session);
 
       // then
       expect(validatedSession.sessionParameters.length, 20);

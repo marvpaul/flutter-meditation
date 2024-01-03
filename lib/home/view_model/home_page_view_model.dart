@@ -60,7 +60,7 @@ class HomePageViewModel extends BaseViewModel {
   }
 
   @override
-  void init() async {
+  Future<void> init() async {
     _isConfigured = _bluetoothRepository.isConfigured();
     _systemDevices = await _bluetoothRepository.getSystemDevices();
     _allMeditationsModel = await _meditationRepository.getAllMeditation();

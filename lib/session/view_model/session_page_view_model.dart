@@ -113,7 +113,7 @@ class SessionPageViewModel extends BaseViewModel {
     }
   }
 
-  void initWithContext(BuildContext context) async {
+  Future<void> initWithContext(BuildContext context) async {
     _isConnected = _bluetoothRepository.isAvailableAndConnected();
     if (_isConnected) {
       getHeartRateData();
