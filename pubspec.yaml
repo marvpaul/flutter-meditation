@@ -51,6 +51,7 @@ dependencies:
   uuid: ^4.2.2
 
   http: ^1.1.0
+  keep_screen_on: ^3.0.0
 
 dev_dependencies:
   flutter_test:
