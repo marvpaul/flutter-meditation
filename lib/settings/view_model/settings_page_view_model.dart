@@ -53,7 +53,7 @@ class SettingsPageViewModel extends BaseViewModel {
   String get kaleidoscopeImageName => _kaleidoscopeImageName;
   final String _kaleidoscopeImageName = "Kaleidoscope image";
   final String bluetoothName = "Bluetooth";
-  final String bluetoothSettingsHeading = "Bluetooth connection";
+  final String bluetoothSettingsHeading = "Bluetooth Connection";
   final String unpairText = "Unpair";
 
   final String userAccountSettingsHeading = "Account Info";
