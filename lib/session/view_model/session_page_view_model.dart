@@ -210,12 +210,17 @@ class SessionPageViewModel extends BaseViewModel {
           numberOfStateChanges = 0;
           print("Changing params");
           final MeditationModel validatedMeditationSession =
-              _meditationSessionValidationService
-                  .validateMeditationSession(meditationModel!);
-          final SessionParameterOptimization? sessionParameterOptimization =
-              await _sessionParameterOptimizationRepository
-                  .getSessionParameterOptimization(validatedMeditationSession);
-          changeSessionParams(sessionParameterOptimization);
+          _meditationSessionValidationService
+              .validateMeditationSession(meditationModel!);
+          try {
+            final SessionParameterOptimization? sessionParameterOptimization =
+            await _sessionParameterOptimizationRepository
+                .getSessionParameterOptimization(validatedMeditationSession);
+            changeSessionParams(sessionParameterOptimization);
+          } catch (e) {
+            changeSessionParams(null);
+            print(e);
+          }
         }
       }
 
@@ -228,8 +233,12 @@ class SessionPageViewModel extends BaseViewModel {
           final MeditationModel validatedMeditationSession =
               _meditationSessionValidationService
                   .validateMeditationSession(meditationModel!);
-          _sessionParameterOptimizationRepository
-              .trainSessionParameterOptimization(validatedMeditationSession);
+          try {
+            _sessionParameterOptimizationRepository
+                .trainSessionParameterOptimization(validatedMeditationSession);
+          } catch (e) {
+            print(e);
+          }
           _allMeditationsRepository.addMeditation(validatedMeditationSession);
           Navigator.pushAndRemoveUntil(
             context,
