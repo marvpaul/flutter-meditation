@@ -328,7 +328,9 @@ class SessionPageViewModel extends BaseViewModel {
         breathingPattern: BreathingPatternType.fourSevenEight,
         heartRates: []));
     double freq = (getLatestSessionParamaters().binauralFrequency)!.toDouble();
-    playBinauralBeats(100, 100+freq);
+    if (settingsModel!.isBinauralBeatEnabled) {
+      playBinauralBeats(100, 100 + freq);
+    }
   }
 
   /// Moves to the next state in the breathing pattern.
