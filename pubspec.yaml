@@ -49,9 +49,9 @@ dependencies:
   fl_chart: ^0.64.0
   flutter_blue_plus: ^1.29.5
   uuid: ^4.2.2
-
   http: ^1.1.0
   keep_screen_on: ^3.0.0
+  vibration: ^1.8.4
 
 dev_dependencies:
   flutter_test:

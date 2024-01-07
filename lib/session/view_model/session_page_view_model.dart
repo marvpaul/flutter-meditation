@@ -22,6 +22,7 @@ import 'package:flutter_meditation/settings/data/model/settings_model.dart';
 import 'package:flutter_meditation/settings/data/repository/impl/settings_repository_local.dart';
 import 'package:flutter_meditation/widgets/heart_rate_graph.dart';
 import 'package:injectable/injectable.dart';
+import 'package:vibration/vibration.dart';
 import '../../di/Setup.dart';
 import 'package:flutter_meditation/session/data/repository/impl/binaural_beats_repository_local.dart';
 import 'package:flutter_meditation/session/data/repository/binaural_beats_repository.dart';
@@ -319,7 +320,7 @@ class SessionPageViewModel extends BaseViewModel {
   /// After the user meditated 20 minutes, we can train a data prediction model.
   /// After initial we'll use parameters suggested by the model.
   void changeSessionParams(
-      SessionParameterOptimization? sessionParameterOptimization) {
+      SessionParameterOptimization? sessionParameterOptimization) async {
       if (_isDisposed) return;
     bool needsToBeRandomized = sessionParameterOptimization == null;
     meditationModel!.sessionParameters.add(SessionParameterModel(
@@ -342,7 +343,7 @@ class SessionPageViewModel extends BaseViewModel {
 
   /// Moves to the next state in the breathing pattern.
   /// If we iterated over every state in our [breathingPattern], we just start from the beginning again.
-  void nextState() {
+  void nextState() async {
     stateCounter++;
     if (breathingPattern!.steps.length <= stateCounter) {
       stateCounter = 0;
@@ -353,6 +354,12 @@ class SessionPageViewModel extends BaseViewModel {
         getLatestSessionParamaters().breathingMultiplier;
     totalTimePerState = breathingPattern!.steps[stateCounter].duration *
         getLatestSessionParamaters().breathingMultiplier;
+
+    bool hasVibrator = await Vibration.hasVibrator() ?? false;
+    if (settingsModel!.isHapticFeedbackEnabled && hasVibrator) {
+      // vibrate shortly to indicate a change in the breathing pattern
+      Vibration.vibrate(duration: 30, intensities: [64]);
+    }
   }
 
   /// Initializes the session with the provided [settings].
