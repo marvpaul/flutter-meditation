@@ -112,6 +112,10 @@ class SessionPageViewModel extends BaseViewModel {
   /// Internal flag indicating whether the fitness tracker / bluetooth device is connected.
   late bool _isConnected;
 
+  /// Indicates whether the ViewModel has been disposed.
+  /// This is used to prevent errors when the ViewModel is disposed and the UI is updated.
+  bool _isDisposed = false;
+
   /// Retrieves the latest session parameters.
   /// Get them from the corresponding repository or generate a new SessionParameterModel object with default parameters.
   SessionParameterModel getLatestSessionParamaters() {
@@ -256,7 +260,9 @@ class SessionPageViewModel extends BaseViewModel {
           print("Warning: meditationModel is null.");
         }
       }
-      notifyListeners();
+      if (!_isDisposed) {
+        notifyListeners();
+      }
     });
   }
 
@@ -314,6 +320,7 @@ class SessionPageViewModel extends BaseViewModel {
   /// After initial we'll use parameters suggested by the model.
   void changeSessionParams(
       SessionParameterOptimization? sessionParameterOptimization) {
+      if (_isDisposed) return;
     bool needsToBeRandomized = sessionParameterOptimization == null;
     meditationModel!.sessionParameters.add(SessionParameterModel(
         visualization: needsToBeRandomized
@@ -401,6 +408,7 @@ class SessionPageViewModel extends BaseViewModel {
     cancelSession();
 
     _bluetoothRepository.stopHeartRateMeasurement();
+    _isDisposed = true;
     super.dispose();
   }
 }
