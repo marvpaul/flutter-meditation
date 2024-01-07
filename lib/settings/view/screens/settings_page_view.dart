@@ -132,32 +132,6 @@ class SettingsPageView extends BaseView<SettingsPageViewModel> {
                 ),
               ],
             ),
-            Padding(
-              padding: _headlineInsets,
-              child: Text(
-                'Meditation Info',
-                style: TextStyle(
-                  fontSize: 14.0,
-                  color: Theme.of(context).colorScheme.surfaceTint,
-                ),
-              ),
-            ),
-            ListView(
-              physics: const NeverScrollableScrollPhysics(),
-              shrinkWrap: true,
-              children: [
-                ListTile(
-                  enableFeedback: false,
-                  title: Text(viewModel.heartRateName),
-                  trailing: Switch(
-                    value: viewModel.settings?.shouldShowHeartRate ?? false,
-                    onChanged: (isEnabled) {
-                      viewModel.toggleShouldShowHeartRate(isEnabled);
-                    },
-                  ),
-                ),
-              ],
-            ),
             if (viewModel.deviceIsConfigured) ...[
               Padding(
                 padding: _headlineInsets,
