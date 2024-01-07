@@ -29,7 +29,7 @@ class SettingsModel with _$SettingsModel {
     @Default("Arctic") String kaleidoscopeImage,
     @Default(true) bool isBinauralBeatEnabled,
     @Default(30) int binauralBeatFrequency,
-    @Default(2) int meditationDuration,
+    @Default(10) int meditationDuration,
     BluetoothDeviceModel? pairedDevice,
     required String uuid,
     @Default(BreathingPatternType.fourSevenEight) BreathingPatternType breathingPattern,
