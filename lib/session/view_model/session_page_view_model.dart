@@ -117,6 +117,10 @@ class SessionPageViewModel extends BaseViewModel {
   /// This is used to prevent errors when the ViewModel is disposed and the UI is updated.
   bool _isDisposed = false;
 
+  /// Indicates whether AI with parameter optimization and training is enabled.
+  bool get isAiModeEnabled => _isAiModeEnabled;
+  bool _isAiModeEnabled = false;
+
   /// Retrieves the latest session parameters.
   /// Get them from the corresponding repository or generate a new SessionParameterModel object with default parameters.
   SessionParameterModel getLatestSessionParamaters() {
@@ -167,7 +171,10 @@ class SessionPageViewModel extends BaseViewModel {
       getHeartRateData();
     }
 
-    meditationModel = await _meditationRepository.createNewMeditation();
+    _isAiModeEnabled = await _sessionParameterOptimizationRepository.isAiModeEnabled.first;
+
+    meditationModel = await _meditationRepository
+        .createNewMeditation(showKaleidoscope: _isAiModeEnabled);
     final SettingsModel currentSettings =
         await _settingsRepository.getSettings();
     settingsModel = currentSettings;
@@ -219,14 +226,16 @@ class SessionPageViewModel extends BaseViewModel {
           final MeditationModel validatedMeditationSession =
           _meditationSessionValidationService
               .validateMeditationSession(meditationModel!);
-          try {
-            final SessionParameterOptimization? sessionParameterOptimization =
-            await _sessionParameterOptimizationRepository
-                .getSessionParameterOptimization(validatedMeditationSession);
-            changeSessionParams(sessionParameterOptimization);
-          } catch (e) {
-            changeSessionParams(null);
-            print(e);
+          if (_isAiModeEnabled) {
+            try {
+              final SessionParameterOptimization? sessionParameterOptimization =
+              await _sessionParameterOptimizationRepository
+                  .getSessionParameterOptimization(validatedMeditationSession);
+              changeSessionParams(sessionParameterOptimization);
+            } catch (e) {
+              changeSessionParams(null);
+              print(e);
+            }
           }
         }
       }
@@ -238,16 +247,19 @@ class SessionPageViewModel extends BaseViewModel {
           meditationModel!.completedSession = true;
           stopBinauralBeats();
           final MeditationModel validatedMeditationSession =
-              _meditationSessionValidationService
-                  .validateMeditationSession(meditationModel!);
-          try {
-            _sessionParameterOptimizationRepository
-                .trainSessionParameterOptimization(validatedMeditationSession);
-            // make sure data was written to db. This should be changed when
-            // logic is split to two endpoints
-            await Future.delayed(const Duration(milliseconds: 250));
-          } catch (e) {
-            print(e);
+          _meditationSessionValidationService
+              .validateMeditationSession(meditationModel!);
+          if (_isAiModeEnabled) {
+            try {
+              _sessionParameterOptimizationRepository
+                  .trainSessionParameterOptimization(
+                  validatedMeditationSession);
+              // make sure data was written to db. This should be changed when
+              // logic is split to two endpoints
+              await Future.delayed(const Duration(milliseconds: 250));
+            } catch (e) {
+              print(e);
+            }
           }
           _allMeditationsRepository.addMeditation(validatedMeditationSession);
           Navigator.pushAndRemoveUntil(
@@ -336,7 +348,7 @@ class SessionPageViewModel extends BaseViewModel {
         breathingPattern: BreathingPatternType.fourSevenEight,
         heartRates: []));
     double freq = (getLatestSessionParamaters().binauralFrequency)!.toDouble();
-    if (settingsModel!.isBinauralBeatEnabled) {
+    if (settingsModel!.isBinauralBeatEnabled || _isAiModeEnabled) {
       playBinauralBeats(100, 100 + freq);
     }
   }
@@ -378,7 +390,7 @@ class SessionPageViewModel extends BaseViewModel {
       });
     }
 
-    if (settings.isBinauralBeatEnabled) {
+    if (settings.isBinauralBeatEnabled || _isAiModeEnabled) {
       playBinauralBeats(100, 102);
     }
   }

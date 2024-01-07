@@ -130,6 +130,13 @@ class SettingsPageView extends BaseView<SettingsPageViewModel> {
                     }).toList(),
                   ),
                 ),
+                const ListTile(title: Text(
+                  "Kaleidoscope and Binaural Beats are automatically enabled in AI mode and cannot be disabled.",
+                  style: TextStyle(
+                    fontSize: 12.0,
+                    color: Colors.grey,
+                  ),
+                ),),
               ],
             ),
             if (viewModel.deviceIsConfigured) ...[

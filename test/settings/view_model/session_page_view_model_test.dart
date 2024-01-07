@@ -17,6 +17,7 @@ import 'package:flutter_meditation/settings/data/repository/impl/settings_reposi
 import 'package:flutter_meditation/settings/data/service/mi_band_bluetooth_service.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
+import 'package:rxdart/rxdart.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -46,15 +47,13 @@ class MockPastSessionsMiddlewareRepository extends Mock
 
 class MockSessionParameterOptimizationMiddlewareRepository extends Mock
     implements SessionParameterOptimizationMiddlewareRepository {
-  final StreamController<bool> _aiModeAvailableController =
-      StreamController<bool>.broadcast();
-  final StreamController<bool> _isAiModeEnabledController =
-      StreamController<bool>.broadcast();
+  final BehaviorSubject<bool> _aiModeAvailableSubject = BehaviorSubject<bool>.seeded(false);
+  final BehaviorSubject<bool> _isAiModeEnabledSubject = BehaviorSubject<bool>.seeded(false);
 
   @override
-  Stream<bool> get isAiModeAvailable => _aiModeAvailableController.stream;
+  Stream<bool> get isAiModeAvailable => _aiModeAvailableSubject.stream;
   @override
-  Stream<bool> get isAiModeEnabled => _isAiModeEnabledController.stream;
+  Stream<bool> get isAiModeEnabled => _isAiModeEnabledSubject.stream;
 }
 
 class MockSharedPreferences extends Mock implements SharedPreferences {}
@@ -147,11 +146,11 @@ void main() async {
         .thenAnswer((_) => Future(() => true));
 
     mockSessionParameterOptimizationMiddlewareRepository
-        ._aiModeAvailableController
+        ._aiModeAvailableSubject
         .add(false);
 
     mockSessionParameterOptimizationMiddlewareRepository
-        ._isAiModeEnabledController
+        ._isAiModeEnabledSubject
         .add(false);
 
     when(() => mockBluetoothService.getSystemDevices()).thenAnswer((_) async {
@@ -183,10 +182,10 @@ void main() async {
   tearDown(() {
     // Close the correct stream controller
     mockSessionParameterOptimizationMiddlewareRepository
-        ._aiModeAvailableController
+        ._aiModeAvailableSubject
         .close();
     mockSessionParameterOptimizationMiddlewareRepository
-        ._isAiModeEnabledController
+        ._isAiModeEnabledSubject
         .close();
   });
   group('Session page view model', () {

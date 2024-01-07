@@ -23,7 +23,7 @@ class SessionPageView extends BaseView<SessionPageViewModel> {
       body: Stack(
         fit: StackFit.expand,
         children: [
-          viewModel.settingsModel?.kaleidoscope ?? false
+          (viewModel.settingsModel?.kaleidoscope ?? false) || viewModel.isAiModeEnabled
             ? Kaleidoscope(viewModel: viewModel)
             : const GradientBackground(),
           SafeArea(
