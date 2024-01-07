@@ -23,7 +23,9 @@ class PastSessionsMiddlewareRepository implements PastSessionsRepository {
 
   final SettingsRepository _settingsRepository;
 
-  PastSessionsMiddlewareRepository(this._settingsRepository);
+  PastSessionsMiddlewareRepository(this._settingsRepository) {
+    _pastSessionsSubject.add([]);
+  }
 
   @factoryMethod
   static Future<PastSessionsMiddlewareRepository> create(
