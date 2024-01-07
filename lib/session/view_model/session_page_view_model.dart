@@ -236,6 +236,9 @@ class SessionPageViewModel extends BaseViewModel {
           try {
             _sessionParameterOptimizationRepository
                 .trainSessionParameterOptimization(validatedMeditationSession);
+            // make sure data was written to db. This should be changed when
+            // logic is split to two endpoints
+            await Future.delayed(const Duration(milliseconds: 250));
           } catch (e) {
             print(e);
           }
