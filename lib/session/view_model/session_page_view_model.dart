@@ -206,7 +206,9 @@ class SessionPageViewModel extends BaseViewModel {
       if (timeLeft < 0) {
         nextState();
         numberOfStateChanges++;
-        if (numberOfStateChanges >= 6 && running) {
+        // change session parameters every 2 breathing cycles
+        // - changed to 1 for demo purposes as requests take too long
+        if (numberOfStateChanges >= 3 && running) {
           numberOfStateChanges = 0;
           print("Changing params");
           final MeditationModel validatedMeditationSession =
