@@ -1,5 +1,6 @@
+/// {@category Widget}
+library breathing_circle_widget;
 import 'dart:ui';
-
 import 'package:flutter/material.dart';
 
 class BreathingCircleWidget extends StatelessWidget {

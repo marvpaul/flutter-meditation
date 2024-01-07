@@ -1,3 +1,8 @@
+/// {@category View}
+/// This view will be shown in case no connected / paired device is found.
+/// The usr is prompted to select one from a list or can skip this. 
+library setup_bluetooth_device_view; 
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 

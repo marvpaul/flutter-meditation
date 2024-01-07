@@ -1,3 +1,6 @@
+/// {@category View}
+/// A page where we show a summary about a previous session which the user selected in the previous screen 
+library session_summary_page_view;
 import 'package:flutter/material.dart';
 import 'package:flutter_meditation/session_summary/view/widgets/meditation_details_widget.dart';
 import '../../../base/base_view.dart';

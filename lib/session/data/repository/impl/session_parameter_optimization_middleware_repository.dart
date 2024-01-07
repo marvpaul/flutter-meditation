@@ -1,5 +1,6 @@
+/// {@category Repository}
+library session_parameter_optimization_middleware_repository;
 import 'dart:convert';
-
 import 'package:flutter_meditation/common/variables.dart';
 import 'package:flutter_meditation/home/data/model/meditation_model.dart';
 import 'package:flutter_meditation/session/data/dto/meditation_session_middleware_dto.dart';
@@ -10,7 +11,6 @@ import 'package:injectable/injectable.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
-
 import '../../../../past_sessions/data/repository/impl/past_sessions_middleware_repository.dart';
 import '../../../../past_sessions/data/repository/past_sessions_repository.dart';
 import '../../../../settings/data/repository/impl/settings_repository_local.dart';

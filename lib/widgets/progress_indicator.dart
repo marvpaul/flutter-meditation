@@ -1,3 +1,5 @@
+/// {@category Widget}
+library progress_indicator_widget;
 
 import 'package:flutter/material.dart';
 
@@ -10,7 +12,7 @@ class ProgressIndicatorWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return LinearProgressIndicator(
       value: progress,
-      color: Colors.blue, // Customize the color as needed
+      color: Colors.blue, 
       backgroundColor: Colors.grey,
     );
   }

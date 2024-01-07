@@ -1,3 +1,14 @@
+# Interactive meditation
+<div style="display: flex; justify-content: space-between;">
+    <img src="https://github.com/marvpaul/flutter-meditation/blob/master/screenshots/meditationView.png?raw=true" width="200" alt="Meditation view">
+    <img src="https://github.com/marvpaul/flutter-meditation/blob/master/screenshots/startscreen.png?raw=true" width="200" alt="Start screen">
+    <img src="https://github.com/marvpaul/flutter-meditation/blob/master/screenshots/settings.png?raw=true" width="200" alt="Settings">
+</div>
+
+# Testing
+For our frontend we used the flutter testing framework paired with mockito to mock certain methods and data objects. This is our overall test coverage: 
+[![codecov](https://codecov.io/gh/marvpaul/flutter-meditation/master/graph/badge.svg)](https://codecov.io/gh/marvpaul/flutter-meditation)
+
 # flutter_meditation
 
 Frontend for our breathing meditation app. The app includes: 

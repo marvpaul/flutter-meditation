@@ -1,10 +1,18 @@
+/// {@category Widget}
+library kaleidoscope;
 import 'dart:async';
 import 'dart:ui';
 import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_meditation/session/view_model/session_page_view_model.dart';
-
+/// This class is responsible for creating our kaleoidoscope visualization during meditation
+/// 
+/// We load an image from the asset folder and bind it to a small fragment shader which 
+/// manipulates the UV coordinates for the binded texture in order
+/// to create a mandala effect. 
+/// Furthermore we expose a variable to animate the kaleidoscope and make it reactive to 
+/// the actual breathing cycle within our meditation. 
 class Kaleidoscope extends StatefulWidget {
   final SessionPageViewModel viewModel;
 
@@ -24,6 +32,10 @@ class _KaleidoscopeState extends State<Kaleidoscope>
   ui.Image? image, prevImage;
   String loadedImage = '';
 
+  /// This method loads an image from the asset folder under path assets/Mandalas/
+  /// We implemented the option to fade between two visualizations / images. Therefor we always store a copy of 
+  /// the actually loaded image in prevImage before loading a new image in order to smoothly fade between them 
+  /// whenever we load a new image.
   void loadImage() async {
     String imageToLoad = widget.viewModel.getLatestSessionParamaters().visualization??'Arctic'; 
     if(imageToLoad == ''){
@@ -46,22 +58,24 @@ class _KaleidoscopeState extends State<Kaleidoscope>
     }
   }
 
+  /// This function loads a custom fragment shader from our assets: assets/shaders/myshader.frag
+  /// loads an image and initialize an update loop in order to smoothly animate our kaleidoscope animation. 
+  /// Note: We execute our update loop every 33ms (30 FPS) and call the setState method of our widget to trigger a repaint.
+  /// This repaint finally triggers the paint method from out KaleidoscopePainter to render the shader into our canvas which 
+  /// lives inside the widget tree. 
   void loadMyShader() async {
-    print("Loading shader...");
     FragmentProgram program =
         await FragmentProgram.fromAsset('assets/shaders/myshader.frag');
-        
-    print("Shader loaded.");
     shader = program.fragmentShader();
     loadImage();
 
-    if (!mounted) return; // check if the widget is still mounted
+    if (!mounted) return; 
     setState(() {
       // trigger a repaint
     });
 
     timer = Timer.periodic(const Duration(milliseconds: 33), (timer) {
-      if (!mounted || !widget.viewModel.running) return; // check if the widget is still mounted
+      if (!mounted || !widget.viewModel.running) return;
       setState(() {
         if (loadedImage != widget.viewModel.getLatestSessionParamaters().visualization) {
           loadImage();
@@ -89,20 +103,31 @@ class _KaleidoscopeState extends State<Kaleidoscope>
     if (shader == null || image == null) {
       return const Center(child: CircularProgressIndicator());
     } else {
-      return CustomPaint(painter: MyFancyPainter(shader!, delta, fade, image!, prevImage!));
+      return CustomPaint(painter: KaleidoscopePainter(shader!, delta, fade, image!, prevImage!));
     }
   }
 }
 
-class MyFancyPainter extends CustomPainter {
+class KaleidoscopePainter extends CustomPainter {
   final FragmentShader shader;
   final double time, fade;
   final ui.Image image, prevImage;
   Paint? paintObj;
 
-  MyFancyPainter(FragmentShader fragmentShader, this.time, this.fade, this.image, this.prevImage)
+  KaleidoscopePainter(FragmentShader fragmentShader, this.time, this.fade, this.image, this.prevImage)
       : shader = fragmentShader;
 
+  /// Method to render our kaleidoscope
+  /// We first bind all important variables to our shader: 
+  /// - size of our canvas
+  /// - a time variable to control the animation / movement
+  /// - a fade parameter to smoothly fade between two loaded images
+  /// - our two images which we want to display
+  /// 
+  /// We inherit from class CustomPainter which allows us to draw to a canvas. 
+  /// The trick here is to draw a simple reactangle which fills the hole
+  /// canvas and bind our custom shader to the paint object so that the reactangle
+  /// will be filled with the colors provided by our fragment shader. 
   @override
   void paint(Canvas canvas, Size size) {
     if (paintObj == null) {
@@ -115,10 +140,7 @@ class MyFancyPainter extends CustomPainter {
       shader.setImageSampler(1, prevImage);
 
       paintObj!.shader = shader;
-      //paintObj?.color = Colors.red;  
     }
-
-    //canvas.drawRect(Offset.zero & size, paintObj!);
     canvas.drawRect(Offset.zero & size, paintObj!);
   }
 

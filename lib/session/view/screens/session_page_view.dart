@@ -1,3 +1,7 @@
+/// {@category View}
+/// The view for our actual meditation session with a kaleidoscope, heart rate visualization,
+/// breathing excerice and a timer for the meditation. 
+library session_page_view; 
 import 'package:flutter/material.dart';
 import 'package:flutter_meditation/widgets/gradient_background.dart';
 import 'package:flutter_meditation/widgets/kaleidoscope.dart';
