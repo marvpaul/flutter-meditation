@@ -37,7 +37,7 @@ class SessionSummaryPeriodDetailsWidget extends StatelessWidget {
         children: [
           SessionSummaryInfoRow(
             leftWidget: SessionSummaryTitleAndValueWidget(
-              title: 'Mandala',
+              title: 'Kaleidoscope Image',
               value: mandala ?? 'None',
             ),
             rightWidget: SessionSummaryTitleAndValueWidget(

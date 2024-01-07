@@ -96,7 +96,7 @@ class SettingsPageView extends BaseView<SettingsPageViewModel> {
                 ),
                 ListTile(
                   enableFeedback: false,
-                  title: const Text('Breathing pattern'),
+                  title: const Text('Breathing Pattern'),
                   trailing: DropdownButton<String>(
                     value: viewModel.settings?.breathingPattern.value ??
                         BreathingPatternType.fourSevenEight.value,
@@ -115,7 +115,7 @@ class SettingsPageView extends BaseView<SettingsPageViewModel> {
                 ),
                 ListTile(
                   enableFeedback: false,
-                  title: const Text('Meditation duration'),
+                  title: const Text('Meditation duration (min)'),
                   trailing: DropdownButton<int>(
                     value: viewModel.settings?.meditationDuration,
                     onChanged: (int? newValue) {

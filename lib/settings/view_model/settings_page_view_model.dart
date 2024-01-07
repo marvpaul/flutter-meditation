@@ -55,7 +55,7 @@ class SettingsPageViewModel extends BaseViewModel {
   final String _heartRateName = "Heart Rate";
   final String isBinauralBeatEnabledDisplayText = "Binaural Beats";
   String get kaleidoscopeImageName => _kaleidoscopeImageName;
-  final String _kaleidoscopeImageName = "Kaleidoscope image";
+  final String _kaleidoscopeImageName = "Kaleidoscope Image";
   final String bluetoothName = "Bluetooth";
   final String bluetoothSettingsHeading = "Bluetooth Connection";
   final String unpairText = "Unpair";

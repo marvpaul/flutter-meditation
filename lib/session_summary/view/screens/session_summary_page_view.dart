@@ -57,7 +57,7 @@ class SessionSummaryPageView extends BaseView<SessionSummaryPageViewModel> {
                 return Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    sectionHeader("Period ${i + 1}"),
+                    sectionHeader("Breathing Cycle ${i + 1}"),
                     SessionSummaryPeriodDetailsWidget(
                       mandala: viewModel.sessionPeriodsPresentationModels[i].visualization,
                       beatFrequency: viewModel.sessionPeriodsPresentationModels[i].beatFrequency,
