@@ -28,8 +28,8 @@ class MeditationRepositoryLocal implements MeditationRepository {
   ///
   /// The duration and other parameters are fetched from the settings and breathing pattern.
   @override
-  Future<MeditationModel> createNewMeditation() async {
-    print("Create new meditation, fetch params from settings!");
+  Future<MeditationModel> createNewMeditation({ bool showKaleidoscope = false }) async {
+    print("Create new meditation, fetch params from settings! showKaleidoscope: $showKaleidoscope");
     // TODO: Fetch duration
     SettingsRepository settingsRepository = getIt<SettingsRepositoryLocal>();
     BreathingPatternRepository breathingPatternRepository =
@@ -45,7 +45,7 @@ class MeditationRepositoryLocal implements MeditationRepository {
         sessionParameters: [
           SessionParameterModel(
               visualization:
-                  settings.kaleidoscope ? settings.kaleidoscopeImage : null,
+                  settings.kaleidoscope || showKaleidoscope ? settings.kaleidoscopeImage : null,
               // TODO: either get an optimized frequency from the trained model or use a default value
               binauralFrequency: settings.binauralBeatFrequency,
               breathingMultiplier: pattern.multiplier,
