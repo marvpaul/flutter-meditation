@@ -2,6 +2,12 @@ String secondsToHRF(double totalSeconds) {
   int minutes = (totalSeconds / 60).floor();
   int seconds = (totalSeconds % 60).round();
 
+  // Adjusting for the case when seconds equal 60
+  if (seconds == 60) {
+    minutes++;
+    seconds = 0;
+  }
+
   String minutesStr = minutes.toString().padLeft(2, '0');
   String secondsStr = seconds.toString().padLeft(2, '0');
 
