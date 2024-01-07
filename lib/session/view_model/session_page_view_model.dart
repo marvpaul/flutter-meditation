@@ -274,6 +274,12 @@ class SessionPageViewModel extends BaseViewModel {
         print("Warning: meditationModel is null.");
       }
     }
+    if (heartRateTimer.isActive) {
+      heartRateTimer.cancel();
+    }
+    if (timer.isActive) {
+      timer.cancel();
+    }
   }
 
   /// Generates a random visualization for the session.
@@ -393,12 +399,6 @@ class SessionPageViewModel extends BaseViewModel {
     cancelSession();
 
     _bluetoothRepository.stopHeartRateMeasurement();
-    if (heartRateTimer.isActive) {
-      heartRateTimer.cancel();
-    }
-    if (timer.isActive) {
-      timer.cancel();
-    }
     super.dispose();
   }
 }
