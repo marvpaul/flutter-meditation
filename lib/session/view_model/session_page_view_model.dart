@@ -84,7 +84,8 @@ class SessionPageViewModel extends BaseViewModel {
   double stateProgress = 0.0;
 
   /// Timer for updating the session progress.
-  late Timer timer, heartRateTimer;
+  late Timer timer;
+  Timer? heartRateTimer;
 
   /// Total duration of the meditation session.
   Duration totalDuration = const Duration();
@@ -291,8 +292,8 @@ class SessionPageViewModel extends BaseViewModel {
         print("Warning: meditationModel is null.");
       }
     }
-    if (heartRateTimer.isActive) {
-      heartRateTimer.cancel();
+    if (heartRateTimer != null && heartRateTimer!.isActive) {
+      heartRateTimer!.cancel();
     }
     if (timer.isActive) {
       timer.cancel();
@@ -422,6 +423,7 @@ class SessionPageViewModel extends BaseViewModel {
   /// Disposes of timers when the view model is no longer active.
   @override
   void dispose() {
+    debugPrint("call dispose");
     cancelSession();
 
     _bluetoothRepository.stopHeartRateMeasurement();
