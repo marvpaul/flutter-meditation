@@ -249,7 +249,6 @@ class SessionPageViewModel extends BaseViewModel {
           final MeditationModel validatedMeditationSession =
           _meditationSessionValidationService
               .validateMeditationSession(meditationModel!);
-          if (_isAiModeEnabled) {
             try {
               _sessionParameterOptimizationRepository
                   .trainSessionParameterOptimization(
@@ -260,7 +259,6 @@ class SessionPageViewModel extends BaseViewModel {
             } catch (e) {
               print(e);
             }
-          }
           _allMeditationsRepository.addMeditation(validatedMeditationSession);
           Navigator.pushAndRemoveUntil(
             context,
