@@ -1,7 +1,8 @@
 /// {@category ViewModel}
-/// ViewModel for the home page. Here we want to show if the user is connected to a device and 
+/// ViewModel for the home page. Here we want to show if the user is connected to a device and
 /// offer options to navigate to the settings page or start a new meditation session.
-library home_page_view_model; 
+library home_page_view_model;
+
 import 'dart:async';
 
 import 'package:flutter/material.dart';
@@ -27,6 +28,7 @@ import '../data/repository/impl/all_meditations_repository_local.dart';
 class HomePageViewModel extends BaseViewModel {
   List<MeditationModel>? get meditations => _allMeditationsModel;
   List<MeditationModel>? _allMeditationsModel;
+
   int get pastSessionsCount => _pastSessionsCount;
   int _pastSessionsCount = 0;
 
@@ -35,8 +37,11 @@ class HomePageViewModel extends BaseViewModel {
   final BluetoothConnectionRepository _bluetoothRepository =
       getIt<MiBandBluetoothService>();
 
-  final PastSessionsRepository _pastSessionsRepository = getIt<PastSessionsMiddlewareRepository>();
-  final SessionParameterOptimizationRepository _sessionParameterOptimizationRepository = getIt<SessionParameterOptimizationMiddlewareRepository>();
+  final PastSessionsRepository _pastSessionsRepository =
+      getIt<PastSessionsMiddlewareRepository>();
+  final SessionParameterOptimizationRepository
+      _sessionParameterOptimizationRepository =
+      getIt<SessionParameterOptimizationMiddlewareRepository>();
 
   bool get deviceIsConfigured => _isConfigured;
 
@@ -44,10 +49,13 @@ class HomePageViewModel extends BaseViewModel {
 
   bool get skippedSetup => _skippedSetup;
 
+  bool get isAiModeAvailable => _isAiModeAvailable && _connectionStatus == MiBandConnectionState.connected;
+
   List<BluetoothDeviceModel>? get systemDevices => _systemDevices;
   late bool _isConfigured;
   List<BluetoothDeviceModel>? _systemDevices;
   bool _skippedSetup = false;
+  MiBandConnectionState _connectionStatus = MiBandConnectionState.unconfigured;
 
   String _appbarText = "";
   final String setupWatchText = "Watch Setup";
@@ -55,7 +63,7 @@ class HomePageViewModel extends BaseViewModel {
   String get appbarText => _appbarText;
   Color? _watchIconColor;
 
-  bool isAiModeAvailable = false;
+  bool _isAiModeAvailable = false;
   bool isAiModeEnabled = false;
   final Set<StreamSubscription> _subscriptions = {};
 
@@ -76,8 +84,8 @@ class HomePageViewModel extends BaseViewModel {
     }
     if (_isConfigured) {
       _listenForWatchStatus();
+      _subscribeToAiModeAvailableAndState();
     }
-    _subscribeToAiModeAvailableAndState();
     notifyListeners();
   }
 
@@ -89,14 +97,16 @@ class HomePageViewModel extends BaseViewModel {
     _subscriptions.clear();
     super.dispose();
   }
+
   /// A stream which contains all previously finished sessions
   void _subscribeToPastSessionsStream() {
     StreamSubscription subscription = _pastSessionsRepository.pastSessionsStream
         .map((event) => event.length)
-        .listen((int count) {
-      _pastSessionsCount = count;
-      notifyListeners();
-    },
+        .listen(
+      (int count) {
+        _pastSessionsCount = count;
+        notifyListeners();
+      },
       onError: (error) {
         // Handle any errors here
       },
@@ -105,12 +115,15 @@ class HomePageViewModel extends BaseViewModel {
   }
 
   void _subscribeToAiModeAvailableAndState() {
-    StreamSubscription availabilitySubscription = _sessionParameterOptimizationRepository.isAiModeAvailable.listen((event) {
-      isAiModeAvailable = event;
+    StreamSubscription availabilitySubscription =
+        _sessionParameterOptimizationRepository.isAiModeAvailable
+            .listen((event) {
+      _isAiModeAvailable = event;
       notifyListeners();
     });
     _subscriptions.add(availabilitySubscription);
-    StreamSubscription stateSubscription = _sessionParameterOptimizationRepository.isAiModeEnabled.listen((event) {
+    StreamSubscription stateSubscription =
+        _sessionParameterOptimizationRepository.isAiModeEnabled.listen((event) {
       isAiModeEnabled = event;
       notifyListeners();
     });
@@ -124,7 +137,7 @@ class HomePageViewModel extends BaseViewModel {
     );
   }
 
-  /// Navigate to session summary page where the user can see all previous meditations. 
+  /// Navigate to session summary page where the user can see all previous meditations.
   void navigateToSessionSummary(var context) {
     Navigator.of(context).push(
       MaterialPageRoute(builder: (context) => PastSessionsPageView()),
@@ -147,7 +160,7 @@ class HomePageViewModel extends BaseViewModel {
     notifyListeners();
   }
 
-  /// Select a bluetooth device / miBand to pair. The user will be asked during first app startup to select a device. 
+  /// Select a bluetooth device / miBand to pair. The user will be asked during first app startup to select a device.
   void selectBluetoothDevice(BluetoothDeviceModel bluetoothDevice) async {
     await _bluetoothRepository.setDevice(bluetoothDevice);
     _isConfigured = true;
@@ -161,6 +174,7 @@ class HomePageViewModel extends BaseViewModel {
         await _bluetoothRepository.getConnectionState();
     if (statusStream != null) {
       statusStream.listen((status) async {
+        _connectionStatus = status;
         if (status == MiBandConnectionState.connected) {
           _watchIconColor = Colors.green;
         } else if (status == MiBandConnectionState.disconnected) {
@@ -172,7 +186,7 @@ class HomePageViewModel extends BaseViewModel {
     }
   }
 
-  /// Get's a proper greeting string for our home screen 
+  /// Get's a proper greeting string for our home screen
   String _getGreetingForCurrentTime() {
     final hour = DateTime.now().hour;
     if (hour > 6 && hour < 12) {
