@@ -11,6 +11,7 @@ class MeditationSessionValidationService {
   MeditationModel validateMeditationSession(MeditationModel session) {
     // Interpolating heart rates for each session parameter
     List<SessionParameterModel> updatedSessionParameters = session.sessionParameters
+        .where((param) => param.heartRates.isNotEmpty)
         .map((param) => param.copyWith(
         heartRates: _interpolateHeartRates(param.heartRates)))
         .toList();

@@ -92,5 +92,30 @@ void main() {
       expect(validatedSession.sessionParameters.length, 20);
       expect(validatedSession.sessionParameters[0].heartRates.length, 15);
     });
+
+    test('givenSessionParametersWithEmptyHeartRates_whenValidateSession_thenFilterSessionParameters', () {
+      // given
+      final MeditationModel session = MeditationModelMock.mock(
+          sessionParameters: [
+            SessionParameterModelMock.mock(
+                heartRates: [
+                  HeartrateMeasurementModelMock.mock(),
+                  HeartrateMeasurementModelMock.mock(),
+                ]
+            ),
+            SessionParameterModelMock.mock(
+                heartRates: []
+            ),
+          ]
+      );
+
+      // when
+      final MeditationModel validatedSession = sut().validateMeditationSession(session);
+
+      // then
+      expect(validatedSession.sessionParameters.length, 1);
+
+    });
   });
+
 }
