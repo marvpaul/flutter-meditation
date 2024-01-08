@@ -413,8 +413,8 @@ class SessionPageViewModel extends BaseViewModel {
   void getHeartRateData() async {
     Stream<int> heartRateStream = await _bluetoothRepository.getHeartRate();
     heartRateStream.listen((measurement) {
-      debugPrint('got heart rate: $heartRate');
-      if (heartRate > 0) {
+      debugPrint('heart rate: $measurement');
+      if (measurement > 0) {
         heartRate = measurement + .0;
         _meditationRepository.addHeartRate(
             meditationModel!,
