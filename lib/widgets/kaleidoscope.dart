@@ -37,7 +37,7 @@ class _KaleidoscopeState extends State<Kaleidoscope>
   /// the actually loaded image in prevImage before loading a new image in order to smoothly fade between them 
   /// whenever we load a new image.
   void loadImage() async {
-    String imageToLoad = widget.viewModel.getLatestSessionParamaters().visualization??'Arctic'; 
+    String imageToLoad = widget.viewModel.getLatestSessionParameters().visualization??'Arctic'; 
     if(imageToLoad == ''){
       imageToLoad = 'Arctic'; 
     }
@@ -77,7 +77,7 @@ class _KaleidoscopeState extends State<Kaleidoscope>
     timer = Timer.periodic(const Duration(milliseconds: 33), (timer) {
       if (!mounted || !widget.viewModel.running) return;
       setState(() {
-        if (loadedImage != widget.viewModel.getLatestSessionParamaters().visualization) {
+        if (loadedImage != widget.viewModel.getLatestSessionParameters().visualization) {
           loadImage();
         }
         delta += widget.viewModel.kaleidoscopeMultiplier * (1 / 33 * 5);

@@ -22,6 +22,10 @@ class SessionWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
+    String heartRate = '--';
+    if(viewModel.heartRate > 0.0){
+      heartRate = viewModel.heartRate.toString();
+    }
     return Padding(
       padding: EdgeInsets.all(padding),
       child: Column(
@@ -33,7 +37,7 @@ class SessionWidget extends StatelessWidget {
                 Expanded(
                   child: InformationBox(
                     kind: "HEART RATE",
-                    value: viewModel.heartRate.toString(),
+                    value: heartRate,
                     unit: "BPM",
                     background: HeartRateGraph(
                       viewModel: viewModel,

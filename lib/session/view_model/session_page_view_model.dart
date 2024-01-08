@@ -1,5 +1,6 @@
 /// {@category ViewModel}
 library session_page_view_model;
+
 import 'dart:async';
 import 'dart:math';
 import 'package:fl_chart/fl_chart.dart';
@@ -124,7 +125,7 @@ class SessionPageViewModel extends BaseViewModel {
 
   /// Retrieves the latest session parameters.
   /// Get them from the corresponding repository or generate a new SessionParameterModel object with default parameters.
-  SessionParameterModel getLatestSessionParamaters() {
+  SessionParameterModel getLatestSessionParameters() {
     if (meditationModel != null) {
       return _meditationRepository.getLatestSessionParamaters(meditationModel!);
     } else {
@@ -172,10 +173,11 @@ class SessionPageViewModel extends BaseViewModel {
       getHeartRateData();
     }
 
-    _isAiModeEnabled = await _sessionParameterOptimizationRepository.isAiModeEnabled.first;
+    _isAiModeEnabled =
+        await _sessionParameterOptimizationRepository.isAiModeEnabled.first;
 
-    meditationModel = await _meditationRepository
-        .createNewMeditation(showKaleidoscope: _isAiModeEnabled);
+    meditationModel = await _meditationRepository.createNewMeditation(
+        showKaleidoscope: _isAiModeEnabled);
     final SettingsModel currentSettings =
         await _settingsRepository.getSettings();
     settingsModel = currentSettings;
@@ -184,9 +186,9 @@ class SessionPageViewModel extends BaseViewModel {
 
     state = breathingPattern!.steps[stateCounter].type;
     timeLeft = breathingPattern!.steps[stateCounter].duration *
-        getLatestSessionParamaters().breathingMultiplier;
+        getLatestSessionParameters().breathingMultiplier;
     totalTimePerState = breathingPattern!.steps[stateCounter].duration *
-        getLatestSessionParamaters().breathingMultiplier;
+        getLatestSessionParameters().breathingMultiplier;
     _initSession(currentSettings);
     running = true;
 
@@ -225,13 +227,14 @@ class SessionPageViewModel extends BaseViewModel {
           numberOfStateChanges = 0;
           print("Changing params");
           final MeditationModel validatedMeditationSession =
-          _meditationSessionValidationService
-              .validateMeditationSession(meditationModel!);
+              _meditationSessionValidationService
+                  .validateMeditationSession(meditationModel!);
           if (_isAiModeEnabled) {
             try {
               final SessionParameterOptimization? sessionParameterOptimization =
-              await _sessionParameterOptimizationRepository
-                  .getSessionParameterOptimization(validatedMeditationSession);
+                  await _sessionParameterOptimizationRepository
+                      .getSessionParameterOptimization(
+                          validatedMeditationSession);
               changeSessionParams(sessionParameterOptimization);
             } catch (e) {
               changeSessionParams(null);
@@ -248,18 +251,17 @@ class SessionPageViewModel extends BaseViewModel {
           meditationModel!.completedSession = true;
           stopBinauralBeats();
           final MeditationModel validatedMeditationSession =
-          _meditationSessionValidationService
-              .validateMeditationSession(meditationModel!);
-            try {
-              _sessionParameterOptimizationRepository
-                  .trainSessionParameterOptimization(
-                  validatedMeditationSession);
-              // make sure data was written to db. This should be changed when
-              // logic is split to two endpoints
-              await Future.delayed(const Duration(milliseconds: 250));
-            } catch (e) {
-              print(e);
-            }
+              _meditationSessionValidationService
+                  .validateMeditationSession(meditationModel!);
+          try {
+            _sessionParameterOptimizationRepository
+                .trainSessionParameterOptimization(validatedMeditationSession);
+            // make sure data was written to db. This should be changed when
+            // logic is split to two endpoints
+            await Future.delayed(const Duration(milliseconds: 250));
+          } catch (e) {
+            print(e);
+          }
           _allMeditationsRepository.addMeditation(validatedMeditationSession);
           Navigator.pushAndRemoveUntil(
             context,
@@ -332,7 +334,7 @@ class SessionPageViewModel extends BaseViewModel {
   /// After initial we'll use parameters suggested by the model.
   void changeSessionParams(
       SessionParameterOptimization? sessionParameterOptimization) async {
-      if (_isDisposed) return;
+    if (_isDisposed) return;
     bool needsToBeRandomized = sessionParameterOptimization == null;
     meditationModel!.sessionParameters.add(SessionParameterModel(
         visualization: needsToBeRandomized
@@ -346,7 +348,7 @@ class SessionPageViewModel extends BaseViewModel {
             : sessionParameterOptimization.breathingPatternMultiplier,
         breathingPattern: BreathingPatternType.fourSevenEight,
         heartRates: []));
-    double freq = (getLatestSessionParamaters().binauralFrequency)!.toDouble();
+    double freq = (getLatestSessionParameters().binauralFrequency)!.toDouble();
     if (settingsModel!.isBinauralBeatEnabled || _isAiModeEnabled) {
       playBinauralBeats(100, 100 + freq);
     }
@@ -362,9 +364,9 @@ class SessionPageViewModel extends BaseViewModel {
 
     state = breathingPattern!.steps[stateCounter].type;
     timeLeft = breathingPattern!.steps[stateCounter].duration *
-        getLatestSessionParamaters().breathingMultiplier;
+        getLatestSessionParameters().breathingMultiplier;
     totalTimePerState = breathingPattern!.steps[stateCounter].duration *
-        getLatestSessionParamaters().breathingMultiplier;
+        getLatestSessionParameters().breathingMultiplier;
 
     bool hasVibrator = await Vibration.hasVibrator() ?? false;
     if (settingsModel!.isHapticFeedbackEnabled && hasVibrator) {
@@ -411,12 +413,15 @@ class SessionPageViewModel extends BaseViewModel {
   void getHeartRateData() async {
     Stream<int> heartRateStream = await _bluetoothRepository.getHeartRate();
     heartRateStream.listen((measurement) {
-      heartRate = measurement + .0;
-      _meditationRepository.addHeartRate(
-          meditationModel!,
-          meditationModel!.timestamp.toInt() + elapsedSeconds.toInt(),
-          heartRate);
-      heartRateGraphKey.currentState?.refreshHeartRate();
+      debugPrint('got heart rate: $heartRate');
+      if (heartRate > 0) {
+        heartRate = measurement + .0;
+        _meditationRepository.addHeartRate(
+            meditationModel!,
+            meditationModel!.timestamp.toInt() + elapsedSeconds.toInt(),
+            heartRate);
+        heartRateGraphKey.currentState?.refreshHeartRate();
+      }
     });
   }
 
