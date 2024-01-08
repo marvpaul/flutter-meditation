@@ -5,10 +5,12 @@ import 'package:flutter_meditation/session/view_model/session_page_view_model.da
 import 'package:flutter_meditation/settings/view_model/settings_page_view_model.dart';
 import 'package:injectable/injectable.dart';
 import 'package:provider/provider.dart';
+import 'package:keep_screen_on/keep_screen_on.dart';
 
 import 'di/Setup.dart';
 import 'home/view_model/home_page_view_model.dart';
 
+/// @nodoc
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await configureInjection(Environment.prod);
@@ -22,6 +24,8 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
+    // Keep the screen on.
+    KeepScreenOn.turnOn();
     return MultiProvider(
       providers: [
         ChangeNotifierProvider.value(value: HomePageViewModel()),

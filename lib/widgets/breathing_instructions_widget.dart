@@ -1,3 +1,5 @@
+/// {@category Widget}
+library breathing_instructions_widget;
 import 'package:flutter/material.dart';
 
 import '../session/data/model/breathing_pattern_model.dart';

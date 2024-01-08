@@ -1,3 +1,5 @@
+/// {@category Widget}
+library past_meditations_card_view; 
 import 'package:flutter/material.dart';
 
 class PastMeditationsCardView extends StatelessWidget {
@@ -38,7 +40,7 @@ class PastMeditationsCardView extends StatelessWidget {
                           style: TextStyle(
                               fontSize: 16, fontWeight: FontWeight.w500)),
                       const SizedBox(height: 5),
-                      Text('$meditationSessionEntries entries',
+                      Text('$meditationSessionEntries ${meditationSessionEntries == 1 ? 'entry' : 'entries'}',
                           style: const TextStyle(fontSize: 14)),
                     ],
                   ),

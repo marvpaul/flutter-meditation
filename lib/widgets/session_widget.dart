@@ -1,3 +1,5 @@
+/// {@category Widget}
+library session_widget;
 import 'package:flutter/material.dart';
 import 'package:flutter_meditation/common/helpers.dart';
 import 'package:flutter_meditation/session/view_model/session_page_view_model.dart';
@@ -20,6 +22,10 @@ class SessionWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
+    String heartRate = '--';
+    if(viewModel.heartRate > 0.0){
+      heartRate = viewModel.heartRate.toString();
+    }
     return Padding(
       padding: EdgeInsets.all(padding),
       child: Column(
@@ -31,7 +37,7 @@ class SessionWidget extends StatelessWidget {
                 Expanded(
                   child: InformationBox(
                     kind: "HEART RATE",
-                    value: viewModel.heartRate.toString(),
+                    value: heartRate,
                     unit: "BPM",
                     background: HeartRateGraph(
                       viewModel: viewModel,
@@ -97,36 +103,7 @@ class _ActionButtons extends StatelessWidget {
           ),
         ),
         const SizedBox(width: 8),
-        Expanded(
-          child: Container(
-            height: 40,
-            child: ElevatedButton(
-              onPressed: () {
-                Navigator.pop(context);
-              },
-              style: ElevatedButton.styleFrom(
-                primary: Theme.of(context).colorScheme.primary,
-                padding: const EdgeInsets.symmetric(horizontal: 16.0),
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(
-                    Icons.check,
-                    color: Theme.of(context).colorScheme.surface,
-                  ),
-                  Text(
-                    'Finish',
-                    style: TextStyle(
-                      fontSize: 14.0,
-                      color: Theme.of(context).colorScheme.surface,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ),
-      ],);
+      ],
+    );
   }
 }

@@ -17,13 +17,11 @@ void main() {
     late SettingsRepositoryLocal settingsRepository;
     late SettingsModel settingsHapticFeedbackEnabled;
     late String settingsJSONHapticFeedbackEnabled;
-    late String defaultSettingsJSON;
     setUp(() {
       mockSharedPreferences = MockSharedPreferences();
       settingsRepository = SettingsRepositoryLocal(mockSharedPreferences);
-      settingsHapticFeedbackEnabled = SettingsModel(isHapticFeedbackEnabled: true);
+      settingsHapticFeedbackEnabled = SettingsModel(isHapticFeedbackEnabled: true, uuid: '123');
       settingsJSONHapticFeedbackEnabled = JsonEncoder().convert(SettingsDTO(settings: settingsHapticFeedbackEnabled).toJson());
-      defaultSettingsJSON = JsonEncoder().convert(SettingsDTO(settings: SettingsModel()).toJson());
     });
 
     test('getSettings - should return default settings when no settings are stored', () async {
@@ -32,9 +30,9 @@ void main() {
       when(() => mockSharedPreferences.setString(any(), any())).thenAnswer((_) => Future(() => true));
 
       final result = await settingsRepository.getSettings();
-      expect(result.isHapticFeedbackEnabled, SettingsModel().isHapticFeedbackEnabled);
+      expect(result.isHapticFeedbackEnabled, SettingsModel(uuid: '123').isHapticFeedbackEnabled);
       // verify default settings are saved
-      verify(() => mockSharedPreferences.setString('settings', defaultSettingsJSON)).called(1);
+      verify(() => mockSharedPreferences.setString('settings', any())).called(1);
     });
 
     test('getSettings - should return saved settings', () async {
@@ -47,12 +45,13 @@ void main() {
       verifyNever(() => mockSharedPreferences.setString(any(), any()));
     });
 
-    test('getSettings - should return saved settings', () async {
+    test('getSettings - should return saved settings with valid ui', () async {
       // Stub the `getString` method.
       when(() => mockSharedPreferences.getString('settings')).thenReturn(settingsJSONHapticFeedbackEnabled);
 
       final result = await settingsRepository.getSettings();
       expect(result.isHapticFeedbackEnabled, settingsHapticFeedbackEnabled.isHapticFeedbackEnabled);
+      expect(await settingsRepository.getDeviceId(), '123'); 
       // saveSettings shouldn't be called, because they are already stored
       verifyNever(() => mockSharedPreferences.setString(any(), any()));
     });
@@ -60,7 +59,7 @@ void main() {
     test('restore settings to default', () async {
       when(() => mockSharedPreferences.setString(any(), any())).thenAnswer((_) => Future(() => true));
       settingsRepository.restoreSettings();
-      verify(() => mockSharedPreferences.setString(SettingsRepository.settingsKey, defaultSettingsJSON)).called(1);
+      verify(() => mockSharedPreferences.setString(SettingsRepository.settingsKey, any())).called(1);
     });
 
   });

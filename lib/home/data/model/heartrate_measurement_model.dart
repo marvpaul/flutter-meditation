@@ -1,4 +1,6 @@
-import 'package:flutter_meditation/session/data/model/breathing_pattern_model.dart';
+/// {@category Model}
+/// Represents a model which stores tuples with a timestamp and a coresponding heart rate
+library heartrate_measurement_model;
 import 'package:freezed_annotation/freezed_annotation.dart';
 part 'heartrate_measurement_model.freezed.dart';
 part 'heartrate_measurement_model.g.dart';

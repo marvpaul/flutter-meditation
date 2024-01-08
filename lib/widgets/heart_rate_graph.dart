@@ -1,3 +1,5 @@
+/// {@category Widget}
+library heart_rate_graph;
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_meditation/session/view_model/session_page_view_model.dart';
@@ -89,8 +91,8 @@ class HeartRateGraphState extends State<HeartRateGraph> {
       ),
       minX: 0,
       maxX: 6,
-      minY: 40 /* minimumValue() */,
-      maxY: 155 /* maximumValue() */,
+      minY: 40,
+      maxY: 155,
       lineBarsData: [
         LineChartBarData(
           spots: widget.viewModel.dataPoints,
