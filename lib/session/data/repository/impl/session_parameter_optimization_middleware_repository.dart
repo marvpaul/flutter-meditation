@@ -26,12 +26,13 @@ class SessionParameterOptimizationMiddlewareRepository implements SessionParamet
   final String _preferenceKey = 'isAiModeEnabled';
   final bool _defaultValueForAiMode = true;
 
-  final PastSessionsRepository _pastSessionsRepository;
+  final PastSessionsRepository _pastSessionsRepository; // TODO: remove
   final SharedPreferences _sharedPreferences;
   final SettingsRepository _settingsRepository;
 
   SessionParameterOptimizationMiddlewareRepository(this._pastSessionsRepository, this._sharedPreferences, this._settingsRepository) {
     bool? isAiModeEnabled = _sharedPreferences.getBool(_preferenceKey);
+    _isAiModeAvailableSubject.add(true);
     if (isAiModeEnabled != null) {
       _isAiModeEnabledSubject.add(isAiModeEnabled);
     } else {
@@ -50,20 +51,12 @@ class SessionParameterOptimizationMiddlewareRepository implements SessionParamet
   }
 
   @override
-  Stream<bool> get isAiModeAvailable => _pastSessionsRepository.pastSessionsStream.map((e) => e.length > 2);
+  Stream<bool> get isAiModeAvailable => _isAiModeAvailableSubject.asBroadcastStream();
+  final BehaviorSubject<bool> _isAiModeAvailableSubject = BehaviorSubject<bool>();
 
   final BehaviorSubject<bool> _isAiModeEnabledSubject = BehaviorSubject<bool>();
   @override
-  Stream<bool> get isAiModeEnabled {
-    return CombineLatestStream.combine2(
-      _pastSessionsRepository.pastSessionsStream,
-      _isAiModeEnabledSubject,
-          (List<dynamic> sessions, bool isAiModeEnabled) {
-        final bool isAiModeAvailable = sessions.length > 2;
-        return isAiModeAvailable && isAiModeEnabled;
-      },
-    ).asBroadcastStream(); // To allow multiple listeners
-  }
+  Stream<bool> get isAiModeEnabled =>_isAiModeEnabledSubject.asBroadcastStream();
 
   @override
   void changeAiMode(bool isEnabled) async {
