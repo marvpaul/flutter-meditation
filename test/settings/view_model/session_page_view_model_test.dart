@@ -205,7 +205,7 @@ void main() async {
       expect(viewModel.running, true);
 
       int beatFreq = viewModel.getRandomBinauralBeats();
-      expect(beatFreq >= 100 && beatFreq <= 150, true);
+      expect(beatFreq >= 2 && beatFreq <= 30, true);
 
       double randomBreathingMultiplier =
           viewModel.getRandomBreathingMultiplier();
