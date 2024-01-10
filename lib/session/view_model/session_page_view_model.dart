@@ -223,7 +223,7 @@ class SessionPageViewModel extends BaseViewModel {
         numberOfStateChanges++;
         // change session parameters every 2 breathing cycles
         // - changed to 1 for demo purposes as requests take too long
-        if (numberOfStateChanges >= 3 && running) {
+        if (numberOfStateChanges >= 6 && running) {
           numberOfStateChanges = 0;
           print("Changing params");
           final MeditationModel validatedMeditationSession =
@@ -231,10 +231,10 @@ class SessionPageViewModel extends BaseViewModel {
                   .validateMeditationSession(meditationModel!);
           if (_isAiModeEnabled) {
             try {
-              final SessionParameterOptimization? sessionParameterOptimization =
-                  await _sessionParameterOptimizationRepository
-                      .getSessionParameterOptimization(
-                          validatedMeditationSession);
+              final SessionParameterOptimization? sessionParameterOptimization = null;
+                  // await _sessionParameterOptimizationRepository
+                  //     .getSessionParameterOptimization(
+                  //         validatedMeditationSession);
               changeSessionParams(sessionParameterOptimization);
             } catch (e) {
               changeSessionParams(null);
