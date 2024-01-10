@@ -17,6 +17,13 @@ jobs:
         with:
           flutter-version: '3.13.9'
       - run: flutter pub get
+      - run: dart doc
+      - run: zip -r doc.zip doc
+      - name: Archive dart doc 
+        uses: actions/upload-artifact@v3
+        with:
+          name: app documentation 
+          path: doc.zip
       - run: flutter pub run build_runner build
       - run: flutter test --coverage
       - name: Upload coverage reports to Codecov

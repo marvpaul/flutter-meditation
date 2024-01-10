@@ -1,3 +1,5 @@
+/// {@category Widget}
+library circle_widget;
 import 'package:flutter/material.dart';
 
 class CircleWidget extends StatelessWidget {
@@ -17,8 +19,8 @@ class CircleWidget extends StatelessWidget {
             shape: BoxShape.circle,
             color: Color.fromRGBO(217, 217, 217, 0.4),
           ),
-          width: 240 + 80 * progress, // Use the animated value for width
-          height: 240 + 80 * progress, // Use the animated value for height
+          width: 240 + 80 * progress, 
+          height: 240 + 80 * progress, 
         ),
         Container(
           decoration: const BoxDecoration(
@@ -30,8 +32,8 @@ class CircleWidget extends StatelessWidget {
         ),
         Icon(
           Icons.play_arrow,
-          size: 60.0, // Set the desired size of the play icon
-          color: Theme.of(context).colorScheme.background, // Set the desired color of the play icon
+          size: 60.0,
+          color: Theme.of(context).colorScheme.background, 
         ),
       ]),
     );

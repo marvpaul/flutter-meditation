@@ -1,5 +1,5 @@
 name: flutter_meditation
-description: A new Flutter project.
+description: Flutter meditation app with MiBand heart rate measurement and backend for ML
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
 publish_to: "none" # Remove this line if you wish to publish to pub.dev
@@ -17,7 +17,6 @@ publish_to: "none" # Remove this line if you wish to publish to pub.dev
 # In Windows, build-name is used as the major, minor, and patch parts
 # of the product and file versions while build-number is used as the build suffix.
 version: 1.0.0+1
-
 environment:
   sdk: ">=3.1.5 <4.0.0"
 
@@ -49,6 +48,22 @@ dependencies:
   mocktail: ^1.0.1
   fl_chart: ^0.64.0
   flutter_blue_plus: ^1.29.5
+  uuid: ^4.2.2
+  http: ^1.1.0
+  keep_screen_on: ^3.0.0
+  vibration: ^1.8.4
+
+
+flutter_launcher_icons:
+  android: "launcher_icon"
+  ios: true
+  image_path: "assets/icon.png"
+  min_sdk_android: 21 # android min sdk min:16, default 21
+  web:
+    generate: true
+    image_path: "assets/icon.png"
+    background_color: "#000000"
+    theme_color: "#000000"
 
 dev_dependencies:
   flutter_test:
@@ -59,6 +74,8 @@ dev_dependencies:
   # activated in the `analysis_options.yaml` file located at the root of your
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
+
+  flutter_launcher_icons: "^0.13.1"
   flutter_lints: ^2.0.0
   build_runner: ^2.4.6
   json_serializable: ^6.7.1
@@ -78,6 +95,7 @@ flutter:
     - assets/shaders/myshader.frag
   assets:
     - assets/Mandalas/
+    - assets/icon.png
   uses-material-design: true
 
   # To add assets to your application, add an assets section, like this:

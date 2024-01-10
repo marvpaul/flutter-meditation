@@ -21,5 +21,5 @@ abstract class SettingsRepository{
   Future<SettingsModel> getSettings();
   void saveSettings(SettingsModel settings);
   void restoreSettings();
-
+  Future<String> getDeviceId();
 }

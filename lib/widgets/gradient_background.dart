@@ -1,3 +1,5 @@
+/// {@category Widget}
+library gradient_background;
 import 'package:flutter/material.dart';
 
 class GradientBackground extends StatefulWidget {
