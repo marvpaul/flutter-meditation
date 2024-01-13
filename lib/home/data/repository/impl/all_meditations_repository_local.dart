@@ -2,6 +2,7 @@
 /// Repository for handling a list of all previous meditations
 library all_meditations_repository_local;
 
+import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_meditation/home/data/dto/get_all_meditation_dto.dart';
@@ -19,6 +20,11 @@ class AllMeditationsRepositoryLocal implements AllMeditationsRepository {
   /// Constructs an instance of [AllMeditationsRepositoryLocal] with the provided [prefs].
   AllMeditationsRepositoryLocal(this.prefs);
 
+  final StreamController<List<MeditationModel>?> _meditationStreamController = StreamController<List<MeditationModel>?>.broadcast();
+
+  Stream<List<MeditationModel>?> get meditationStream => _meditationStreamController.stream;
+
+
   /// Retrieves all saved meditations from local storage.
   ///
   /// Returns a list of [MeditationModel] if available; otherwise, returns `null`.
@@ -26,8 +32,9 @@ class AllMeditationsRepositoryLocal implements AllMeditationsRepository {
   Future<List<MeditationModel>?> getAllMeditation() async {
     final String? meditationJson = prefs.getString(AllMeditationsRepository.sessionKey);
     if (meditationJson != null) {
-      debugPrint(meditationJson);
-      return GetMeditationDTO.fromJson(JsonDecoder().convert(meditationJson)).meditations;
+      List<MeditationModel> meditations = GetMeditationDTO.fromJson(JsonDecoder().convert(meditationJson)).meditations;
+      _meditationStreamController.add(meditations);
+      return meditations; 
     }
     return null;
   }
@@ -37,6 +44,7 @@ class AllMeditationsRepositoryLocal implements AllMeditationsRepository {
   /// The [meditations] parameter represents the list of [MeditationModel] to be saved.
   @override
   void saveMeditations(List<MeditationModel> meditations) {
+    _meditationStreamController.add(meditations);
     final String meditationJson = JsonEncoder().convert(GetMeditationDTO(meditations: meditations).toJson());
     prefs.setString(AllMeditationsRepository.sessionKey, meditationJson);
   }
@@ -49,7 +57,6 @@ class AllMeditationsRepositoryLocal implements AllMeditationsRepository {
     final String? meditationJson = prefs.getString(AllMeditationsRepository.sessionKey);
     List<MeditationModel> meditations;
     if (meditationJson != null) {
-      debugPrint(meditationJson);
       meditations = GetMeditationDTO.fromJson(JsonDecoder().convert(meditationJson)).meditations;
     } else {
       meditations = [];
