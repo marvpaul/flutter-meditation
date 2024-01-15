@@ -27,9 +27,9 @@ class PastSessionsPageView extends BaseView<PastSessionsPageViewModel> {
         children: [
           Expanded(
             child: ListView.builder(
-              itemCount: viewModel.meditations?.length ?? 0,
+              itemCount: viewModel.pastSessions?.length ?? 0,
               itemBuilder: (context, index) {
-                MeditationModel meditation = viewModel.meditations![index];
+                MeditationModel meditation = viewModel.pastSessions![index];
                 return ListTile(
                   title: Text('${secondsToHRF(meditation.duration.toDouble())} min'),
                   titleTextStyle: TextStyle(
@@ -42,7 +42,7 @@ class PastSessionsPageView extends BaseView<PastSessionsPageViewModel> {
                     color: Theme.of(context).colorScheme.secondary,
                   ),
                   trailing: SizedBox(
-                    width: 100,
+                    width: 100, // Adjust the width as needed
                     child: Row(
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: [

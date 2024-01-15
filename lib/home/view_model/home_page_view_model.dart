@@ -6,6 +6,7 @@ library home_page_view_model;
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_meditation/home/data/repository/all_meditations_repository.dart';
 import 'package:flutter_meditation/session/data/repository/session_parameter_optimization_repository.dart';
 import 'package:injectable/injectable.dart';
 
@@ -31,7 +32,7 @@ class HomePageViewModel extends BaseViewModel {
   int get pastSessionsCount => _pastSessionsCount;
   int _pastSessionsCount = 0;
 
-  final AllMeditationsRepositoryLocal _meditationRepository =
+  final AllMeditationsRepository _meditationRepository =
       getIt<AllMeditationsRepositoryLocal>();
   final BluetoothConnectionRepository _bluetoothRepository =
       getIt<MiBandBluetoothService>();
@@ -48,9 +49,7 @@ class HomePageViewModel extends BaseViewModel {
 
   bool get skippedSetup => _skippedSetup;
 
-  bool get isAiModeAvailable =>
-      _isAiModeAvailable &&
-      _connectionStatus == MiBandConnectionState.connected;
+  bool get isAiModeAvailable => _isAiModeAvailable && _connectionStatus == MiBandConnectionState.connected;
 
   List<BluetoothDeviceModel>? get systemDevices => _systemDevices;
   late bool _isConfigured;
@@ -76,8 +75,8 @@ class HomePageViewModel extends BaseViewModel {
   Future<void> init() async {
     _isConfigured = _bluetoothRepository.isConfigured();
     _systemDevices = await _bluetoothRepository.getSystemDevices();
-    _subscribeToPastSessionsStream();
     _allMeditationsModel = await _meditationRepository.getAllMeditation();
+    _subscribeToPastSessionsStream();
     try {
       _pastSessionsRepository.fetchMeditationSessions();
     } catch (e) {
@@ -101,8 +100,8 @@ class HomePageViewModel extends BaseViewModel {
 
   /// A stream which contains all previously finished sessions
   void _subscribeToPastSessionsStream() {
-    StreamSubscription subscription = _meditationRepository.meditationStream
-        .map((event) => event?.length ?? 0)
+    StreamSubscription subscription = _pastSessionsRepository.pastSessionsStream
+        .map((event) => event.length)
         .listen(
       (int count) {
         _pastSessionsCount = count;

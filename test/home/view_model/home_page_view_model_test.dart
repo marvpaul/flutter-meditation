@@ -18,22 +18,7 @@ class MockSettingsRepositoryLocal extends Mock
     implements SettingsRepositoryLocal {}
 
 class MockAllMeditationsRepositoryLocal extends Mock
-    implements AllMeditationsRepositoryLocal {
-  final StreamController<List<MeditationModel>?> _mockController =
-      StreamController<List<MeditationModel>?>.broadcast();
-
-  Stream<List<MeditationModel>?> get meditationStream => _mockController.stream;
-
-  // This method can be used to add mock data to the stream
-  void addMockData(List<MeditationModel>? data) {
-    _mockController.add(data);
-  }
-
-  // Close the stream controller when the mock repository is disposed
-  void dispose() {
-    _mockController.close();
-  }
-}
+    implements AllMeditationsRepositoryLocal {}
 
 class MockPastSessionsMiddlewareRepository extends Mock
     implements PastSessionsMiddlewareRepository {
