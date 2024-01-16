@@ -51,7 +51,7 @@ If you want to deploy the app, please consider reading these articles:
   - JSON serialization/deserialization of model classes using freezed library
 - dependency injection using injectable library
 
-<img src="https://github.com/marvpaul/flutter-meditation/blob/master/architecture.png?raw=true" width="200" alt="Meditation view">
+<img src="https://github.com/marvpaul/flutter-meditation/blob/master/architecture.png?raw=true" width="100%" alt="Meditation view">
 
 The frontend of our Flutter app adopts the MVVM architecture, which divides the application's components into a view, viewmodel, and model/repository. The view is responsible for displaying data received from the viewmodel. The viewmodel, in turn, retrieves data from a repository that can be either remote or local. Additionally, there are services employed within the repository to fulfill specific functionalities, such as connecting to a Bluetooth wearable. Finally, Data Transfer Objects (DTOs) classes assist in serializing/deserializing our data models.
 
