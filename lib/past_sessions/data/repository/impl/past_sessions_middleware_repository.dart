@@ -26,6 +26,7 @@ import '../past_sessions_repository.dart';
 class PastSessionsMiddlewareRepository implements PastSessionsRepository {
 
   final SettingsRepository _settingsRepository;
+  final AllMeditationsRepository _meditationsRepository = getIt<AllMeditationsRepositoryLocal>();
 
   PastSessionsMiddlewareRepository(this._settingsRepository) {
     _pastSessionsSubject.add([]);
@@ -41,7 +42,6 @@ class PastSessionsMiddlewareRepository implements PastSessionsRepository {
   @override
   Stream<List<MeditationModel>> get pastSessionsStream => _pastSessionsSubject.stream;
   final BehaviorSubject<List<MeditationModel>> _pastSessionsSubject = BehaviorSubject<List<MeditationModel>>();
-  final AllMeditationsRepository _meditationsRepository = getIt<AllMeditationsRepositoryLocal>();
 
   @override
   void fetchMeditationSessions() async {
@@ -82,6 +82,7 @@ class PastSessionsMiddlewareRepository implements PastSessionsRepository {
       if (!isStatusCodeWithinAcceptanceRange) {
         throw Exception('Error: ${response.statusCode}');
       }
+      _meditationsRepository.addMeditation(session);
     } catch (e) {
       throw Exception('Error storing meditation session: $e');
     }

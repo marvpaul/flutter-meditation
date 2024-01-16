@@ -8,9 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_meditation/base/base_view_model.dart';
 import 'package:flutter_meditation/home/data/model/meditation_model.dart';
 import 'package:flutter_meditation/home/data/model/session_parameter_model.dart';
-import 'package:flutter_meditation/home/data/repository/impl/all_meditations_repository_local.dart';
 import 'package:flutter_meditation/home/data/repository/impl/meditation_repository_local.dart';
-import 'package:flutter_meditation/home/data/repository/all_meditations_repository.dart';
 import 'package:flutter_meditation/home/data/repository/meditation_repository.dart';
 import 'package:flutter_meditation/home/view/screens/home_page_view.dart';
 import 'package:flutter_meditation/past_sessions/data/repository/impl/past_sessions_middleware_repository.dart';
@@ -44,8 +42,6 @@ class SessionPageViewModel extends BaseViewModel {
       getIt<MeditationRepositoryLocal>();
   final BreathingPatternRepository _breathingPatternRepository =
       getIt<BreathingPatternRepositoryLocal>();
-  final AllMeditationsRepository _allMeditationsRepository =
-      getIt<AllMeditationsRepositoryLocal>();
   final SettingsRepositoryLocal _settingsRepository =
       getIt<SettingsRepositoryLocal>();
   final BluetoothConnectionRepository _bluetoothRepository =
@@ -261,7 +257,6 @@ class SessionPageViewModel extends BaseViewModel {
           } catch (e) {
             print(e);
           }
-          _allMeditationsRepository.addMeditation(validatedMeditationSession);
           Navigator.pushAndRemoveUntil(
             context,
             MaterialPageRoute(
@@ -287,7 +282,6 @@ class SessionPageViewModel extends BaseViewModel {
       if (meditationModel != null) {
         meditationModel!.duration = elapsedSeconds.toInt();
         stopBinauralBeats();
-        _allMeditationsRepository.addMeditation(meditationModel!);
       } else {
         print("Warning: meditationModel is null.");
       }
