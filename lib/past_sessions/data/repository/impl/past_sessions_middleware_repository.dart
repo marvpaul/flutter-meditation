@@ -17,6 +17,7 @@ import 'package:http/http.dart' as http;
 import 'package:injectable/injectable.dart';
 import 'package:rxdart/rxdart.dart';
 
+import '../../../../session/data/dto/meditation_session_middleware_dto.dart';
 import '../../dto/past_sessions_response_dto.dart';
 import '../past_sessions_repository.dart';
 
@@ -60,6 +61,29 @@ class PastSessionsMiddlewareRepository implements PastSessionsRepository {
     } catch (e) {
       // Handle any exceptions
       throw Exception('Error fetching meditation sessions: $e');
+    }
+  }
+
+  @override
+  Future<void> storeMeditationSession(MeditationModel session) async {
+    final String deviceId = await getDeviceId();
+    final url = Uri.parse('$defaultServerHost$meditationsUri');
+
+    try {
+      MeditationSessionMiddlewareDTO body = session.toDTO(deviceId);
+      final response = await http.post(
+        url,
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: json.encode(body.toJson()),
+      );
+      final bool isStatusCodeWithinAcceptanceRange = response.statusCode >= 200 && response.statusCode < 300;
+      if (!isStatusCodeWithinAcceptanceRange) {
+        throw Exception('Error: ${response.statusCode}');
+      }
+    } catch (e) {
+      throw Exception('Error storing meditation session: $e');
     }
   }
 

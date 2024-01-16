@@ -13,6 +13,8 @@ import 'package:flutter_meditation/home/data/repository/impl/meditation_reposito
 import 'package:flutter_meditation/home/data/repository/all_meditations_repository.dart';
 import 'package:flutter_meditation/home/data/repository/meditation_repository.dart';
 import 'package:flutter_meditation/home/view/screens/home_page_view.dart';
+import 'package:flutter_meditation/past_sessions/data/repository/impl/past_sessions_middleware_repository.dart';
+import 'package:flutter_meditation/past_sessions/data/repository/past_sessions_repository.dart';
 import 'package:flutter_meditation/session/data/model/breathing_pattern_model.dart';
 import 'package:flutter_meditation/session/data/model/session_parameter_optimization.dart';
 import 'package:flutter_meditation/session/data/repository/breathing_pattern_repository.dart';
@@ -55,6 +57,7 @@ class SessionPageViewModel extends BaseViewModel {
       getIt<MeditationSessionValidationService>();
   final BinauralBeatsRepository _binauralBeatsRepository =
       getIt<BinauralBeatsRepositoryLocal>();
+  final PastSessionsRepository _pastSessionsRepository = getIt<PastSessionsMiddlewareRepository>();
 
   /// Flag indicating whether to show the UI.
   bool showUI = true;
@@ -253,11 +256,8 @@ class SessionPageViewModel extends BaseViewModel {
               _meditationSessionValidationService
                   .validateMeditationSession(meditationModel!);
           try {
-            _sessionParameterOptimizationRepository
-                .trainSessionParameterOptimization(validatedMeditationSession);
-            // make sure data was written to db. This should be changed when
-            // logic is split to two endpoints
-            await Future.delayed(const Duration(milliseconds: 250));
+            await _pastSessionsRepository.storeMeditationSession(validatedMeditationSession);
+            await _sessionParameterOptimizationRepository.trainSessionParameterOptimization();
           } catch (e) {
             print(e);
           }

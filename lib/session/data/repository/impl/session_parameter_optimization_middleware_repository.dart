@@ -98,18 +98,13 @@ class SessionParameterOptimizationMiddlewareRepository implements SessionParamet
   }
 
   @override
-  Future<void> trainSessionParameterOptimization(MeditationModel session) async {
+  Future<void> trainSessionParameterOptimization() async {
     final String deviceId = await getDeviceId();
-    final url = Uri.parse('$defaultServerHost$trainUri');
+    final url = Uri.parse('$defaultServerHost$trainUri?deviceId=$deviceId');
 
     try {
-      MeditationSessionMiddlewareDTO body = session.toDTO(deviceId);
       final response = await http.post(
         url,
-        headers: <String, String>{
-          'Content-Type': 'application/json; charset=UTF-8',
-        },
-        body: json.encode(body.toJson()),
       );
       TrainSessionParameterOptimizationResponseDTO decodedResponse = TrainSessionParameterOptimizationResponseDTO.fromJson(json.decode(response.body));
       if (response.statusCode == 200 && decodedResponse.message != null) {
