@@ -41,7 +41,6 @@ class BreathingPatternRepositoryLocal implements BreathingPatternRepository {
     final String? allBreathingPatternsJson =
         prefs.getString(BreathingPatternRepository.allBreathingPatternsKey);
     if (allBreathingPatternsJson != null) {
-      debugPrint(allBreathingPatternsJson);
       return AllBreathingPatternsDTO.fromJson(
               JsonDecoder().convert(allBreathingPatternsJson))
           .allBreathingPatterns;

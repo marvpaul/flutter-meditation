@@ -5,7 +5,10 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter_meditation/common/variables.dart';
+import 'package:flutter_meditation/di/Setup.dart';
 import 'package:flutter_meditation/home/data/model/meditation_model.dart';
+import 'package:flutter_meditation/home/data/repository/all_meditations_repository.dart';
+import 'package:flutter_meditation/home/data/repository/impl/all_meditations_repository_local.dart';
 import 'package:flutter_meditation/session/data/mapper/meditation_session_data_mapper.dart';
 import 'package:flutter_meditation/settings/data/model/settings_model.dart';
 import 'package:flutter_meditation/settings/data/repository/impl/settings_repository_local.dart';
@@ -37,6 +40,7 @@ class PastSessionsMiddlewareRepository implements PastSessionsRepository {
   @override
   Stream<List<MeditationModel>> get pastSessionsStream => _pastSessionsSubject.stream;
   final BehaviorSubject<List<MeditationModel>> _pastSessionsSubject = BehaviorSubject<List<MeditationModel>>();
+  final AllMeditationsRepository _meditationsRepository = getIt<AllMeditationsRepositoryLocal>();
 
   @override
   void fetchMeditationSessions() async {
@@ -51,7 +55,7 @@ class PastSessionsMiddlewareRepository implements PastSessionsRepository {
         _pastSessionsSubject.add(mappedResponse);
       } else {
         print('Error ${response.statusCode} - ${decodedResponse.message}');
-        // Handle the case where the server responds with an error
+      _pastSessionsSubject.add((await _meditationsRepository.getAllMeditation())!);
       }
     } catch (e) {
       // Handle any exceptions

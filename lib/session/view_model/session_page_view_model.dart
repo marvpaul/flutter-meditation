@@ -225,7 +225,6 @@ class SessionPageViewModel extends BaseViewModel {
         // - changed to 1 for demo purposes as requests take too long
         if (numberOfStateChanges >= 3 && running) {
           numberOfStateChanges = 0;
-          print("Changing params");
           final MeditationModel validatedMeditationSession =
               _meditationSessionValidationService
                   .validateMeditationSession(meditationModel!);
@@ -287,7 +286,6 @@ class SessionPageViewModel extends BaseViewModel {
       running = false;
       if (meditationModel != null) {
         meditationModel!.duration = elapsedSeconds.toInt();
-        print(meditationModel);
         stopBinauralBeats();
         _allMeditationsRepository.addMeditation(meditationModel!);
       } else {
@@ -413,7 +411,6 @@ class SessionPageViewModel extends BaseViewModel {
   void getHeartRateData() async {
     Stream<int> heartRateStream = await _bluetoothRepository.getHeartRate();
     heartRateStream.listen((measurement) {
-      debugPrint('heart rate: $measurement');
       if (measurement > 0) {
         heartRate = measurement + .0;
         _meditationRepository.addHeartRate(
@@ -428,7 +425,6 @@ class SessionPageViewModel extends BaseViewModel {
   /// Disposes of timers when the view model is no longer active.
   @override
   void dispose() {
-    debugPrint("call dispose");
     cancelSession();
 
     _bluetoothRepository.stopHeartRateMeasurement();

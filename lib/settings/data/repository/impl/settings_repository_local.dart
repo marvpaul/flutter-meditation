@@ -46,7 +46,6 @@ class SettingsRepositoryLocal implements SettingsRepository {
     final String? settingsJson =
         prefs.getString(SettingsRepository.settingsKey);
     if (settingsJson != null) {
-      debugPrint(settingsJson);
       return SettingsDTO.fromJson(JsonDecoder().convert(settingsJson)).settings;
     }
     SettingsModel settingsModel = SettingsModel(uuid: _generateUUID());

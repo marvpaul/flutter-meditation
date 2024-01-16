@@ -20,7 +20,6 @@ class SettingsPageView extends BaseView<SettingsPageViewModel> {
     if (viewModel.settings == null) {
       return const Scaffold();
     }
-    debugPrint("current state: ${viewModel.connectionState.name}");
     return Scaffold(
       appBar: AppBar(
         centerTitle: false,
