@@ -1,4 +1,4 @@
-# <img src="https://github.com/marvpaul/flutter-meditation/blob/master/assets/icon.png?raw=true" width="50" alt="Meditation view"> Mindsync - interactive meditation
+# <img src="https://github.com/marvpaul/flutter-meditation/blob/master/assets/icon.png?raw=true" width="40" alt="Meditation view">indsync - interactive meditation
 
 
 ## Introduction and showcase
