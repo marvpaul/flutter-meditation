@@ -23,6 +23,9 @@ Test coverage:
 
 To run the tests locally you can use `flutter test`
 
+## Design
+We used a figma draft to design the UI which can be found here: https://www.figma.com/file/XJANOZdmRCKBhPL7Fgr3uC/Meditation-App-Material-Design?type=design&node-id=54895-66&mode=design
+
 ## Documentation 
 We included source code documentation using `dart doc` following the dart documentation standards. The latest documentation will always be generated through our Github actions pipeline and is available as a pipeline artifact.
 
