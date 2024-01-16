@@ -1,38 +1,42 @@
-# Interactive meditation
+# Mindsync - interactive meditation
+## Introduction and showcase
+This is what the app looks like in action. You can connect a Mi-Band 2/3/4 to get realtime heartrate data and meditate with the help of: 
+- Binaural beats
+- Several breathing pattern
+- Realtime heart measurement
+- Kaleidoscope mandala which synchronizes with breathing
+- different visualizations
+You can either configure these settings by yourself or (after the app collected enough training data, 2x10 minute sessions) let an AI-model predict the meditation sessions parameters which will relax you the most.
 <div style="display: flex; justify-content: space-between;">
     <img src="https://github.com/marvpaul/flutter-meditation/blob/master/screenshots/meditationView.png?raw=true" width="200" alt="Meditation view">
     <img src="https://github.com/marvpaul/flutter-meditation/blob/master/screenshots/startscreen.png?raw=true" width="200" alt="Start screen">
     <img src="https://github.com/marvpaul/flutter-meditation/blob/master/screenshots/settings.png?raw=true" width="200" alt="Settings">
 </div>
 
-# Testing
-For our frontend we used the flutter testing framework paired with mockito to mock certain methods and data objects. This is our overall test coverage: 
+## Testing
+For our frontend we used the flutter testing framework paired with mockito to mock certain methods and data objects. 
+
+Test coverage: 
 [![codecov](https://codecov.io/gh/marvpaul/flutter-meditation/master/graph/badge.svg)](https://codecov.io/gh/marvpaul/flutter-meditation)
 
-# flutter_meditation
+To run the tests locally you can use `flutter test`
 
-Frontend for our breathing meditation app. The app includes: 
-- integration to MiBand 3 / 4 (connection via bluetooth, fetch of heart rate in realtime)
-- Binaural beats
-- Several breathing pattern
-- Realtime heart measurement
-- Kaleidoscope mandala which synchronizes with breathing
+## Documentation 
+We included source code documentation using `dart doc` following the dart documentation standards. The latest documentation will always be generated through our Github actions pipeline and is available as a pipeline artifact.
 
-The goal of this app is to provide a user-tailored meditation experience which aims to relax the user. For this purpose we measure the heart rate in realtime using a MiBand 3. The user has to go through a training phase (2 sessions) where we randomly change the meditation parameters (kaleidoscope image, breathing cycle length, binaural beat frequencies ...). We record the heart rate along with the session and finally sent it over to our backend which trains a machine learning model in order to deliver meditaion parameters which will relax the user the most (bring heart rate down). 
-
-
+## AI mode 
+The goal of this app is mainly to provide a user-tailored meditation experience which aims to relax the user. For this purpose we measure the heart rate in realtime using a MiBand 3. The user has to go through a training phase (2 sessions) where we randomly change the meditation parameters (kaleidoscope image, breathing cycle length, binaural beat frequencies ...). We record the heart rate along with the session and finally sent it over to our backend which trains a machine learning model in order to deliver meditaion parameters which will relax the user the most (bring heart rate down). 
 
 ## Build / deploy project
 
 To build GETIt service locator instances for dependency injection and model classes run:
-
 `flutter pub run build_runner build`
 
 To clean generated files:
-
 `flutter packages pub run build_runner clean`
 
-To run for development purposes, please use `flutter run`
+Run for development: 
+`flutter run`
 
 If you want to deploy the app, please consider reading these articles: 
 - Android: https://docs.flutter.dev/deployment/android
