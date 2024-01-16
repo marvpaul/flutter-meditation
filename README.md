@@ -1,4 +1,6 @@
 # Mindsync - interactive meditation
+<img src="https://github.com/marvpaul/flutter-meditation/blob/master/assets/icon.png?raw=true" width="50" alt="Meditation view">
+
 ## Introduction and showcase
 This is what the app looks like in action. You can connect a Mi-Band 2/3/4 to get realtime heartrate data and meditate with the help of: 
 - Binaural beats
