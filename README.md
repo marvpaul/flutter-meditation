@@ -23,6 +23,14 @@ Test coverage:
 
 To run the tests locally you can use `flutter test`
 
+We make sure our code works well by using unit tests for our frontend. These tests focus on key parts of our code, making sure everything runs smoothly and avoids any issues.
+
+In addition, we added a step to build our app automatically in our Github process. This ensures we always have an Android APK ready to go. It's an essential step to keep our app working and ready for deployment.
+
+To make sure our app runs perfectly on real devices, we're thinking about using end-to-end tests. These tests are more thorough as they install the app on actual devices for a complete check. Keep in mind that these tests can be more demanding on resources and may cost a bit more.
+
+Our goal is to find the right balance between testing everything well and using resources wisely. This way, our app stays reliable and performs well in different situations.
+
 ## Design
 We used a figma draft to design the UI which can be found here: https://www.figma.com/file/XJANOZdmRCKBhPL7Fgr3uC/Meditation-App-Material-Design?type=design&node-id=54895-66&mode=design
 
