@@ -37,6 +37,9 @@ We used a figma draft to design the UI which can be found here: https://www.figm
 ## Documentation 
 We included source code documentation using `dart doc` following the dart documentation standards. The latest documentation will always be generated through our Github actions pipeline and is available as a pipeline artifact.
 
+### User documentation
+To help the end user get started, we have created user documentation, which you can find in our repository as a PDF file: https://github.com/marvpaul/flutter-meditation/blob/master/Userdokumentation.pdf
+
 ## AI mode 
 The goal of this app is mainly to provide a user-tailored meditation experience which aims to relax the user. For this purpose we measure the heart rate in realtime using a MiBand 3. The user has to go through a training phase (2 sessions) where we randomly change the meditation parameters (kaleidoscope image, breathing cycle length, binaural beat frequencies ...). We record the heart rate along with the session and finally sent it over to our backend which trains a machine learning model in order to deliver meditaion parameters which will relax the user the most (bring heart rate down). 
 
