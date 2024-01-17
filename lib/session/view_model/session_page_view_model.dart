@@ -253,7 +253,7 @@ class SessionPageViewModel extends BaseViewModel {
                   .validateMeditationSession(meditationModel!);
           try {
             await _pastSessionsRepository.storeMeditationSession(validatedMeditationSession);
-            await _sessionParameterOptimizationRepository.trainSessionParameterOptimization();
+            _sessionParameterOptimizationRepository.trainSessionParameterOptimization();
           } catch (e) {
             print(e);
           }
