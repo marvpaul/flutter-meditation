@@ -75,3 +75,7 @@ The app architecture is inspired by the following projects:
  - https://github.com/HarryHaiVn/Flutter-Clean-Architecture-MVVM/tree/master
  - https://github.com/wasabeef/flutter-architecture-blueprints/tree/main
  - https://github.com/dacianf/flutter_rxdart_state_management/tree/master
+
+## Project presentation
+The presentation for the entire project took place on January 10, 2024 at HTW Berlin..
+[Link to presentation as pdf](presentation/Meditationsapp_praesi.pdf)
