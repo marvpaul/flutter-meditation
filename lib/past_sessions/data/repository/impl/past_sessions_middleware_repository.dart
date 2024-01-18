@@ -69,6 +69,7 @@ class PastSessionsMiddlewareRepository implements PastSessionsRepository {
     final String deviceId = await getDeviceId();
     final url = Uri.parse('$defaultServerHost$meditationsUri');
 
+    _meditationsRepository.addMeditation(session);
     try {
       MeditationSessionMiddlewareDTO body = session.toDTO(deviceId);
       final response = await http.post(
@@ -82,7 +83,6 @@ class PastSessionsMiddlewareRepository implements PastSessionsRepository {
       if (!isStatusCodeWithinAcceptanceRange) {
         throw Exception('Error: ${response.statusCode}');
       }
-      _meditationsRepository.addMeditation(session);
     } catch (e) {
       throw Exception('Error storing meditation session: $e');
     }
