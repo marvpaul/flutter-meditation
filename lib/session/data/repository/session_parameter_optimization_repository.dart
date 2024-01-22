@@ -7,7 +7,6 @@ abstract class SessionParameterOptimizationRepository {
       MeditationModel session
       );
   Future<void> trainSessionParameterOptimization(
-      MeditationModel sessionParameterOptimization
       );
   Stream<bool> get isAiModeAvailable;
   Stream<bool> get isAiModeEnabled;

@@ -8,11 +8,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_meditation/base/base_view_model.dart';
 import 'package:flutter_meditation/home/data/model/meditation_model.dart';
 import 'package:flutter_meditation/home/data/model/session_parameter_model.dart';
-import 'package:flutter_meditation/home/data/repository/impl/all_meditations_repository_local.dart';
 import 'package:flutter_meditation/home/data/repository/impl/meditation_repository_local.dart';
-import 'package:flutter_meditation/home/data/repository/all_meditations_repository.dart';
 import 'package:flutter_meditation/home/data/repository/meditation_repository.dart';
 import 'package:flutter_meditation/home/view/screens/home_page_view.dart';
+import 'package:flutter_meditation/past_sessions/data/repository/impl/past_sessions_middleware_repository.dart';
+import 'package:flutter_meditation/past_sessions/data/repository/past_sessions_repository.dart';
 import 'package:flutter_meditation/session/data/model/breathing_pattern_model.dart';
 import 'package:flutter_meditation/session/data/model/session_parameter_optimization.dart';
 import 'package:flutter_meditation/session/data/repository/breathing_pattern_repository.dart';
@@ -42,8 +42,6 @@ class SessionPageViewModel extends BaseViewModel {
       getIt<MeditationRepositoryLocal>();
   final BreathingPatternRepository _breathingPatternRepository =
       getIt<BreathingPatternRepositoryLocal>();
-  final AllMeditationsRepository _allMeditationsRepository =
-      getIt<AllMeditationsRepositoryLocal>();
   final SettingsRepositoryLocal _settingsRepository =
       getIt<SettingsRepositoryLocal>();
   final BluetoothConnectionRepository _bluetoothRepository =
@@ -55,6 +53,7 @@ class SessionPageViewModel extends BaseViewModel {
       getIt<MeditationSessionValidationService>();
   final BinauralBeatsRepository _binauralBeatsRepository =
       getIt<BinauralBeatsRepositoryLocal>();
+  final PastSessionsRepository _pastSessionsRepository = getIt<PastSessionsMiddlewareRepository>();
 
   /// Flag indicating whether to show the UI.
   bool showUI = true;
@@ -253,15 +252,11 @@ class SessionPageViewModel extends BaseViewModel {
               _meditationSessionValidationService
                   .validateMeditationSession(meditationModel!);
           try {
-            _sessionParameterOptimizationRepository
-                .trainSessionParameterOptimization(validatedMeditationSession);
-            // make sure data was written to db. This should be changed when
-            // logic is split to two endpoints
-            await Future.delayed(const Duration(milliseconds: 250));
+            await _pastSessionsRepository.storeMeditationSession(validatedMeditationSession);
+            _sessionParameterOptimizationRepository.trainSessionParameterOptimization();
           } catch (e) {
             print(e);
           }
-          _allMeditationsRepository.addMeditation(validatedMeditationSession);
           Navigator.pushAndRemoveUntil(
             context,
             MaterialPageRoute(
@@ -287,7 +282,6 @@ class SessionPageViewModel extends BaseViewModel {
       if (meditationModel != null) {
         meditationModel!.duration = elapsedSeconds.toInt();
         stopBinauralBeats();
-        _allMeditationsRepository.addMeditation(meditationModel!);
       } else {
         print("Warning: meditationModel is null.");
       }
