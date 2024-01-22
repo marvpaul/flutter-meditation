@@ -56,11 +56,21 @@ class PastSessionsMiddlewareRepository implements PastSessionsRepository {
         _pastSessionsSubject.add(mappedResponse);
       } else {
         print('Error ${response.statusCode} - ${decodedResponse.message}');
-      _pastSessionsSubject.add((await _meditationsRepository.getAllMeditation())!);
+        _pastSessionsSubject.add(await _getLocallyStoredMeditationSessions());
       }
     } catch (e) {
       // Handle any exceptions
+      _pastSessionsSubject.add(await _getLocallyStoredMeditationSessions());
       throw Exception('Error fetching meditation sessions: $e');
+    }
+  }
+
+  Future<List<MeditationModel>> _getLocallyStoredMeditationSessions() async {
+    List<MeditationModel>? session = await _meditationsRepository.getAllMeditation();
+    if (session != null) {
+      return session;
+    } else {
+      return [];
     }
   }
 
